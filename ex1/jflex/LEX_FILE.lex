@@ -71,10 +71,62 @@ import java_cup.runtime.*;
 /***********************/
 /* MACRO DECLARATIONS */
 /***********************/
-LineTerminator	= \r|\n|\r\n
-WhiteSpace		= {LineTerminator} | [ \t\f]
+
+/* Internal definitions */
+_LETTERS 		= [a-zA-Z]
+_NON_LETTER 	= [^a-zA-Z\n\r\"] /* Anything that is not a letter, newline, carriage return, or double quote */
+_ALPHANUM		= [a-zA-Z0-9]
+_COMMENT_BODY   = [a-zA-Z0-9 \t\f\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
+_LINETERMINATOR	= \r|\n|\r\n
+WhiteSpace		= {_LINETERMINATOR} | [ \t\f]
+
+/* Lexical definitions */
+
+ID				= {_LETTERS}{_ALPHANUM}*
 INTEGER			= 0 | [1-9][0-9]*
-ID				= [a-z]+
+
+STRING = \"{_LETTERS}*\"
+INVALID_STRING = \"[^\"{_LINETERMINATOR}]*\"  
+UNCLOSED_STRING = \"[^\"{_LINETERMINATOR}]*({_LINETERMINATOR}|<<EOF>>)
+
+
+PLUS			= \+
+MINUS			= -
+TIMES			= \*
+DIVIDE			= \/
+
+LPAREN			= \(
+RPAREN			= \)
+LBRACK			= \[
+RBRACK			= \]
+LBRACE			= \{
+RBRACE			= \}
+COMMA			= ,
+DOT				= \.
+SEMICOLON		= ;
+
+TYPE_INT		= int
+TYPE_STRING		= STRING
+TYPE_VOID		= void
+
+ASSIGN 			= :=
+EQUAL 			= =
+LT 				= <
+GT 				= >
+
+ARRAY 			= array
+CLASS 			= class
+RETURN 			= return
+WHILE 			= while
+IF 				= if
+ELSE 			= else
+NEW 			= new
+EXTENDS 		= extends
+NIL 			= nil
+
+TYPE_1_COMMENT = "//"{_COMMENT_BODY}*{_LINETERMINATOR}
+TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*"*/"
+UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -93,14 +145,66 @@ ID				= [a-z]+
 /**************************************************************/
 
 <YYINITIAL> {
+{TYPE_1_COMMENT}	{ /* Do nothing */ }
+{TYPE_2_COMMENT}	{ /* Do nothing */ }
+{UNCLOSED_TYPE_2_COMMENT}	{
+	throw new Error("Unclosed comment at line " + getLine() + ", column "
+		+ getTokenStartPosition());
+}
 
-"+"					{ return symbol(TokenNames.PLUS);}
-"-"					{ return symbol(TokenNames.MINUS);}
-"PPP"				{ return symbol(TokenNames.TIMES);}
-"/"					{ return symbol(TokenNames.DIVIDE);}
-"("					{ return symbol(TokenNames.LPAREN);}
-")"					{ return symbol(TokenNames.RPAREN);}
-{INTEGER}			{ return symbol(TokenNames.NUMBER, Integer.valueOf(yytext()));}
+{UNCLOSED_STRING}	{
+	throw new Error("Unclosed string at line " + getLine() + ", column "
+		+ getTokenStartPosition());
+}
+
+{INVALID_STRING}	{
+	throw new Error("Invalid string at line " + getLine() + ", column "
+		+ getTokenStartPosition());
+}
+
+{ARRAY}				{ return symbol(TokenNames.ARRAY);}
+{CLASS}				{ return symbol(TokenNames.CLASS);}
+{RETURN}			{ return symbol(TokenNames.RETURN);}
+{WHILE}				{ return symbol(TokenNames.WHILE);}
+{IF}				{ return symbol(TokenNames.IF);}
+{ELSE}				{ return symbol(TokenNames.ELSE);}
+{NEW}				{ return symbol(TokenNames.NEW);}
+{EXTENDS}			{ return symbol(TokenNames.EXTENDS);}
+{NIL}				{ return symbol(TokenNames.NIL);}
+
+{TYPE_INT}			{ return symbol(TokenNames.TYPE_INT);}
+{TYPE_STRING}		{ return symbol(TokenNames.TYPE_STRING);}
+{TYPE_VOID}			{ return symbol(TokenNames.TYPE_VOID);}
+
+{PLUS}				{ return symbol(TokenNames.PLUS);}
+{MINUS}				{ return symbol(TokenNames.MINUS);}
+{TIMES}				{ return symbol(TokenNames.TIMES);}
+{DIVIDE}			{ return symbol(TokenNames.DIVIDE);}
+{LPAREN}			{ return symbol(TokenNames.LPAREN);}
+{RPAREN}			{ return symbol(TokenNames.RPAREN);}
+{LBRACK}			{ return symbol(TokenNames.LBRACK);}
+{RBRACK}			{ return symbol(TokenNames.RBRACK);}
+{LBRACE}			{ return symbol(TokenNames.LBRACE);}
+{RBRACE}			{ return symbol(TokenNames.RBRACE);}
+{COMMA}				{ return symbol(TokenNames.COMMA);}
+{DOT}				{ return symbol(TokenNames.DOT);}
+{SEMICOLON}			{ return symbol(TokenNames.SEMICOLON);}
+{ASSIGN}			{ return symbol(TokenNames.ASSIGN);}
+{EQUAL}				{ return symbol(TokenNames.EQUAL);}
+{LT}				{ return symbol(TokenNames.LT);}
+{GT}				{ return symbol(TokenNames.GT);}
+
+{INTEGER}			{
+	try {
+		int value = Integer.parseInt(yytext());
+		if (value < 0 || value > Short.MAX_VALUE) {
+			throw new NumberFormatException();
+		}
+	} catch (NumberFormatException e) {
+		throw new Error("Integer out of range: " + yytext());
+	}
+	return symbol(TokenNames.NUMBER, Integer.valueOf(yytext()));
+}
 {ID}				{ return symbol(TokenNames.ID,     yytext());}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 <<EOF>>				{ return symbol(TokenNames.EOF);}
