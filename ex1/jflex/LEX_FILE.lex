@@ -7,6 +7,7 @@
 /*************/
 
 import java_cup.runtime.*;
+import Exceptions.LexerError;
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -148,17 +149,14 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 <YYINITIAL> {
 {TYPE_1_COMMENT}	{ /* Do nothing */ }
 {INVALID_TYPE_1_COMMENT}	{
-	throw new Error("Invalid comment at line " + getLine() + ", column "
-		+ getTokenStartPosition());
+	throw new LexerError("Invalid comment", getLine(), getTokenStartPosition());
 }
 {TYPE_2_COMMENT}	{ /* Do nothing */ }
 {INVALID_TYPE_2_COMMENT}	{
-	throw new Error("Invalid comment at line " + getLine() + ", column "
-		+ getTokenStartPosition());
+	throw new LexerError("Invalid comment", getLine(), getTokenStartPosition());
 }
 {UNCLOSED_TYPE_2_COMMENT}	{
-	throw new Error("Unclosed comment at line " + getLine() + ", column "
-		+ getTokenStartPosition());
+	throw new LexerError("Unclosed comment", getLine(), getTokenStartPosition());
 }
 
 {STRING_LITERAL}	{
@@ -166,12 +164,10 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 	return symbol(TokenNames.STRING_LITERAL, yytext().substring(1, yytext().length() - 1));
 }
 {UNCLOSED_STRING}	{
-	throw new Error("Unclosed string at line " + getLine() + ", column "
-		+ getTokenStartPosition());
+	throw new LexerError("Unclosed string", getLine(), getTokenStartPosition());
 }
 {INVALID_STRING}	{
-	throw new Error("Invalid string at line " + getLine() + ", column "
-		+ getTokenStartPosition());
+	throw new LexerError("Invalid string", getLine(), getTokenStartPosition());
 }
 
 {ARRAY}				{ return symbol(TokenNames.ARRAY);}
@@ -217,14 +213,12 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 		}
 		return symbol(TokenNames.INT_LITERAL, Integer.valueOf(value));
 	} catch (NumberFormatException e) {
-		throw new Error("Invalid integer literal '" + yytext() + "' at line " + getLine() + ", column "
-			+ getTokenStartPosition());
+		throw new LexerError("Invalid integer literal '" + yytext() + "'", getLine(), getTokenStartPosition());
 	}
 }
 {ID}				{
-	if (Character.isDigit(yytext().charAt(0))) {
-		throw new Error("Invalid identifier '" + yytext() + "' at line " + getLine() + ", column "
-			+ getTokenStartPosition());
+	if (yytext().isEmpty() || Character.isDigit(yytext().charAt(0))) {
+		throw new LexerError("Invalid identifier '" + yytext() + "'", getLine(), getTokenStartPosition());
 	}
 	return symbol(TokenNames.ID, yytext());
 }

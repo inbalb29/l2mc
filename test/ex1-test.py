@@ -41,7 +41,7 @@ def main():
     OUTPUT_DIR.mkdir(exist_ok=True)
     
     # Compile using javac directly (make requires full rebuild)
-    java_files = list(SRC_DIR.glob("*.java"))
+    java_files = list(SRC_DIR.rglob("*.java"))
     if not java_files:
         print("No Java files found to compile!")
         sys.exit(1)
