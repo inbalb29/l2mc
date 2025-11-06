@@ -85,8 +85,8 @@ WhiteSpace		= {_LINETERMINATOR} | [ \t]
 ID				= {_LETTERS}{_ALPHANUM}*
 INTEGER			= 0 | [1-9][0-9]*
 
-STRING = \"{_LETTERS}*\"
-INVALID_STRING = \"[^\"{_LINETERMINATOR}]*\"  
+STRING 			= \"{_LETTERS}*\"
+INVALID_STRING 	= \"[^\"{_LINETERMINATOR}]*\"  
 UNCLOSED_STRING = \"[^\"{_LINETERMINATOR}]*({_LINETERMINATOR}|<<EOF>>)
 
 
@@ -200,10 +200,10 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 		if (value < 0 || value > Short.MAX_VALUE) {
 			throw new NumberFormatException();
 		}
+		return symbol(TokenNames.NUMBER, Integer.valueOf(value));
 	} catch (NumberFormatException e) {
 		throw new Error("Integer out of range: " + yytext());
 	}
-	return symbol(TokenNames.NUMBER, Integer.valueOf(yytext()));
 }
 {ID}				{ return symbol(TokenNames.ID,     yytext());}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
