@@ -74,7 +74,6 @@ import java_cup.runtime.*;
 
 /* Internal definitions */
 _LETTERS 		= [a-zA-Z]
-_NON_LETTER 	= [^a-zA-Z\n\r\"] /* Anything that is not a letter, newline, carriage return, or double quote */
 _ALPHANUM		= [a-zA-Z0-9]
 _COMMENT_BODY   = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
 _LINETERMINATOR	= \r|\n|\r\n
