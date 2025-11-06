@@ -78,17 +78,16 @@ _NON_LETTER 	= [^a-zA-Z\n\r\"] /* Anything that is not a letter, newline, carria
 _ALPHANUM		= [a-zA-Z0-9]
 _COMMENT_BODY   = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
 _LINETERMINATOR	= \r|\n|\r\n
-WhiteSpace		= {_LINETERMINATOR} | [ \t]
 
 /* Lexical definitions */
+WHITESPACE		= {_LINETERMINATOR} | [ \t]
 
 ID				= {_LETTERS}{_ALPHANUM}*
 INTEGER			= 0 | [1-9][0-9]*
 
-STRING 			= \"{_LETTERS}*\"
+STRING_LITERAL	= \"{_LETTERS}*\"
 INVALID_STRING 	= \"[^\"{_LINETERMINATOR}]*\"  
 UNCLOSED_STRING = \"[^\"{_LINETERMINATOR}]*({_LINETERMINATOR}|<<EOF>>)
-
 
 PLUS			= \+
 MINUS			= -
@@ -106,7 +105,7 @@ DOT				= \.
 SEMICOLON		= ;
 
 TYPE_INT		= int
-TYPE_STRING		= STRING
+TYPE_STRING		= string
 TYPE_VOID		= void
 
 ASSIGN 			= :=
@@ -125,8 +124,8 @@ EXTENDS 		= extends
 NIL 			= nil
 
 TYPE_1_COMMENT = "//"{_COMMENT_BODY}*{_LINETERMINATOR}
-TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*"*/"
-UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
+TYPE_2_COMMENT = "/*"[{_COMMENT_BODY}|{_LINETERMINATOR}]*"*/"
+UNCLOSED_TYPE_2_COMMENT = "/*"[{_COMMENT_BODY}|{_LINETERMINATOR}]*
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -152,11 +151,14 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 		+ getTokenStartPosition());
 }
 
+{STRING_LITERAL}			{
+	/* Remove the surrounding double quotes before returning the string */
+	return symbol(TokenNames.STRING, yytext().substring(1, yytext().length() - 1));
+}
 {UNCLOSED_STRING}	{
 	throw new Error("Unclosed string at line " + getLine() + ", column "
 		+ getTokenStartPosition());
 }
-
 {INVALID_STRING}	{
 	throw new Error("Invalid string at line " + getLine() + ", column "
 		+ getTokenStartPosition());
@@ -206,6 +208,6 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 	}
 }
 {ID}				{ return symbol(TokenNames.ID,     yytext());}
-{WhiteSpace}		{ /* just skip what was found, do nothing */ }
+{WHITESPACE}		{ /* just skip what was found, do nothing */ }
 <<EOF>>				{ return symbol(TokenNames.EOF);}
 }
