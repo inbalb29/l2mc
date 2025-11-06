@@ -37,24 +37,31 @@ public class Main {
 			/* [5] Main reading tokens loop */
 			/********************************/
 			while (s.sym != TokenNames.EOF) {
+				String tokenName = TokenNames.getTokenName(s.sym);
+				StringBuilder sb = new StringBuilder(tokenName);
+
+				if (s.sym == TokenNames.ID || s.sym == TokenNames.INT_LITERAL) {
+					sb.append('(').append(s.value).append(')');
+				} else if (s.sym == TokenNames.STRING_LITERAL) {
+					sb.append("(\"").append(s.value).append("\")");
+				}
+
+				sb.append('[')
+						.append(l.getLine())
+						.append(',')
+						.append(l.getTokenStartPosition())
+						.append(']');
+				String output = sb.toString();
+
 				/************************/
 				/* [6] Print to console */
 				/************************/
-				System.out.print("[");
-				System.out.print(l.getLine());
-				System.out.print(",");
-				System.out.print(l.getTokenStartPosition());
-				System.out.print("]:");
-				System.out.print(s.value);
-				System.out.print("\n");
+				System.out.println(output);
 
 				/*********************/
 				/* [7] Print to file */
 				/*********************/
-				fileWriter.print(l.getLine());
-				fileWriter.print(": ");
-				fileWriter.print(s.value);
-				fileWriter.print("\n");
+				fileWriter.println(output);
 
 				/***********************/
 				/* [8] Read next token */
@@ -72,6 +79,13 @@ public class Main {
 			/**************************/
 			fileWriter.close();
 		} catch (Exception e) {
+			try {
+				fileWriter = new PrintWriter(outputFileName);
+				fileWriter.print("ERROR");
+				fileWriter.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 

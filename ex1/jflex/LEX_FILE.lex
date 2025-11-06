@@ -76,6 +76,7 @@ import java_cup.runtime.*;
 _LETTERS 		= [a-zA-Z]
 _ALPHANUM		= [a-zA-Z0-9]
 _COMMENT_BODY   = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
+_COMMENT_BODY_NO_STAR = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\/\.\;]
 _LINETERMINATOR	= \r|\n|\r\n
 
 /* Lexical definitions */
@@ -124,7 +125,7 @@ NIL 			= nil
 
 TYPE_1_COMMENT = "//"{_COMMENT_BODY}*{_LINETERMINATOR}
 TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*"*/"
-UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
+UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY_NO_STAR}|{_LINETERMINATOR}|\*[^/])*\**
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -152,7 +153,7 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 
 {STRING_LITERAL}	{
 	/* Remove the surrounding double quotes before returning the string */
-	return symbol(TokenNames.STRING, yytext().substring(1, yytext().length() - 1));
+	return symbol(TokenNames.STRING_LITERAL, yytext().substring(1, yytext().length() - 1));
 }
 {UNCLOSED_STRING}	{
 	throw new Error("Unclosed string at line " + getLine() + ", column "
@@ -191,7 +192,7 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 {DOT}				{ return symbol(TokenNames.DOT);}
 {SEMICOLON}			{ return symbol(TokenNames.SEMICOLON);}
 {ASSIGN}			{ return symbol(TokenNames.ASSIGN);}
-{EQUAL}				{ return symbol(TokenNames.EQUAL);}
+{EQUAL}				{ return symbol(TokenNames.EQ);}
 {LT}				{ return symbol(TokenNames.LT);}
 {GT}				{ return symbol(TokenNames.GT);}
 
@@ -201,7 +202,7 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 		if (value < 0 || value > Short.MAX_VALUE) {
 			throw new NumberFormatException();
 		}
-		return symbol(TokenNames.NUMBER, Integer.valueOf(value));
+		return symbol(TokenNames.INT_LITERAL, Integer.valueOf(value));
 	} catch (NumberFormatException e) {
 		throw new Error("Integer out of range: " + yytext());
 	}
