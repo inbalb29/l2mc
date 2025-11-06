@@ -82,8 +82,8 @@ _NOT_CLOSING_COMMENT = [^\*]|\*+[^\*/]
 /* Lexical definitions */
 WHITESPACE		= {_LINETERMINATOR} | [ \t]
 
-ID				= {_LETTERS}{_ALPHANUM}*
-INT_LITERAL		= 0 | [1-9][0-9]*
+ID				= {_ALPHANUM}*
+INT_LITERAL		= [0-9]+
 
 STRING_LITERAL	= \"{_LETTERS}*\"
 INVALID_STRING 	= \"[^\"\r\n]*\"  
@@ -208,16 +208,26 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 
 {INT_LITERAL}		{
 	try {
+		if (yytext().startsWith("0") && yytext().length() > 1) {
+			throw new NumberFormatException();
+		}
 		int value = Integer.parseInt(yytext());
 		if (value < 0 || value > Short.MAX_VALUE) {
 			throw new NumberFormatException();
 		}
 		return symbol(TokenNames.INT_LITERAL, Integer.valueOf(value));
 	} catch (NumberFormatException e) {
-		throw new Error("Integer out of range: " + yytext());
+		throw new Error("Invalid integer literal '" + yytext() + "' at line " + getLine() + ", column "
+			+ getTokenStartPosition());
 	}
 }
-{ID}				{ return symbol(TokenNames.ID,     yytext());}
+{ID}				{
+	if (Character.isDigit(yytext().charAt(0))) {
+		throw new Error("Invalid identifier '" + yytext() + "' at line " + getLine() + ", column "
+			+ getTokenStartPosition());
+	}
+	return symbol(TokenNames.ID, yytext());
+}
 {WHITESPACE}		{ /* just skip what was found, do nothing */ }
 <<EOF>>				{ return symbol(TokenNames.EOF);}
 }

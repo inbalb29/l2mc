@@ -78,16 +78,18 @@ public class Main {
 			/* [10] Close output file */
 			/**************************/
 			fileWriter.close();
-		} catch (Exception e) {
-			try {
-				fileWriter = new PrintWriter(outputFileName);
-				fileWriter.print("ERROR");
-				fileWriter.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+		} catch (Throwable e) {
+			writeError(outputFileName);
 			e.printStackTrace();
 		}
 
+	}
+
+	private static void writeError(String outputFileName) {
+		try (PrintWriter errorWriter = new PrintWriter(outputFileName)) {
+			errorWriter.print("ERROR");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

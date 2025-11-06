@@ -51,7 +51,7 @@ def main():
     try:
         run_command(compile_cmd)
     except FileNotFoundError:
-        print("\nERROR: javac not found. Please install JDK:")
+        print("\nERROR: javac not found. Please install JDK.")
         sys.exit(1)
     
     # Step 5: Run Main class for every file in input directory
@@ -71,8 +71,10 @@ def main():
                 stderr=subprocess.PIPE,
                 text=True
             )
-            if result.returncode != 0:
-                print(f"    Error processing {input_file.name}: {result.stderr}")
+
+            stderr_output = result.stderr.strip()
+            if stderr_output:
+                print(f"    Error processing {input_file.name}: {stderr_output}")
             else:
                 print(f"    Success: {output_file.name} created")
     

@@ -1,0 +1,4 @@
+int x = 1;
+/* oh no! who forgot to close me?
+1+1=3;
+class /**** / still unclosed
