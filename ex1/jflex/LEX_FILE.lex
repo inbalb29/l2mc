@@ -151,7 +151,7 @@ UNCLOSED_TYPE_2_COMMENT = "/*"[{_COMMENT_BODY}|{_LINETERMINATOR}]*
 		+ getTokenStartPosition());
 }
 
-{STRING_LITERAL}			{
+{STRING_LITERAL}	{
 	/* Remove the surrounding double quotes before returning the string */
 	return symbol(TokenNames.STRING, yytext().substring(1, yytext().length() - 1));
 }
