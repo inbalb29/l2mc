@@ -76,8 +76,8 @@ import java_cup.runtime.*;
 _LETTERS 		= [a-zA-Z]
 _ALPHANUM		= [a-zA-Z0-9]
 _COMMENT_BODY   = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
-_COMMENT_BODY_NO_STAR = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\/\.\;]
 _LINETERMINATOR	= \r|\n|\r\n
+_NOT_CLOSING_COMMENT = [^\*]|\*+[^\*/]
 
 /* Lexical definitions */
 WHITESPACE		= {_LINETERMINATOR} | [ \t]
@@ -124,8 +124,10 @@ EXTENDS 		= extends
 NIL 			= nil
 
 TYPE_1_COMMENT = "//"{_COMMENT_BODY}*{_LINETERMINATOR}
+INVALID_TYPE_1_COMMENT = "//"[^\r\n]*{_LINETERMINATOR}
 TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*"*/"
-UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY_NO_STAR}|{_LINETERMINATOR}|\*[^/])*\**
+INVALID_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*"*/"
+UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -145,7 +147,15 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY_NO_STAR}|{_LINETERMINATOR}|\*[^/])
 
 <YYINITIAL> {
 {TYPE_1_COMMENT}	{ /* Do nothing */ }
+{INVALID_TYPE_1_COMMENT}	{
+	throw new Error("Invalid comment at line " + getLine() + ", column "
+		+ getTokenStartPosition());
+}
 {TYPE_2_COMMENT}	{ /* Do nothing */ }
+{INVALID_TYPE_2_COMMENT}	{
+	throw new Error("Invalid comment at line " + getLine() + ", column "
+		+ getTokenStartPosition());
+}
 {UNCLOSED_TYPE_2_COMMENT}	{
 	throw new Error("Unclosed comment at line " + getLine() + ", column "
 		+ getTokenStartPosition());
