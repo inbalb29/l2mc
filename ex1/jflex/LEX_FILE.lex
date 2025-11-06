@@ -82,7 +82,7 @@ _LINETERMINATOR	= \r|\n|\r\n
 WHITESPACE		= {_LINETERMINATOR} | [ \t]
 
 ID				= {_LETTERS}{_ALPHANUM}*
-INTEGER			= 0 | [1-9][0-9]*
+INT_LITERAL		= 0 | [1-9][0-9]*
 
 STRING_LITERAL	= \"{_LETTERS}*\"
 INVALID_STRING 	= \"[^\"\r\n]*\"  
@@ -195,7 +195,7 @@ UNCLOSED_TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*
 {LT}				{ return symbol(TokenNames.LT);}
 {GT}				{ return symbol(TokenNames.GT);}
 
-{INTEGER}			{
+{INT_LITERAL}		{
 	try {
 		int value = Integer.parseInt(yytext());
 		if (value < 0 || value > Short.MAX_VALUE) {
