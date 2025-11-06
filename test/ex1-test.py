@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 # Get the project root directory (ex1)
-PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+PROJECT_ROOT = Path(__file__).parent.parent.resolve() / "ex1"
 SRC_DIR = PROJECT_ROOT / "src"
 BIN_DIR = PROJECT_ROOT / "bin"
 INPUT_DIR = PROJECT_ROOT / "input"
