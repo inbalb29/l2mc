@@ -1,5 +1,4 @@
 import java.io.*;
-import java.io.PrintWriter;
 
 import java_cup.runtime.Symbol;
 
@@ -61,12 +60,19 @@ public class Main {
 				/*********************/
 				/* [7] Print to file */
 				/*********************/
-				fileWriter.println(output);
+				fileWriter.print(output);
 
 				/***********************/
 				/* [8] Read next token */
 				/***********************/
 				s = l.next_token();
+
+				/******************************/
+				/* [9] Add newline if not EOF */
+				/******************************/
+				if (s.sym != TokenNames.EOF) {
+                    fileWriter.println();
+            	}
 			}
 
 			/******************************/
