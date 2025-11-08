@@ -67,12 +67,10 @@ public class Main {
 				/***********************/
 				s = l.next_token();
 
-				/******************************/
-				/* [9] Add newline if not EOF */
-				/******************************/
+				/* Add newline if not EOF */
 				if (s.sym != TokenNames.EOF) {
-                    fileWriter.println();
-            	}
+					fileWriter.println();
+				}
 			}
 
 			/******************************/
