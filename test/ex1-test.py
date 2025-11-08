@@ -63,20 +63,18 @@ def main():
         print(f"\n  Processing: {input_file.name} -> {output_file.name}")
         
         # Run the Main class with input and output files
-        with open(input_file, 'r') as inf, open(output_file, 'w') as outf:
-            result = subprocess.run(
-                ["java", "-cp", f"{BIN_DIR}:{JAVA_CUP_JAR}", "Main", str(input_file), str(output_file)],
-                stdin=inf,
-                stdout=outf,
-                stderr=subprocess.PIPE,
-                text=True
-            )
+        result = subprocess.run(
+            ["java", "-cp", f"{BIN_DIR}:{JAVA_CUP_JAR}", "Main", str(input_file), str(output_file)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True
+        )
 
-            stderr_output = result.stderr.strip()
-            if stderr_output:
-                print(f"    Error processing {input_file.name}: {stderr_output}")
-            else:
-                print(f"    Success: {output_file.name} created")
+        stderr_output = result.stderr.strip()
+        if stderr_output:
+            print(f"    Error processing {input_file.name}: {stderr_output}")
+        else:
+            print(f"    Success: {output_file.name} created")
     
     print("\n:) All tests completed!")
 
