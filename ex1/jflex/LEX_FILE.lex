@@ -217,7 +217,10 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 	}
 }
 {ID}				{
-	if (yytext().isEmpty() || Character.isDigit(yytext().charAt(0))) {
+	if (yytext().isEmpty()) {
+		throw new LexerError("Could not match input (invalid character?)", getLine(), getTokenStartPosition());
+	}
+	if (Character.isDigit(yytext().charAt(0))) {
 		throw new LexerError("Invalid identifier '" + yytext() + "'", getLine(), getTokenStartPosition());
 	}
 	return symbol(TokenNames.ID, yytext());
