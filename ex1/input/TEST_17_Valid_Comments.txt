@@ -1,0 +1,14 @@
+int x = 1; // valid comment
+// this is valid too
+//abc123    ()[]{}?!+-*/.;
+/* This is a valid
+   multi-line comment */
+
+/**********/
+
+/* /* this is valid too */
+/* /* this isnt the start of a nested comment
+    this is just part of the outer comment
+    
+abc123  ()[]{}?!+-*/.;
+    */

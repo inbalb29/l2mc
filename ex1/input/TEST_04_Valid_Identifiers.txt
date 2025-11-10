@@ -1,0 +1,3 @@
+int0 // NOT a reserved keyword
+abc
+abcd
