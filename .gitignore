@@ -25,5 +25,5 @@ replay_pid*
 
 ids.txt
 
-ex1/src/Lexer.java
-ex1/output/
+**/Lexer.java
+**/output/
