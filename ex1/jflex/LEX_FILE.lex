@@ -42,6 +42,11 @@ import Exceptions.LexerError;
 /******************************************************************/
 %cup
 
+/**********************/
+/* STATE DECLARATIONS */
+/**********************/
+%state TYPE_2_COMMENT
+
 /****************/
 /* DECLARATIONS */
 /****************/
@@ -66,7 +71,12 @@ import Exceptions.LexerError;
 	/**********************************************/
 	/* Enable token position extraction from main */
 	/**********************************************/
-	public int getTokenStartPosition() { return yycolumn + 1; } 
+	public int getTokenStartPosition() { return yycolumn + 1; }
+
+	// The row and column when entering a state
+	private int stateStartLine;
+	private int stateStartTokenPosition;
+	
 %}
 
 /***********************/
@@ -78,12 +88,11 @@ _LETTERS 		= [a-zA-Z]
 _ALPHANUM		= [a-zA-Z0-9]
 _COMMENT_BODY   = [a-zA-Z0-9 \t\(\)\[\]\{\}\?\!\+\-\*\/\.\;]
 _LINETERMINATOR	= \r|\n|\r\n
-_NOT_CLOSING_COMMENT = [^\*]|\*+[^\*/]
 
 /* Lexical definitions */
 WHITESPACE		= {_LINETERMINATOR} | [ \t]
 
-ID				= {_ALPHANUM}*
+ID				= {_LETTERS}{_ALPHANUM}*
 INT_LITERAL		= [0-9]+
 
 STRING_LITERAL	= \"{_LETTERS}*\"
@@ -126,9 +135,9 @@ NIL 			= nil
 
 TYPE_1_COMMENT = "//"{_COMMENT_BODY}*{_LINETERMINATOR}
 INVALID_TYPE_1_COMMENT = "//"[^\r\n]*{_LINETERMINATOR}
-TYPE_2_COMMENT = "/*"({_COMMENT_BODY}|{_LINETERMINATOR})*"*/"
-INVALID_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*"*/"
-UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
+
+TYPE_2_COMMENT_START = "/*"
+TYPE_2_COMMENT_END = "*/"
 
 /******************************/
 /* DOLLAR DOLLAR - DON'T TOUCH! */
@@ -151,12 +160,10 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 {INVALID_TYPE_1_COMMENT}	{
 	throw new LexerError("Invalid comment", getLine(), getTokenStartPosition());
 }
-{TYPE_2_COMMENT}	{ /* Do nothing */ }
-{INVALID_TYPE_2_COMMENT}	{
-	throw new LexerError("Invalid comment", getLine(), getTokenStartPosition());
-}
-{UNCLOSED_TYPE_2_COMMENT}	{
-	throw new LexerError("Unclosed comment", getLine(), getTokenStartPosition());
+{TYPE_2_COMMENT_START}	{
+	stateStartLine = getLine();
+	stateStartTokenPosition = getTokenStartPosition();
+	yybegin(TYPE_2_COMMENT);
 }
 
 {STRING_LITERAL}	{
@@ -216,15 +223,16 @@ UNCLOSED_TYPE_2_COMMENT = "/*"{_NOT_CLOSING_COMMENT}*
 		throw new LexerError("Invalid integer literal '" + yytext() + "'", getLine(), getTokenStartPosition());
 	}
 }
-{ID}				{
-	if (yytext().isEmpty()) {
-		throw new LexerError("Could not match input (invalid character?)", getLine(), getTokenStartPosition());
-	}
-	if (Character.isDigit(yytext().charAt(0))) {
-		throw new LexerError("Invalid identifier '" + yytext() + "'", getLine(), getTokenStartPosition());
-	}
-	return symbol(TokenNames.ID, yytext());
-}
+{ID}				{ return symbol(TokenNames.ID, yytext()); }
 {WHITESPACE}		{ /* just skip what was found, do nothing */ }
 <<EOF>>				{ return symbol(TokenNames.EOF);}
+.					{ throw new LexerError("Could not match input (invalid character?)", getLine(), getTokenStartPosition()); }
+}
+
+<TYPE_2_COMMENT> {
+{TYPE_2_COMMENT_END}	{ yybegin(YYINITIAL); }
+{_COMMENT_BODY}		{ /* Valid comment character, continue */ }
+{WHITESPACE}    	{ /* Valid comment character, continue */ }
+.					{ throw new LexerError("Invalid comment", stateStartLine, stateStartTokenPosition); }
+<<EOF>>				{ throw new LexerError("Unclosed comment", stateStartLine, stateStartTokenPosition); }
 }
