@@ -1,11 +1,14 @@
 import java.io.*;
-
+import java.io.PrintWriter;
 import java_cup.runtime.Symbol;
+import ast.*;
 
 public class Main {
 	static public void main(String argv[]) {
 		Lexer l;
+		Parser p;
 		Symbol s;
+		AstStmtList ast;
 		FileReader fileReader;
 		PrintWriter fileWriter;
 		String inputFileName = argv[0];
@@ -27,72 +30,33 @@ public class Main {
 			/******************************/
 			l = new Lexer(fileReader);
 
-			/***********************/
-			/* [4] Read next token */
-			/***********************/
-			s = l.next_token();
+			/*******************************/
+			/* [4] Initialize a new parser */
+			/*******************************/
+			p = new Parser(l);
 
-			/********************************/
-			/* [5] Main reading tokens loop */
-			/********************************/
-			while (s.sym != TokenNames.EOF) {
-				String tokenName = TokenNames.getTokenName(s.sym);
-				StringBuilder sb = new StringBuilder(tokenName);
+			/***********************************/
+			/* [5] 3 ... 2 ... 1 ... Parse !!! */
+			/***********************************/
+			ast = (AstStmtList) p.parse().value;
 
-				if (s.sym == TokenNames.ID || s.sym == TokenNames.INT_LITERAL) {
-					sb.append('(').append(s.value).append(')');
-				} else if (s.sym == TokenNames.STRING_LITERAL) {
-					sb.append("(\"").append(s.value).append("\")");
-				}
+			/*************************/
+			/* [6] Print the AST ... */
+			/*************************/
+			ast.printMe();
 
-				sb.append('[')
-						.append(l.getLine())
-						.append(',')
-						.append(l.getTokenStartPosition())
-						.append(']');
-				String output = sb.toString();
-
-				/************************/
-				/* [6] Print to console */
-				/************************/
-				System.out.println(output);
-
-				/*********************/
-				/* [7] Print to file */
-				/*********************/
-				fileWriter.print(output);
-
-				/***********************/
-				/* [8] Read next token */
-				/***********************/
-				s = l.next_token();
-
-				/* Add newline if not EOF */
-				if (s.sym != TokenNames.EOF) {
-					fileWriter.println();
-				}
-			}
-
-			/******************************/
-			/* [9] Close lexer input file */
-			/******************************/
-			l.yyclose();
-
-			/**************************/
-			/* [10] Close output file */
-			/**************************/
+			/*************************/
+			/* [7] Close output file */
+			/*************************/
 			fileWriter.close();
-		} catch (Throwable e) {
-			writeError(outputFileName);
-			e.printStackTrace();
+
+			/*************************************/
+			/* [8] Finalize AST GRAPHIZ DOT file */
+			/*************************************/
+			AstGraphviz.getInstance().finalizeFile();
 		}
 
-	}
-
-	private static void writeError(String outputFileName) {
-		try (PrintWriter errorWriter = new PrintWriter(outputFileName)) {
-			errorWriter.print("ERROR");
-		} catch (FileNotFoundException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
