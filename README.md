@@ -39,6 +39,13 @@ l2mc/
 	make
 	```
 
+## Testing
+
+```bash
+cd tests
+python ex<num>-test.py # e.g., ex1-test.py
+```
+
 ## Exercises
 
 ### Exercise 1: Lexical Analysis
