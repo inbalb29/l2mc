@@ -1,14 +1,12 @@
 package ast;
 
-public class AstExpVar extends AstExp
-{
+public class AstExpVar extends AstExp {
 	public AstVar var;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpVar(AstVar var)
-	{
+	public AstExpVar(AstVar var) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -24,12 +22,11 @@ public class AstExpVar extends AstExp
 		/*******************************/
 		this.var = var;
 	}
-	
+
 	/***********************************************/
 	/* The default message for an exp var AST node */
 	/***********************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/************************************/
 		/* AST NODE TYPE = EXP VAR AST NODE */
 		/************************************/
@@ -38,19 +35,20 @@ public class AstExpVar extends AstExp
 		/*****************************/
 		/* RECURSIVELY PRINT var ... */
 		/*****************************/
-		if (var != null) var.printMe();
-		
+		if (var != null)
+			var.printMe();
+
 		/*********************************/
 		/* Print to AST GRAPHVIZ DOT file */
 		/*********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			"EXP\nVAR");
+				"EXP\nVAR");
 
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
-			
+		AstGraphviz.getInstance().logEdge(serialNumber, var.serialNumber);
+
 	}
 }

@@ -1,7 +1,10 @@
 package ast;
 
-public class AstStmtList extends AstNode
-{
+/**
+ * @deprecated Redundant now that AstProg exists
+ */
+@Deprecated
+public class AstStmtList extends AstNode {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
@@ -11,8 +14,7 @@ public class AstStmtList extends AstNode
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstStmtList(AstStmt head, AstStmtList tail)
-	{
+	public AstStmtList(AstStmt head, AstStmtList tail) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -21,8 +23,10 @@ public class AstStmtList extends AstNode
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		if (tail != null) System.out.print("====================== stmts -> stmt stmts\n");
-		if (tail == null) System.out.print("====================== stmts -> stmt      \n");
+		if (tail != null)
+			System.out.print("====================== stmts -> stmt stmts\n");
+		if (tail == null)
+			System.out.print("====================== stmts -> stmt      \n");
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */
@@ -34,8 +38,7 @@ public class AstStmtList extends AstNode
 	/******************************************************/
 	/* The printing message for a statement list AST node */
 	/******************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/**************************************/
 		/* AST NODE TYPE = AST STATEMENT LIST */
 		/**************************************/
@@ -44,21 +47,25 @@ public class AstStmtList extends AstNode
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (head != null) head.printMe();
-		if (tail != null) tail.printMe();
+		if (head != null)
+			head.printMe();
+		if (tail != null)
+			tail.printMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			"STMT\nLIST\n");
-		
+				"STMT\nLIST\n");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (head != null) AstGraphviz.getInstance().logEdge(serialNumber,head.serialNumber);
-		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
+		if (head != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
+		if (tail != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
-	
+
 }

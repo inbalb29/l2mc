@@ -1,5 +1,4 @@
 package ast;
 
-public abstract class AstVar extends AstNode
-{
+public abstract class AstVar extends AstNode {
 }

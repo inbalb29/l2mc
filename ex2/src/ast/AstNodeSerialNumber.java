@@ -1,14 +1,13 @@
 package ast;
 
-public class AstNodeSerialNumber
-{
+public class AstNodeSerialNumber {
 	/*******************************************/
 	/* The serial number is for debug purposes */
-	/* In particular, it can help in creating  */
-	/* a graphviz dot format of the AST ...    */
+	/* In particular, it can help in creating */
+	/* a graphviz dot format of the AST ... */
 	/*******************************************/
 	public int serialNumber;
-	
+
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
@@ -17,18 +16,17 @@ public class AstNodeSerialNumber
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected AstNodeSerialNumber() {}
+	protected AstNodeSerialNumber() {
+	}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	private static AstNodeSerialNumber getInstance()
-	{
-		if (instance == null)
-		{
+	private static AstNodeSerialNumber getInstance() {
+		if (instance == null) {
 			instance = new AstNodeSerialNumber();
 			instance.serialNumber = 0;
-			
+
 		}
 		return instance;
 	}
@@ -36,16 +34,14 @@ public class AstNodeSerialNumber
 	/**********************************/
 	/* GET A UNIQUE SERIAL NUMBER ... */
 	/**********************************/
-	public int get()
-	{
+	public int get() {
 		return serialNumber++;
 	}
 
 	/**********************************/
 	/* GET A UNIQUE SERIAL NUMBER ... */
 	/**********************************/
-	public static int getFresh()
-	{
+	public static int getFresh() {
 		return AstNodeSerialNumber.getInstance().get();
 	}
 }

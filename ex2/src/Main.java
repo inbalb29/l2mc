@@ -8,7 +8,7 @@ public class Main {
 		Lexer l;
 		Parser p;
 		Symbol s;
-		AstStmtList ast;
+		AstProg ast;
 		FileReader fileReader;
 		PrintWriter fileWriter;
 		String inputFileName = argv[0];
@@ -38,7 +38,7 @@ public class Main {
 			/***********************************/
 			/* [5] 3 ... 2 ... 1 ... Parse !!! */
 			/***********************************/
-			ast = (AstStmtList) p.parse().value;
+			ast = (AstProg) p.parse().value;
 
 			/*************************/
 			/* [6] Print the AST ... */

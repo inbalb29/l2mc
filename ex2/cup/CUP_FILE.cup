@@ -3,6 +3,9 @@
 /*************/
 import java_cup.runtime.*;
 import ast.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 parser code 
 {:
@@ -114,7 +117,6 @@ non terminal List<AstExp> callExp_args;
 non terminal AstExp exp;
 non terminal AstVar var;
 non terminal AstStmt stmt;
-// non terminal AstStmtList stmtList;
 non terminal List<AstStmt> stmtList;
 
 /***********************/
@@ -139,7 +141,7 @@ start with program;
 /* DERIVATION RULES */
 /********************/
 
-program ::= dec:d  {: RESULT = new AstProg(new ArrayList<>(Arrays.asList(d))); :}
+program ::= dec:d  {: RESULT = new AstProg(d); :}
 		  | program:p dec:d {: p.addDeclaration(d); RESULT = p; :}
 		  ;
 
@@ -149,10 +151,10 @@ dec ::= varDec:v {: RESULT = v; :}
       | arrayTypedef:a {: RESULT = a; :}
       ;
 
-type ::= TYPE_INT {: /* TODO!! */ :}
-	   | TYPE_STRING
-	   | TYPE_VOID
-	   | ID:id
+type ::= TYPE_INT {: RESULT = AstType.INT(); :}
+	   | TYPE_STRING {: RESULT = AstType.STRING(); :}
+	   | TYPE_VOID {: RESULT = AstType.VOID(); :}
+	   | ID:id {: RESULT = new AstType(id); :}
 	   ;
 
 varDec ::= type:t ID:id SEMICOLON {: RESULT = new AstVarDec(t, id); :}
@@ -184,70 +186,51 @@ cField ::= varDec:v {: RESULT = v; :}
 		 | funcDec:f {: RESULT = f; :}
 		 ;
 
-arrayTypedef ::= ARRAY ID:id EQ type:t LBRACK RBRACK SEMICOLON
-
-exp ::= var
-	  | LPAREN exp:e RPAREN
-	  | exp:e1 PLUS exp:e2
-	  | exp:e1 MINUS exp:e2
-	  | exp:e1 TIMES exp:e2
-	  | exp:e1 DIVIDE exp:e2
-	  | exp:e1 LT exp:e2
-	  | exp:e1 GT exp:e2
-	  | exp:e1 EQ exp:e2
-	  | callExp:ce
-	  | INT_LITERAL:
-	  | MINUS INT_LITERAL
-	  | NIL
-	  | STRING_LITERAL
-	  ;
-
-newExp ::= NEW type
-	     | NEW type LBRACK exp RBRACK
-		 ;
-
-callExp ::= ID LPAREN RPAREN
-          | ID LPAREN exp callExp_args RPAREN
-          | var DOT ID LPAREN RPAREN
-          | var DOT ID LPAREN exp callExp_args RPAREN
-          ;
-
-callExp_args ::= empty
-               | callExp_args COMMA exp
+arrayTypedef ::= ARRAY ID:id EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AstTypedef(id, t); :}
 			   ;
 
-var ::= ID
-	  | var DOT ID
-	  | var LBRACK exp RBRACK
+exp ::= var:v {: RESULT = new AstExpVar(v); :}
+	  | LPAREN exp:e RPAREN {: RESULT = e; :}
+	  | exp:e1 PLUS exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.PLUS); :}
+	  | exp:e1 MINUS exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.MINUS); :}
+	  | exp:e1 TIMES exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.TIMES); :}
+	  | exp:e1 DIVIDE exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.DIVIDE); :}
+	  | exp:e1 LT exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.LT); :}
+	  | exp:e1 GT exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.GT); :}
+	  | exp:e1 EQ exp:e2 {: RESULT = new AstExpBinop(e1, e2, BinOp.EQ); :}
+	  | callExp:ce {: RESULT = ce; :}
+	  | INT_LITERAL:i {: RESULT = new AstExpInt(i); :}
+	  | MINUS INT_LITERAL:i {: RESULT = new AstExpInt(-i); :}
+	  | NIL {: RESULT = new AstExpNil(); :}
+	  | STRING_LITERAL:s {: RESULT = new AstExpString(s); :}
 	  ;
 
-stmt ::= varDec
-       | var ASSIGN exp SEMICOLON
-       | var ASSIGN newExp SEMICOLON
-       | RETURN SEMICOLON
-       | RETURN exp SEMICOLON
-       | IF LPAREN exp RPAREN LBRACE stmtList RBRACE
-       | IF LPAREN exp RPAREN LBRACE stmtList RBRACE ELSE LBRACE stmtList RBRACE
-       | WHILE LPAREN exp RPAREN LBRACE stmtList RBRACE
-       | callExp SEMICOLON
+newExp ::= NEW type:t {: RESULT = new AstNewExp(t, null); :}
+	     | NEW type:t LBRACK exp:e RBRACK {: RESULT = new AstNewExp(t, e); :}
+		 ;
+
+callExp ::= ID:name LPAREN RPAREN {: RESULT = new AstCallExp(null, name, new ArrayList<>()); :}
+          | ID:name LPAREN callExp_args:args RPAREN {: RESULT = new AstCallExp(null, name, args); :}
+          | var:v DOT ID:name LPAREN RPAREN {: RESULT = new AstCallExp(v, name, new ArrayList<>()); :}
+          | var:v DOT ID:name LPAREN callExp_args:args RPAREN {: RESULT = new AstCallExp(v, name, args); :}
+          ;
+
+callExp_args ::= exp:e {: RESULT = new ArrayList<>(Arrays.asList(e)); :}
+               | callExp_args:args COMMA exp:e {: args.add(e); RESULT = args; :}
+			   ;
+
+var ::= ID:name {: RESULT = new AstVarSimple(name); :}
+	  | var:v DOT ID:field {: RESULT = new AstVarField(v, field); :}
+	  | var:v LBRACK exp:e RBRACK {: RESULT = new AstVarSubscript(v, e); :}
+	  ;
+
+stmt ::= varDec:v {: RESULT = v; :}
+       | var:v ASSIGN exp:e SEMICOLON {: RESULT = new AstStmtAssign(v, e); :}
+       | var:v ASSIGN newExp:n SEMICOLON {: RESULT = new AstStmtAssign(v, n); :}
+       | RETURN SEMICOLON {: RESULT = new AstStmtReturn(null); :}
+       | RETURN exp:e SEMICOLON {: RESULT = new AstStmtReturn(e); :}
+       | IF LPAREN exp:cond RPAREN LBRACE stmtList:then RBRACE {: RESULT = new AstStmtIf(cond, then, null); :}
+       | IF LPAREN exp:cond RPAREN LBRACE stmtList:then RBRACE ELSE LBRACE stmtList:els RBRACE {: RESULT = new AstStmtIf(cond, then, els); :}
+       | WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE {: RESULT = new AstStmtWhile(cond, body); :}
+       | callExp:c SEMICOLON {: RESULT = new AstStmtCall(c); :}
        ;
-
-// stmtList	::=		stmt:s	stmtList:l		{: RESULT = new AstStmtList(s,l);    :}
-// 					| stmt:s				{: RESULT = new AstStmtList(s,null); :}
-// 					;
-
-// var			::=		ID:name								{: RESULT = new AstVarSimple(name);       :}
-// 					| var:v DOT ID:fieldName			{: RESULT = new AstVarField(v,fieldName); :}
-// 					| var:v LBRACK exp:e RBRACK			{: RESULT = new AstVarSubscript(v,e);     :}
-// 					;
-					
-// stmt		::=		var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AstStmtAssign(v,e); :}
-// 					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AstStmtIf(   cond,body); :}
-// 					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AstStmtWhile(cond,body); :}
-// 					;
-
-// exp			::=		INT:i								{: RESULT = new AstExpInt(i);          	:}
-// 					| var:v								{: RESULT = new AstExpVar(v);          	:}
-// 					| exp:e1 PLUS  exp:e2				{: RESULT = new AstExpBinop(e1, e2, 0);	:}
-// 					| exp:e1 MINUS exp:e2				{: RESULT = new AstExpBinop(e1, e2, 1);	:}
-// 					;

@@ -1,16 +1,85 @@
 package ast;
 
-public class AstStmtIf extends AstStmt
-{
+import java.util.List;
+
+public class AstStmtIf extends AstStmt {
 	public AstExp cond;
-	public AstStmtList body;
+	public List<AstStmt> thenBody;
+	public List<AstStmt> elseBody; // null if no else clause
 
 	/*******************/
-	/*  CONSTRUCTOR(S) */
+	/* CONSTRUCTOR(S) */
 	/*******************/
-	public AstStmtIf(AstExp cond, AstStmtList body)
-	{
+	public AstStmtIf(AstExp cond, List<AstStmt> thenBody, List<AstStmt> elseBody) {
+		/******************************/
+		/* SET A UNIQUE SERIAL NUMBER */
+		/******************************/
+		serialNumber = AstNodeSerialNumber.getFresh();
+
+		/***************************************/
+		/* PRINT CORRESPONDING DERIVATION RULE */
+		/***************************************/
+		if (elseBody != null) {
+			System.out.print(
+					"====================== stmt -> IF LPAREN exp RPAREN LBRACE stmtList RBRACE ELSE LBRACE stmtList RBRACE\n");
+		} else {
+			System.out.print("====================== stmt -> IF LPAREN exp RPAREN LBRACE stmtList RBRACE\n");
+		}
+
+		/*******************************/
+		/* COPY INPUT DATA MEMBERS ... */
+		/*******************************/
 		this.cond = cond;
-		this.body = body;
+		this.thenBody = thenBody;
+		this.elseBody = elseBody;
+	}
+
+	/*****************************************************/
+	/* The printing message for an if statement AST node */
+	/*****************************************************/
+	public void printMe() {
+		/***************************************/
+		/* AST NODE TYPE = AST IF STATEMENT */
+		/***************************************/
+		System.out.print("AST NODE IF STMT\n");
+
+		/************************************/
+		/* RECURSIVELY PRINT COND + BODY ... */
+		/************************************/
+		if (cond != null)
+			cond.printMe();
+		for (AstStmt stmt : thenBody) {
+			if (stmt != null)
+				stmt.printMe();
+		}
+		if (elseBody != null) {
+			for (AstStmt stmt : elseBody) {
+				if (stmt != null)
+					stmt.printMe();
+			}
+		}
+
+		/***************************************/
+		/* PRINT Node to AST GRAPHVIZ DOT file */
+		/***************************************/
+		AstGraphviz.getInstance().logNode(
+				serialNumber,
+				"IF\nSTMT");
+
+		/****************************************/
+		/* PRINT Edges to AST GRAPHVIZ DOT file */
+		/****************************************/
+		if (cond != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, cond.serialNumber);
+		for (AstStmt stmt : thenBody) {
+			if (stmt != null)
+				AstGraphviz.getInstance().logEdge(serialNumber, stmt.serialNumber);
+		}
+		if (elseBody != null) {
+			for (AstStmt stmt : elseBody) {
+				if (stmt != null)
+					AstGraphviz.getInstance().logEdge(serialNumber, stmt.serialNumber);
+			}
+		}
 	}
 }

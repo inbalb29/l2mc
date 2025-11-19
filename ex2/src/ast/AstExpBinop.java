@@ -1,16 +1,14 @@
 package ast;
 
-public class AstExpBinop extends AstExp
-{
-	int op;
+public class AstExpBinop extends AstExp {
+	BinOp op;
 	public AstExp left;
 	public AstExp right;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpBinop(AstExp left, AstExp right, int op)
-	{
+	public AstExpBinop(AstExp left, AstExp right, BinOp op) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -28,20 +26,11 @@ public class AstExpBinop extends AstExp
 		this.right = right;
 		this.op = op;
 	}
-	
+
 	/*************************************************/
 	/* The printing message for a binop exp AST node */
 	/*************************************************/
-	public void printMe()
-	{
-		String sop="";
-		
-		/*********************************/
-		/* CONVERT op to a printable sop */
-		/*********************************/
-		if (op == 0) {sop = "+";}
-		if (op == 1) {sop = "-";}
-		
+	public void printMe() {
 		/*************************************/
 		/* AST NODE TYPE = AST BINOP EXP */
 		/*************************************/
@@ -50,20 +39,24 @@ public class AstExpBinop extends AstExp
 		/**************************************/
 		/* RECURSIVELY PRINT left + right ... */
 		/**************************************/
-		if (left != null) left.printMe();
-		if (right != null) right.printMe();
-		
+		if (left != null)
+			left.printMe();
+		if (right != null)
+			right.printMe();
+
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			String.format("BINOP(%s)",sop));
-		
+				String.format("BINOP(%c)", op.getSymbol()));
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (left  != null) AstGraphviz.getInstance().logEdge(serialNumber,left.serialNumber);
-		if (right != null) AstGraphviz.getInstance().logEdge(serialNumber,right.serialNumber);
+		if (left != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, left.serialNumber);
+		if (right != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, right.serialNumber);
 	}
 }

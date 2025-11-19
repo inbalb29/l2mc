@@ -1,15 +1,13 @@
 package ast;
 
-public class AstVarField extends AstVar
-{
+public class AstVarField extends AstVar {
 	public AstVar var;
 	public String fieldName;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstVarField(AstVar var, String fieldName)
-	{
+	public AstVarField(AstVar var, String fieldName) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -18,7 +16,7 @@ public class AstVarField extends AstVar
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		System.out.format("====================== var -> var DOT ID( %s )\n",fieldName);
+		System.out.format("====================== var -> var DOT ID( %s )\n", fieldName);
 
 		/*******************************/
 		/* COPY INPUT DATA MEMBERS ... */
@@ -30,8 +28,7 @@ public class AstVarField extends AstVar
 	/*************************************************/
 	/* The printing message for a field var AST node */
 	/*************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/*********************************/
 		/* AST NODE TYPE = AST FIELD VAR */
 		/*********************************/
@@ -40,19 +37,21 @@ public class AstVarField extends AstVar
 		/**********************************************/
 		/* RECURSIVELY PRINT VAR, then FIELD NAME ... */
 		/**********************************************/
-		if (var != null) var.printMe();
-		System.out.format("FIELD NAME( %s )\n",fieldName);
+		if (var != null)
+			var.printMe();
+		System.out.format("FIELD NAME( %s )\n", fieldName);
 
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			String.format("FIELD\nVAR\n...->%s",fieldName));
-		
+				String.format("FIELD\nVAR\n...->%s", fieldName));
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (var != null) AstGraphviz.getInstance().logEdge(serialNumber,var.serialNumber);
+		if (var != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, var.serialNumber);
 	}
 }
