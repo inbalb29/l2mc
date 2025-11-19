@@ -2,10 +2,12 @@
 /* IMPORT(S) */
 /*************/
 import java_cup.runtime.*;
-import ast.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import ast.*;
+import Exceptions.ParserError;
 
 parser code 
 {:
@@ -18,13 +20,7 @@ parser code
 	}
 	public void report_error(String message, Object info)
 	{
-		System.out.print("ERROR >> ");		
-		System.out.print("[");
-		System.out.print(lexer.getLine());
-		System.out.print(":");
-		System.out.print(lexer.getTokenStartPosition());
-		System.out.print("]");		
-		System.exit(0);
+		throw new ParserError(lexer.getLine());
 	}
 :}
 

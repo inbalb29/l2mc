@@ -1,13 +1,13 @@
 import java.io.*;
-import java.io.PrintWriter;
-import java_cup.runtime.Symbol;
+
+import Exceptions.LexerError;
+import Exceptions.ParserError;
 import ast.*;
 
 public class Main {
 	static public void main(String argv[]) {
 		Lexer l;
 		Parser p;
-		Symbol s;
 		AstProg ast;
 		FileReader fileReader;
 		PrintWriter fileWriter;
@@ -45,19 +45,30 @@ public class Main {
 			/*************************/
 			ast.printMe();
 
-			/*************************/
-			/* [7] Close output file */
-			/*************************/
+			/*******************************/
+			/* [7] Write OK to output file */
+			/*******************************/
+			fileWriter.print("OK");
 			fileWriter.close();
 
 			/*************************************/
 			/* [8] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
+		} catch (LexerError e) {
+			writeError(outputFileName, "ERROR");
+		} catch (ParserError e) {
+			writeError(outputFileName, "ERROR(" + e.getLine() + ")");
+		} catch (Throwable e) {
+			writeError(outputFileName, "ERROR");
 		}
+	}
 
-		catch (Exception e) {
-			e.printStackTrace();
+	private static void writeError(String outputFileName, String errorMessage) {
+		try (PrintWriter errorWriter = new PrintWriter(outputFileName)) {
+			errorWriter.print(errorMessage);
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
 		}
 	}
 }
