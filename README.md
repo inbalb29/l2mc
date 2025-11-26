@@ -23,11 +23,11 @@ l2mc/
 
 ## Setup
 
-1. **Install prerequisites** (JDK 17+, JFlex). On Ubuntu/Debian you can grab everything with APT:
+1. **Install prerequisites** (JDK 17+, JFlex, Graphviz). On Ubuntu/Debian you can grab everything with APT:
 
 	```bash
 	sudo apt update
-	sudo apt install default-jdk jflex
+	sudo apt install default-jdk jflex graphviz eog
 	```
 
     The `external_jars/` directory already contains the `java-cup` compiler and runtime jars.
