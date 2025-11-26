@@ -27,6 +27,9 @@ ids.txt
 
 ex*/input/
 
+# External jars
+!ex*/external_jars/*
+
 # Output directories
 **/output/
 
@@ -36,4 +39,4 @@ ex*/input/
 **/PARSER
 **/TokenNames.java
 # For ex1, this was coded by hand
-!ex1/TokenNames.javq
+!ex1/TokenNames.java
