@@ -10,7 +10,7 @@ public class AstCallExp extends AstExp {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstCallExp(AstVar object, String funcName, List<AstExp> args) {
+    public AstCallExp(AstVar object, String funcName, List<AstExp> args, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -31,6 +31,7 @@ public class AstCallExp extends AstExp {
         this.object = object;
         this.funcName = funcName;
         this.args = args;
+        this.lineNumber = lineNumber;
     }
 
     /*************************************************/

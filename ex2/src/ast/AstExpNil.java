@@ -4,7 +4,7 @@ public class AstExpNil extends AstExp {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstExpNil() {
+    public AstExpNil(int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -14,6 +14,8 @@ public class AstExpNil extends AstExp {
         /* PRINT CORRESPONDING DERIVATION RULE */
         /***************************************/
         System.out.print("====================== exp -> NIL\n");
+
+        this.lineNumber = lineNumber;
     }
 
     /************************************************/

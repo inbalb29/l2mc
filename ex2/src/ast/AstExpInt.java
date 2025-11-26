@@ -6,7 +6,7 @@ public class AstExpInt extends AstExp {
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpInt(int value) {
+	public AstExpInt(int value, int lineNumber) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -21,6 +21,7 @@ public class AstExpInt extends AstExp {
 		/* COPY INPUT DATA MEMBERS ... */
 		/*******************************/
 		this.value = value;
+		this.lineNumber = lineNumber;
 	}
 
 	/************************************************/

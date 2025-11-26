@@ -7,6 +7,7 @@ public abstract class AstNode {
 	/* a graphviz dot format of the AST ... */
 	/*******************************************/
 	public int serialNumber;
+	public int lineNumber = -1;
 
 	/***********************************************/
 	/* The default message for an unknown AST node */

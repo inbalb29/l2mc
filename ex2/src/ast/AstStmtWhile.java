@@ -9,7 +9,7 @@ public class AstStmtWhile extends AstStmt {
 	/*******************/
 	/* CONSTRUCTOR(S) */
 	/*******************/
-	public AstStmtWhile(AstExp cond, List<AstStmt> body) {
+	public AstStmtWhile(AstExp cond, List<AstStmt> body, int lineNumber) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -25,6 +25,7 @@ public class AstStmtWhile extends AstStmt {
 		/*******************************/
 		this.cond = cond;
 		this.body = body;
+		this.lineNumber = lineNumber;
 	}
 
 	/********************************************************/

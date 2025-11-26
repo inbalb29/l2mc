@@ -6,7 +6,7 @@ public class AstStmtCall extends AstStmt {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstStmtCall(AstCallExp callExp) {
+    public AstStmtCall(AstCallExp callExp, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -21,6 +21,7 @@ public class AstStmtCall extends AstStmt {
         /* COPY INPUT DATA MEMBERS ... */
         /*******************************/
         this.callExp = callExp;
+        this.lineNumber = lineNumber;
     }
 
     /******************************************************/

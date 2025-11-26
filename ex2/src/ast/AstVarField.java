@@ -7,7 +7,7 @@ public class AstVarField extends AstVar {
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstVarField(AstVar var, String fieldName) {
+	public AstVarField(AstVar var, String fieldName, int lineNumber) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -23,6 +23,7 @@ public class AstVarField extends AstVar {
 		/*******************************/
 		this.var = var;
 		this.fieldName = fieldName;
+		this.lineNumber = lineNumber;
 	}
 
 	/*************************************************/
@@ -46,7 +47,7 @@ public class AstVarField extends AstVar {
 		/***************************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-				String.format("FIELD\nVAR\n...->%s", fieldName));
+				String.format("FIELD\nVAR\n.%s", fieldName));
 
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */

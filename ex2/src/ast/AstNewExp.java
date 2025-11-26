@@ -7,7 +7,7 @@ public class AstNewExp extends AstExp {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstNewExp(AstType type, AstExp sizeExp) {
+    public AstNewExp(AstType type, AstExp sizeExp, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -27,6 +27,7 @@ public class AstNewExp extends AstExp {
         /*******************************/
         this.type = type;
         this.sizeExp = sizeExp;
+        this.lineNumber = lineNumber;
     }
 
     /************************************************/

@@ -7,7 +7,7 @@ public class AstType extends AstNode {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstType(String name, boolean isPrimitive) {
+    public AstType(String name, boolean isPrimitive, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -23,24 +23,25 @@ public class AstType extends AstNode {
         /*******************************/
         this.name = name;
         this.isPrimitive = isPrimitive;
+        this.lineNumber = lineNumber;
     }
 
     // Constructor for user-defined types (class names)
-    public AstType(String name) {
-        this(name, false);
+    public AstType(String name, int lineNumber) {
+        this(name, false, lineNumber);
     }
 
     // Factory methods for primitive types
-    public static AstType INT() {
-        return new AstType("int", true);
+    public static AstType INT(int lineNumber) {
+        return new AstType("int", true, lineNumber);
     }
 
-    public static AstType STRING() {
-        return new AstType("string", true);
+    public static AstType STRING(int lineNumber) {
+        return new AstType("string", true, lineNumber);
     }
 
-    public static AstType VOID() {
-        return new AstType("void", true);
+    public static AstType VOID(int lineNumber) {
+        return new AstType("void", true, lineNumber);
     }
 
     /*********************************************/

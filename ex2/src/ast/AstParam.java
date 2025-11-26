@@ -7,7 +7,7 @@ public class AstParam extends AstNode {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstParam(AstType type, String name) {
+    public AstParam(AstType type, String name, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -23,6 +23,7 @@ public class AstParam extends AstNode {
         /*******************************/
         this.type = type;
         this.name = name;
+        this.lineNumber = lineNumber;
     }
 
     /************************************************/

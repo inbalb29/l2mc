@@ -11,7 +11,7 @@ public class AstFuncDec extends AstDec {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstFuncDec(AstType returnType, String name, List<AstParam> params, List<AstStmt> body) {
+    public AstFuncDec(AstType returnType, String name, List<AstParam> params, List<AstStmt> body, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -30,6 +30,7 @@ public class AstFuncDec extends AstDec {
         this.name = name;
         this.params = params;
         this.body = body;
+        this.lineNumber = lineNumber;
     }
 
     /*****************************************************/

@@ -5,7 +5,7 @@ import java.util.List;
 public class AstProg extends AstNode {
     public List<AstDec> decs;
 
-    public AstProg(AstDec dec) {
+    public AstProg(AstDec dec, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -21,6 +21,7 @@ public class AstProg extends AstNode {
         decs = new java.util.ArrayList<AstDec>();
         decs.add(dec);
         this.decs = decs;
+        this.lineNumber = lineNumber;
     }
 
     public void addDeclaration(AstDec dec) {

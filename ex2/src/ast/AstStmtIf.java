@@ -10,7 +10,7 @@ public class AstStmtIf extends AstStmt {
 	/*******************/
 	/* CONSTRUCTOR(S) */
 	/*******************/
-	public AstStmtIf(AstExp cond, List<AstStmt> thenBody, List<AstStmt> elseBody) {
+	public AstStmtIf(AstExp cond, List<AstStmt> thenBody, List<AstStmt> elseBody, int lineNumber) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -32,6 +32,7 @@ public class AstStmtIf extends AstStmt {
 		this.cond = cond;
 		this.thenBody = thenBody;
 		this.elseBody = elseBody;
+		this.lineNumber = lineNumber;
 	}
 
 	/*****************************************************/

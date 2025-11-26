@@ -10,7 +10,7 @@ public class AstClassDec extends AstDec {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstClassDec(String name, String parentName, List<AstDec> fields) {
+    public AstClassDec(String name, String parentName, List<AstDec> fields, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -32,6 +32,7 @@ public class AstClassDec extends AstDec {
         this.name = name;
         this.parentName = parentName;
         this.fields = fields;
+        this.lineNumber = lineNumber;
     }
 
     /******************************************************/

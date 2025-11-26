@@ -8,7 +8,7 @@ public class AstExpBinop extends AstExp {
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpBinop(AstExp left, AstExp right, BinOp op) {
+	public AstExpBinop(AstExp left, AstExp right, BinOp op, int lineNumber) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -25,6 +25,7 @@ public class AstExpBinop extends AstExp {
 		this.left = left;
 		this.right = right;
 		this.op = op;
+		this.lineNumber = lineNumber;
 	}
 
 	/*************************************************/

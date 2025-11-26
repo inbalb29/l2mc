@@ -6,7 +6,7 @@ public class AstStmtReturn extends AstStmt {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstStmtReturn(AstExp exp) {
+    public AstStmtReturn(AstExp exp, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -25,6 +25,7 @@ public class AstStmtReturn extends AstStmt {
         /* COPY INPUT DATA MEMBERS ... */
         /*******************************/
         this.exp = exp;
+        this.lineNumber = lineNumber;
     }
 
     /*********************************************************/

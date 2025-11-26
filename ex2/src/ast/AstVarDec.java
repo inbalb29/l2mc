@@ -10,12 +10,12 @@ public class AstVarDec extends AstDec {
     /******************/
 
     // Constructor without initialization
-    public AstVarDec(AstType type, String name) {
-        this(type, name, null);
+    public AstVarDec(AstType type, String name, int lineNumber) {
+        this(type, name, null, lineNumber);
     }
 
     // Constructor with initialization expression
-    public AstVarDec(AstType type, String name, AstExp initExp) {
+    public AstVarDec(AstType type, String name, AstExp initExp, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -36,6 +36,7 @@ public class AstVarDec extends AstDec {
         this.type = type;
         this.name = name;
         this.initExp = initExp;
+        this.lineNumber = lineNumber;
     }
 
     /****************************************************/

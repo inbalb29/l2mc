@@ -7,7 +7,7 @@ public class AstTypedef extends AstDec {
     /******************/
     /* CONSTRUCTOR(S) */
     /******************/
-    public AstTypedef(String name, AstType elementType) {
+    public AstTypedef(String name, AstType elementType, int lineNumber) {
         /******************************/
         /* SET A UNIQUE SERIAL NUMBER */
         /******************************/
@@ -24,6 +24,7 @@ public class AstTypedef extends AstDec {
         /*******************************/
         this.name = name;
         this.elementType = elementType;
+        this.lineNumber = lineNumber;
     }
 
     /****************************************************/

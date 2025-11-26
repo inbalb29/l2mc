@@ -25,6 +25,8 @@ replay_pid*
 
 ids.txt
 
+ex*/input/
+
 # Output directories
 **/output/
 
