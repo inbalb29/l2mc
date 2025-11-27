@@ -1,4 +1,0 @@
-int x = 1;
-/* oh no! who forgot to close me?
-1+1 equals 3;
-class /**** / still unclosed

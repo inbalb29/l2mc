@@ -1,9 +1,0 @@
-int x = 1; // Just regular text
-string comment = "";
-string more string = "sdfsdf"identiferhello /*
-this is a comment in between other things */
-string end = "theend"
-/***********/
-int y = 2; /* abc123    
-XYZ()[]{}?!+-/.; int string */
-int z = 3; /* horay! */
