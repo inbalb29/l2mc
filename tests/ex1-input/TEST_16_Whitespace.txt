@@ -1,0 +1,6 @@
+space space;
+tabs    tabs	tabs;
+newlines
+
+
+1+1=3;

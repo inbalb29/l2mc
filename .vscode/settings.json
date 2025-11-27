@@ -1,9 +1,9 @@
 {
   "java.project.sourcePaths": [
-    "ex1/src/**",
-    "ex1/src"
+    "ex2/src/**",
+    "ex2/src"
   ],
   "java.project.referencedLibraries": [
-    "ex1/external_jars/*"
+    "ex2/external_jars/*"
   ]
 }

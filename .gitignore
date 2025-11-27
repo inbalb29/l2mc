@@ -25,5 +25,18 @@ replay_pid*
 
 ids.txt
 
-ex1/src/Lexer.java
-ex1/output/
+ex*/input/
+
+# External jars
+!ex*/external_jars/*
+
+# Output directories
+**/output/
+
+# Auto-generated files by compiler
+**/Lexer.java
+**/Parser.java
+**/PARSER
+**/TokenNames.java
+# For ex1, this was coded by hand
+!ex1/TokenNames.java

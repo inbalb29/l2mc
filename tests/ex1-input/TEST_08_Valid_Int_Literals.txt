@@ -1,0 +1,5 @@
+0
+-1 // This will be tokenized as MINUS INT LITERAL
+123
+1000
+32767 // Max valid int literal
