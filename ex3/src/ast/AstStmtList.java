@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 /**
  * @deprecated Redundant now that AstProg exists
  */
@@ -68,4 +70,12 @@ public class AstStmtList extends AstNode {
 			AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
 
+	public Type semantMe() {
+		if (head != null)
+			head.semantMe();
+		if (tail != null)
+			tail.semantMe();
+
+		return null;
+	}
 }

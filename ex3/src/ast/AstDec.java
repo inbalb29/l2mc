@@ -1,7 +1,12 @@
 package ast;
 
+import types.*;
+
 public abstract class AstDec extends AstStmt {
-    // All declarations are also statements
-    // This allows variable declarations to be used both at top-level and within
-    // functions
+	/***********************************************/
+	/* The default semantic action for an AST node */
+	/***********************************************/
+	public Type semantMe() {
+		return null;
+	}
 }

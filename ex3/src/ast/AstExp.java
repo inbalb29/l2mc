@@ -1,4 +1,14 @@
 package ast;
 
-public abstract class AstExp extends AstNode {
+import types.*;
+
+public abstract class AstExp extends AstNode
+{
+	/***********************************************/
+	/* The default semantic action for an AST node */
+	/***********************************************/
+	public Type semantMe()
+	{
+		return null;
+	}
 }

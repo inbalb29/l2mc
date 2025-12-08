@@ -1,3 +1,4 @@
+
 import java.io.*;
 
 import Exceptions.LexerError;
@@ -45,14 +46,19 @@ public class Main {
 			/*************************/
 			ast.printMe();
 
-			/*******************************/
-			/* [7] Write OK to output file */
-			/*******************************/
+			/**************************/
+			/* [7] Semant the AST ... */
+			/**************************/
+			ast.semantMe();
+
+			/*************************/
+			/* [8] Close output file */
+			/*************************/
 			fileWriter.print("OK");
 			fileWriter.close();
 
 			/*************************************/
-			/* [8] Finalize AST GRAPHIZ DOT file */
+			/* [9] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
 		} catch (LexerError e) {
