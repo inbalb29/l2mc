@@ -1,7 +1,9 @@
 package types;
 
-public class TypeList
-{
+/**
+ * @deprecated Please use A List<> of Type instead
+ */
+public class TypeList {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
@@ -11,8 +13,7 @@ public class TypeList
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public TypeList(Type head, TypeList tail)
-	{
+	public TypeList(Type head, TypeList tail) {
 		this.head = head;
 		this.tail = tail;
 	}

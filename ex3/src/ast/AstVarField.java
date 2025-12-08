@@ -1,5 +1,8 @@
 package ast;
 
+import types.*;
+import Exceptions.SemanticError;
+
 public class AstVarField extends AstVar {
 	public AstVar var;
 	public String fieldName;
@@ -54,5 +57,39 @@ public class AstVarField extends AstVar {
 		/****************************************/
 		if (var != null)
 			AstGraphviz.getInstance().logEdge(serialNumber, var.serialNumber);
+	}
+
+	public Type semantMe() throws SemanticError {
+		Type t = null;
+		TypeClass tc = null;
+
+		/******************************/
+		/* [1] Recursively semant var */
+		/******************************/
+		if (var != null)
+			t = var.semantMe();
+
+		/*********************************/
+		/* [2] Make sure type is a class */
+		/*********************************/
+		if (t.isClass() == false) {
+			throw new SemanticError("access '" + fieldName + "' field of a non-class variable\n", lineNumber);
+		} else {
+			tc = (TypeClass) t;
+		}
+
+		/************************************/
+		/* [3] Look for fiedlName inside tc */
+		/************************************/
+		for (TypeList it = tc.dataMembers; it != null; it = it.tail) {
+			if (it.head.name == fieldName) {
+				return it.head;
+			}
+		}
+
+		/*********************************************/
+		/* [4] fieldName does not exist in class var */
+		/*********************************************/
+		throw new SemanticError("field '" + fieldName + "' does not exist in class\n", lineNumber);
 	}
 }

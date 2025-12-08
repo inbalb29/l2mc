@@ -1,6 +1,7 @@
 package ast;
 
 import types.*;
+import Exceptions.SemanticError;
 
 public class AstExpBinop extends AstExp {
 	BinOp op;
@@ -63,20 +64,88 @@ public class AstExpBinop extends AstExp {
 			AstGraphviz.getInstance().logEdge(serialNumber, right.serialNumber);
 	}
 
-	public Type semantMe() {
-		Type t1 = null;
-		Type t2 = null;
+	// public Type semantMe() {
+	// Type t1 = null;
+	// Type t2 = null;
 
-		if (left != null)
-			t1 = left.semantMe();
-		if (right != null)
-			t2 = right.semantMe();
+	// if (left != null)
+	// t1 = left.semantMe();
+	// if (right != null)
+	// t2 = right.semantMe();
 
-		if ((t1 == TypeInt.getInstance()) && (t2 == TypeInt.getInstance())) {
-			return TypeInt.getInstance();
+	// if ((t1 == TypeInt.getInstance()) && (t2 == TypeInt.getInstance())) {
+	// return TypeInt.getInstance();
+	// }
+	// System.exit(0);
+	// return null;
+	// }
+
+	public Type semantMe() throws SemanticError {
+		Type leftType = null;
+		Type rightType = null;
+
+		if (left != null) {
+			leftType = left.semantMe();
 		}
-		System.exit(0);
-		return null;
+		if (right != null) {
+			rightType = right.semantMe();
+		}
+
+		if ((!leftType.isClass() && !rightType.isClass()) && leftType != rightType) {
+			throw new SemanticError(
+					"mismatching types '" + leftType + "', '" + rightType + "' for binary operation exp " + op
+							+ " exp\n",
+					lineNumber);
+		}
+
+		if (op == BinOp.PLUS) {
+			if (!leftType.isInt() && !leftType.isString()) {
+				throw new SemanticError("left-hand expression type, '" + leftType + "', should be integer or string\n",
+						lineNumber);
+			}
+			if (!rightType.isInt() && !rightType.isString()) {
+				throw new SemanticError(
+						"right-hand expression type, '" + rightType + "', should be integer or string\n", lineNumber);
+			}
+		} else if (op == BinOp.EQ) {
+			if (leftType.isClass() && rightType.isClass()) {
+				for (TypeClass ancestor = (TypeClass) leftType; ancestor != null; ancestor = ancestor.father) {
+					if (ancestor.name.equals(rightType.name)) {
+						return TypeInt.getInstance();
+					}
+				}
+
+				for (TypeClass ancestor = (TypeClass) rightType; ancestor != null; ancestor = ancestor.father) {
+					if (ancestor.name.equals(leftType.name)) {
+						return TypeInt.getInstance();
+					}
+				}
+
+				throw new SemanticError("comparison of mismatching classes '" + leftType + "', '" + rightType + "'\n",
+						lineNumber);
+			}
+
+			// leftType and rightType are the same type
+			return TypeInt.getInstance();
+		} else {
+			if (!leftType.isInt()) {
+				throw new SemanticError("left-hand expression type, '" + leftType + "', should be integer\n",
+						lineNumber);
+			}
+
+			if (!rightType.isInt()) {
+				throw new SemanticError("right-hand expression type, '" + rightType + "', should be integer\n",
+						lineNumber);
+			}
+		}
+
+		if (op == BinOp.DIVIDE) {
+			if (((AstExpInt) right).value == 0) {
+				throw new SemanticError("cannot divide by 0\n", lineNumber);
+			}
+		}
+
+		return leftType;
 	}
 
 }

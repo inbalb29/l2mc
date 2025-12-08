@@ -1,7 +1,6 @@
 package types;
 
-public class TypeVoid extends Type
-{
+public class TypeVoid extends Type {
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
@@ -10,16 +9,16 @@ public class TypeVoid extends Type
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected TypeVoid() {}
+	protected TypeVoid() {
+	}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	public static TypeVoid getInstance()
-	{
-		if (instance == null)
-		{
+	public static TypeVoid getInstance() {
+		if (instance == null) {
 			instance = new TypeVoid();
+			instance.name = "void";
 		}
 		return instance;
 	}

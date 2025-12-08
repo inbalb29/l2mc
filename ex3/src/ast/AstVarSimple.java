@@ -1,5 +1,9 @@
 package ast;
 
+import symboltable.SymbolTable;
+import types.*;
+import Exceptions.SemanticError;
+
 public class AstVarSimple extends AstVar {
 	/************************/
 	/* simple variable name */
@@ -42,5 +46,16 @@ public class AstVarSimple extends AstVar {
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
 				String.format("SIMPLE\nVAR\n(%s)", name));
+	}
+
+	public Type semantMe() {
+		Type t;
+
+		t = SymbolTable.getInstance().find(name);
+		if (t == null) {
+			throw new SemanticError("variable '" + name + "' is undefined", lineNumber);
+		}
+
+		return t;
 	}
 }

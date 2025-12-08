@@ -103,9 +103,13 @@ public class AstStmtIf extends AstStmt {
 		/***************************/
 		/* [2] Semant Data Members */
 		/***************************/
-		thenBody.semantMe();
+		for (AstStmt stmt : thenBody) {
+			stmt.semantMe();
+		}
 		if (elseBody != null) {
-			elseBody.semantMe();
+			for (AstStmt stmt : elseBody) {
+				stmt.semantMe();
+			}
 		}
 
 		/*****************/

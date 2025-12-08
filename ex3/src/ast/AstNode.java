@@ -1,5 +1,7 @@
 package ast;
 
+import types.Type;
+
 public abstract class AstNode {
 	/*******************************************/
 	/* The serial number is for debug purposes */
@@ -14,5 +16,12 @@ public abstract class AstNode {
 	/***********************************************/
 	public void printMe() {
 		System.out.print("AST NODE UNKNOWN\n");
+	}
+
+	/***********************************************/
+	/* The default semantic action for an AST node */
+	/***********************************************/
+	public Type semantMe() {
+		return null;
 	}
 }

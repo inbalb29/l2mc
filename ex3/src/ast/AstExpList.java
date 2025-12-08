@@ -1,7 +1,8 @@
 package ast;
 
-public class AstExpList extends AstNode
-{
+import types.*;
+
+public class AstExpList extends AstNode {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
@@ -11,8 +12,7 @@ public class AstExpList extends AstNode
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpList(AstExp head, AstExpList tail)
-	{
+	public AstExpList(AstExp head, AstExpList tail) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -21,11 +21,11 @@ public class AstExpList extends AstNode
 		this.head = head;
 		this.tail = tail;
 	}
+
 	/*******************************************************/
 	/* The printing message for a expression list AST node */
 	/*******************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/********************************/
 		/* AST NODE TYPE = AST EXP LIST */
 		/********************************/
@@ -34,20 +34,33 @@ public class AstExpList extends AstNode
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (head != null) head.printMe();
-		if (tail != null) tail.printMe();
+		if (head != null)
+			head.printMe();
+		if (tail != null)
+			tail.printMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			"EXP\nLIST\n");
-		
+				"EXP\nLIST\n");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (head != null) AstGraphviz.getInstance().logEdge(serialNumber,head.serialNumber);
-		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
+		if (head != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
+		if (tail != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
+	}
+
+	public Type semantMe() {
+		if (head != null)
+			head.semantMe();
+		if (tail != null)
+			tail.semantMe();
+
+		return null;
 	}
 }

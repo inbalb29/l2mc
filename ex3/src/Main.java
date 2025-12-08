@@ -1,8 +1,7 @@
 
 import java.io.*;
 
-import Exceptions.LexerError;
-import Exceptions.ParserError;
+import Exceptions.*;
 import ast.*;
 
 public class Main {
@@ -64,6 +63,8 @@ public class Main {
 		} catch (LexerError e) {
 			writeError(outputFileName, "ERROR");
 		} catch (ParserError e) {
+			writeError(outputFileName, "ERROR(" + e.getLine() + ")");
+		} catch (SemanticError e) {
 			writeError(outputFileName, "ERROR(" + e.getLine() + ")");
 		} catch (Throwable e) {
 			writeError(outputFileName, "ERROR");

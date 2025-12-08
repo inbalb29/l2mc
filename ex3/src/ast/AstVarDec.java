@@ -1,5 +1,9 @@
 package ast;
 
+import symboltable.SymbolTable;
+import types.*;
+import Exceptions.SemanticError;
+
 public class AstVarDec extends AstDec {
     public AstType type;
     public String name;
@@ -70,5 +74,40 @@ public class AstVarDec extends AstDec {
             AstGraphviz.getInstance().logEdge(serialNumber, type.serialNumber);
         if (initExp != null)
             AstGraphviz.getInstance().logEdge(serialNumber, initExp.serialNumber);
+    }
+
+    public Type semantMe() throws SemanticError {
+        Type t;
+        Type initType;
+
+        /****************************/
+        /* [1] Check If Type exists */
+        /****************************/
+        t = SymbolTable.getInstance().find(type.name);
+        if (t == null) {
+            throw new SemanticError("non existing type '" + type.name + "'\n", lineNumber);
+        }
+
+        /**************************************/
+        /* [2] Check That Name does NOT exist */
+        /**************************************/
+        if (SymbolTable.getInstance().find(name) != null) {
+            throw new SemanticError("variable '" + name + "' already exists in scope\n", lineNumber);
+        }
+
+        initType = initExp.semantMe();
+        if (initType != t) {
+            throw new SemanticError("expression type '" + initType + "' does not match variable type '" + t + "'\n", lineNumber);
+        }
+
+        /************************************************/
+        /* [3] Enter the Identifier to the Symbol Table */
+        /************************************************/
+        SymbolTable.getInstance().enter(name, t);
+
+        /************************************************************/
+        /* [4] Return value is irrelevant for variable declarations */
+        /************************************************************/
+        return null;
     }
 }

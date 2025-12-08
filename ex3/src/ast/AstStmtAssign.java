@@ -1,6 +1,7 @@
 package ast;
 
 import types.*;
+import Exceptions.SemanticError;
 
 public class AstStmtAssign extends AstStmt {
 	/***************/
@@ -68,17 +69,39 @@ public class AstStmtAssign extends AstStmt {
 			AstGraphviz.getInstance().logEdge(serialNumber, exp.serialNumber);
 	}
 
-	public Type semantMe() {
-		Type t1 = null;
-		Type t2 = null;
+	public Type semantMe() throws SemanticError {
+		Type varType = null;
+		Type expType = null;
 
 		if (var != null)
-			t1 = var.semantMe();
+			varType = var.semantMe();
 		if (exp != null)
-			t2 = exp.semantMe();
+			expType = exp.semantMe();
 
-		if (t1 != t2) {
-			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
+		if (!varType.isClass() && !varType.isArray() && expType.isVoid()) {
+			throw new SemanticError(
+					"type '" + varType + "' cannot be assigned NIL\n",
+					lineNumber);
+		}
+
+		if (expType.isArray()) {
+			// TODO
+		}
+
+		if (varType.isClass() && expType.isClass()) {
+			for (TypeClass ancestor = (TypeClass) expType; ancestor != null; ancestor = ancestor.father) {
+				if (ancestor.name.equals(varType.name)) {
+					return null;
+				}
+			}
+			throw new SemanticError("assignment of mismatching classes '" + varType + "', '" + expType + "'\n",
+					lineNumber);
+		}
+
+		if (varType != expType) {
+			throw new SemanticError(
+					"mismatching types '" + varType + "', '" + expType + "' for variable assignment\n",
+					lineNumber);
 		}
 		return null;
 	}

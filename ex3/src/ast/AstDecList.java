@@ -2,8 +2,10 @@ package ast;
 
 import types.*;
 
-public class AstDecList extends AstNode
-{
+/**
+ * @deprecated Redundant now that AstProg exists
+ */
+public class AstDecList extends AstNode {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
@@ -13,8 +15,7 @@ public class AstDecList extends AstNode
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstDecList(AstDec head, AstDecList tail)
-	{
+	public AstDecList(AstDec head, AstDecList tail) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -27,8 +28,7 @@ public class AstDecList extends AstNode
 	/********************************************************/
 	/* The printing message for a declaration list AST node */
 	/********************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/********************************/
 		/* AST NODE TYPE = AST DEC LIST */
 		/********************************/
@@ -37,30 +37,35 @@ public class AstDecList extends AstNode
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (head != null) head.printMe();
-		if (tail != null) tail.printMe();
+		if (head != null)
+			head.printMe();
+		if (tail != null)
+			tail.printMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			"DEC\nLIST\n");
-				
+				"DEC\nLIST\n");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (head != null) AstGraphviz.getInstance().logEdge(serialNumber,head.serialNumber);
-		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
+		if (head != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
+		if (tail != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
 
-	public Type semantMe()
-	{
+	public Type semantMe() {
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (head != null) head.semantMe();
-		if (tail != null) tail.semantMe();
+		if (head != null)
+			head.semantMe();
+		if (tail != null)
+			tail.semantMe();
 
 		return null;
 	}
