@@ -1,6 +1,9 @@
 package ast;
 
 import java.util.List;
+import types.*;
+import Exceptions.SemanticError;
+import symboltable.SymbolTable;
 
 public class AstStmtWhile extends AstStmt {
 	public AstExp cond;
@@ -63,5 +66,36 @@ public class AstStmtWhile extends AstStmt {
 			if (stmt != null)
 				AstGraphviz.getInstance().logEdge(serialNumber, stmt.serialNumber);
 		}
+	}
+
+	public Type semantMe() throws SemanticError {
+		/****************************/
+		/* [0] Semant the Condition */
+		/****************************/
+		if (cond.semantMe() != TypeInt.getInstance()) {
+			throw new SemanticError("condition inside if statement is not integral", lineNumber);
+		}
+
+		/*************************/
+		/* [1] Begin While Scope */
+		/*************************/
+		SymbolTable.getInstance().beginScope();
+
+		/***************************/
+		/* [2] Semant Data Members */
+		/***************************/
+		for (AstStmt stmt : body) {
+			stmt.semantMe();
+		}
+
+		/*****************/
+		/* [3] End Scope */
+		/*****************/
+		SymbolTable.getInstance().endScope();
+
+		/***************************************************/
+		/* [4] Return value is irrelevant for if statement */
+		/**************************************************/
+		return null;
 	}
 }

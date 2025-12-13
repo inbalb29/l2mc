@@ -2,6 +2,9 @@ package ast;
 
 import types.*;
 
+/**
+ * @deprecated DONT USE
+ */
 public class AstExpVarField extends AstExpVar {
 	public AstExpVar var;
 	public String fieldName;

@@ -9,6 +9,9 @@ package ast;
 import types.*;
 import symboltable.*;
 
+/**
+ * @deprecated DONT USE
+ */
 public class AstTypeName extends AstNode {
 	/****************/
 	/* DATA MEMBERS */

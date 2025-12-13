@@ -1,5 +1,8 @@
 package ast;
 
+import types.*;
+import symboltable.SymbolTable;
+
 public class AstNewExp extends AstExp {
     public AstType type;
     public AstExp sizeExp; // null for simple NEW type, non-null for NEW type[size]
@@ -61,5 +64,9 @@ public class AstNewExp extends AstExp {
             AstGraphviz.getInstance().logEdge(serialNumber, type.serialNumber);
         if (sizeExp != null)
             AstGraphviz.getInstance().logEdge(serialNumber, sizeExp.serialNumber);
+    }
+
+    public Type semantMe() {
+
     }
 }

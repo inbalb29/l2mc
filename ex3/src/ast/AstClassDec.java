@@ -88,10 +88,14 @@ public class AstClassDec extends AstDec {
             throw new SemanticError("type name  '" + name + "' already exists", lineNumber);
         }
 
+        if (SymbolTable.getInstance().getLocalScope() != null) {
+            throw new SemanticError("Class '" + name + "' cannot be declared inside non global scope", lineNumber);
+        }
         /*****************************************************************************************/
         /*
-         * [2] Verify no circular dependency with super class if this class extends from
-         * another
+         * [2] If this class extends from another, verify:
+         * 1. super class already defined
+         * 2. no circular dependency with super class
          */
         /*****************************************************************************************/
         TypeClass parentType = null;
@@ -120,14 +124,11 @@ public class AstClassDec extends AstDec {
         /* [4] Begin Class Scope */
         /*************************/
         SymbolTable.getInstance().beginScope();
-
-        /*******************************/
-        /* [5] Semant The Class Itself */
-        /*******************************/
+        SymbolTable.getInstance().setLocalScope(t);
 
         /*****************************************************************************************/
         /*
-         * [6] Get data members, we need to verify:
+         * [5] Get data members, we need to verify:
          * - No method overloading (defining multiple methods with the same name but
          * different signatures in the same class).
          * - No Shadowing:
@@ -143,49 +144,92 @@ public class AstClassDec extends AstDec {
          * Subclass substitutions in the signature are not allowed.
          */
         /*****************************************************************************************/
-        List<TypeClassVarDec> dataMembers = new ArrayList<>();
         for (AstDec field : this.fields) {
             Type dataMemberType;
             TypeClassVarDec dataMember;
             if (field instanceof AstVarDec varDec) {
                 dataMemberType = varDec.semantMe();
                 dataMember = new TypeClassVarDec(dataMemberType, varDec.name);
-                dataMembers.add(dataMember);
 
-                // No Field shadowing
-                if (t.findMemberInAncestor(dataMember.name) != null) {
-                    throw new SemanticError("field '" + dataMember.name
-                            + "' already defined as field or method in class or superclass", lineNumber);
+                // No duplicate in same class
+                if (t.findMemberInThisClass(dataMember.name) != null) {
+                    throw new SemanticError("Field: '" + dataMember.name
+                            + "' already defined as field or method in class. (Shadowing not allowed)", lineNumber);
                 }
+
+                // No shadowing from parent classes
+                if (t.father.findMember(dataMember.name) != null) {
+                    throw new SemanticError("Field: '" + dataMember.name
+                            + "' already defined as field or method in superclass (Shadowing not allowed)", lineNumber);
+                }
+
+                // Add valid datamember to class type
                 t.addDataMember(dataMember);
 
             } else if (field instanceof AstFuncDec funcDec) {
                 dataMemberType = funcDec.semantMe();
                 dataMember = new TypeClassVarDec(dataMemberType, funcDec.name);
-                dataMembers.add(dataMember);
 
                 // No Method overloading
-                if (t.findClassMember(dataMember.name) != null) {
+                if (t.findMemberInThisClass(dataMember.name) != null) {
                     throw new SemanticError(
-                            "method '" + dataMember.name
-                                    + "' already exists in current class (Overloading/Shadowing not allowed)",
+                            "Method: '" + dataMember.name
+                                    + "' already defined as field or method in current class (Overloading/Shadowing not allowed)",
                             lineNumber);
                 }
+
+                TypeClassVarDec ancestorMember = t.father.findMember(dataMember.name);
+
+                // Member already defined in ancestor class, this this classes datamember is a
+                // valid instance of method overriding
+                // I.e. need to check if ancestor member is a method (datamember already checked
+                // to be one) and need to check that
+                // their signatures and return types are identical. If its a valid override of
+                // nearest ancestor then its a valid override
+                // of all ancestors, read @findMember docString for further details.
+                if (ancestorMember != null) {
+                    if (ancestorMember.t instanceof TypeFunction) {
+                        // dataMember is derived from AstFuncDec's semantMe which returns a TypeFunction
+                        // type.
+                        TypeFunction mydataMemberFunc = (TypeFunction) dataMember.t;
+                        TypeFunction ancestordataMemberFunc = (TypeFunction) ancestorMember.t;
+
+                        if (!mydataMemberFunc.isValidOverride(ancestordataMemberFunc)) {
+                            throw new SemanticError("Method: '" + dataMember.name
+                                    + "' is an illegal override (different signatures) of an ancestor method.",
+                                    lineNumber);
+                        }
+                    }
+                    // AncestorMember isn't a function type so must be a field.
+                    // (We implicitly assume that a valid class only has Methods and field types,
+                    // additionally
+                    // this implicit assumption is upheld both by the CUP parser and the AstClass
+                    // grammer/derivation and is implicitly
+                    // upheld here as we only handle dataMember's of type AstFuncDec and and
+                    // AstVarDec)
+                    else {
+                        throw new SemanticError("Method: '" + dataMember.name
+                                + "' already defined as field in ancestor. (Shadowing not allowed).", lineNumber);
+                    }
+                }
+
+                // Only reach here if:
+                // class hasn't already declared dataMember AND no ancestor declared datamember
+                // OR
+                // class hasn't already declared dataMember AND ancestor also declared
+                // datamember as a method with the exact same signature
+                t.addDataMember(dataMember);
             }
         }
 
         /*****************/
-        /* [3] End Scope */
+        /* [6] End Scope */
         /*****************/
+        SymbolTable.getInstance().setLocalScope(null);
         SymbolTable.getInstance().endScope();
 
-        /************************************************/
-        /* [4] Enter the Class Type to the Symbol Table */
-        /************************************************/
-        SymbolTable.getInstance().enter(name, t);
-
         /*********************************************************/
-        /* [5] Return value is irrelevant for class declarations */
+        /* [7] Return value is irrelevant for class declarations */
         /*********************************************************/
         return null;
     }

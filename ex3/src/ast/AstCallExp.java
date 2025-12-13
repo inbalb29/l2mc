@@ -2,6 +2,10 @@ package ast;
 
 import java.util.List;
 
+import Exceptions.SemanticError;
+import symboltable.SymbolTable;
+import types.*;
+
 public class AstCallExp extends AstExp {
     public AstVar object; // null for simple function calls, non-null for method calls
     public String funcName;
@@ -69,5 +73,99 @@ public class AstCallExp extends AstExp {
             if (arg != null)
                 AstGraphviz.getInstance().logEdge(serialNumber, arg.serialNumber);
         }
+    }
+
+    @Override
+    public Type semantMe() {
+        TypeFunction funcType = null;
+
+        if (object != null) {
+            /* Method call */
+            Type objType = object.semantMe();
+            if (objType == null || !objType.isClass()) {
+                throw new SemanticError("method call on a non-class type", lineNumber);
+            }
+
+            TypeClass classType = (TypeClass) objType;
+            TypeClassVarDec memberType = classType.findMember(funcName);
+
+            if (memberType == null) {
+                throw new SemanticError("method '" + funcName + "' not found in class '" + classType.name + "'",
+                        lineNumber);
+            }
+
+            if (!(memberType.t instanceof TypeFunction)) {
+                throw new SemanticError("cannot call non-method '" + funcName + "' in class '" + classType.name + "'",
+                        lineNumber);
+            }
+
+            funcType = (TypeFunction) memberType.t;
+        } else {
+            /* Simple function call, or method call from within a class */
+            Type t = null;
+
+            // If inside a class, try to resolve as a member (method) first
+            if (SymbolTable.getInstance().getLocalScope() instanceof TypeClass currentClass) {
+                TypeClassVarDec varDec = currentClass.findMember(funcName);
+                if (varDec != null) {
+                    if (!(varDec.t instanceof TypeFunction)) {
+                        throw new SemanticError(
+                                "cannot call non-method '" + funcName + "' in class '" + currentClass.name + "'",
+                                lineNumber);
+                    }
+                    funcType = (TypeFunction) varDec.t;
+                }
+            }
+
+            // Fallback to global scope if not found as a class member
+            if (funcType == null) {
+                t = SymbolTable.getInstance().find(funcName);
+                if (t == null) {
+                    throw new SemanticError("function '" + funcName + "' not found", lineNumber);
+                }
+
+                if (!(t instanceof TypeFunction)) {
+                    throw new SemanticError("cannot call non-function '" + funcName + "'", lineNumber);
+                }
+
+                funcType = (TypeFunction) t;
+            }
+        }
+
+        // Check arguments
+        if (args.size() != funcType.params.size()) {
+            throw new SemanticError("wrong number of arguments for function '" + funcName + "'", lineNumber);
+        }
+
+        for (int i = 0; i < args.size(); i++) {
+            AstExp arg = args.get(i);
+            Type argType = arg.semantMe();
+            Type paramType = funcType.params.get(i);
+
+            if (!isArgumentCompatible(paramType, argType, arg)) {
+                throw new SemanticError("incompatible argument type for parameter " + (i + 1) +
+                        " in function '" + funcName + "'", lineNumber);
+            }
+        }
+
+        return funcType.returnType;
+    }
+
+    private static boolean isArgumentCompatible(Type paramType, Type argType, AstExp argExp) {
+        if (argType == TypeNil.getInstance()) {
+            return paramType.isClass() || paramType.isArray();
+        }
+
+        if (paramType == argType) {
+            return true;
+        }
+
+        if (paramType.isClass() && argType.isClass()) {
+            TypeClass paramClass = (TypeClass) paramType;
+            TypeClass argClass = (TypeClass) argType;
+            return argClass.isSubClassOf(paramClass);
+        }
+
+        return false;
     }
 }

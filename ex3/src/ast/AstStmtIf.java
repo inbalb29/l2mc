@@ -4,6 +4,7 @@ import java.util.List;
 
 import types.*;
 import symboltable.*;
+import Exceptions.SemanticError;
 
 public class AstStmtIf extends AstStmt {
 	public AstExp cond;
@@ -87,12 +88,12 @@ public class AstStmtIf extends AstStmt {
 		}
 	}
 
-	public Type semantMe() {
+	public Type semantMe() throws SemanticError {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/
 		if (cond.semantMe() != TypeInt.getInstance()) {
-			System.out.format(">> ERROR [%d:%d] condition inside IF is not integral\n", 2, 2);
+			throw new SemanticError("condition inside if statement is not integral", lineNumber);
 		}
 
 		/*************************/

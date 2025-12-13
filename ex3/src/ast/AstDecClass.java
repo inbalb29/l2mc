@@ -3,8 +3,10 @@ package ast;
 import types.*;
 import symboltable.*;
 
-public class AstDecClass extends AstDec
-{
+/**
+ * @deprecated DONT USE
+ */
+public class AstDecClass extends AstDec {
 	/********/
 	/* NAME */
 	/********/
@@ -14,17 +16,16 @@ public class AstDecClass extends AstDec
 	/* DATA MEMBERS */
 	/****************/
 	public AstTypeNameList dataMembers;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstDecClass(String name, AstTypeNameList dataMembers)
-	{
+	public AstDecClass(String name, AstTypeNameList dataMembers) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
 		serialNumber = AstNodeSerialNumber.getFresh();
-	
+
 		this.name = name;
 		this.dataMembers = dataMembers;
 	}
@@ -32,29 +33,28 @@ public class AstDecClass extends AstDec
 	/*********************************************************/
 	/* The printing message for a class declaration AST node */
 	/*********************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		System.out.format("CLASS DEC = %s\n",name);
-		if (dataMembers != null) dataMembers.printMe();
-		
+		System.out.format("CLASS DEC = %s\n", name);
+		if (dataMembers != null)
+			dataMembers.printMe();
+
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AstGraphviz.getInstance().logNode(
-                serialNumber,
-			String.format("CLASS\n%s",name));
-		
+				serialNumber,
+				String.format("CLASS\n%s", name));
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
 		AstGraphviz.getInstance().logEdge(serialNumber, dataMembers.serialNumber);
 	}
-	
-	public Type semantMe()
-	{	
+
+	public Type semantMe() {
 		/*************************/
 		/* [1] Begin Class Scope */
 		/*************************/
@@ -63,7 +63,7 @@ public class AstDecClass extends AstDec
 		/***************************/
 		/* [2] Semant Data Members */
 		/***************************/
-		TypeClass t = new TypeClass(null,name, dataMembers.semantMe());
+		TypeClass t = new TypeClass(null, name, dataMembers.semantMe());
 
 		/*****************/
 		/* [3] End Scope */
@@ -73,11 +73,11 @@ public class AstDecClass extends AstDec
 		/************************************************/
 		/* [4] Enter the Class Type to the Symbol Table */
 		/************************************************/
-		SymbolTable.getInstance().enter(name,t);
+		SymbolTable.getInstance().enter(name, t);
 
 		/*********************************************************/
 		/* [5] Return value is irrelevant for class declarations */
 		/*********************************************************/
-		return null;		
+		return null;
 	}
 }

@@ -1,5 +1,7 @@
 package ast;
 
+import types.*;
+
 public class AstParam extends AstNode {
     public AstType type;
     public String name;
@@ -53,5 +55,9 @@ public class AstParam extends AstNode {
         /****************************************/
         if (type != null)
             AstGraphviz.getInstance().logEdge(serialNumber, type.serialNumber);
+    }
+
+    public Type semantMe() {
+        return type.semantMe();
     }
 }

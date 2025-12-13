@@ -4,6 +4,7 @@ import java.util.List;
 
 import symboltable.SymbolTable;
 import types.*;
+import Exceptions.SemanticError;
 
 public class AstFuncDec extends AstDec {
     public AstType returnType;
@@ -81,17 +82,18 @@ public class AstFuncDec extends AstDec {
         }
     }
 
-    public Type semantMe() {
-        Type t;
+    public Type semantMe() throws SemanticError {
+        String returnTypeName = returnType.name;
         Type returnType = null;
-        TypeList type_list = null;
+        List<Type> paramTypeList = new java.util.ArrayList<Type>();
 
         /*******************/
         /* [0] return type */
         /*******************/
         returnType = SymbolTable.getInstance().find(returnTypeName);
         if (returnType == null) {
-            System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
+            throw new SemanticError("Non existing return type '" + returnTypeName + "' for function '" +
+                    name + "'\n", lineNumber);
         }
 
         /****************************/
@@ -102,20 +104,24 @@ public class AstFuncDec extends AstDec {
         /***************************/
         /* [2] Semant Input Params */
         /***************************/
-        for (AstTypeNameList it = params; it != null; it = it.tail) {
-            t = SymbolTable.getInstance().find(it.head.type);
-            if (t == null) {
-                System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, it.head.type);
+        for (AstParam param : params) {
+            Type paramType = param.semantMe();
+
+            if (paramType == null) {
+                throw new SemanticError("Non existing type '" + param.type.name +
+                        "' in function declaration\n", lineNumber);
             } else {
-                type_list = new TypeList(t, type_list);
-                SymbolTable.getInstance().enter(it.head.name, t);
+                paramTypeList.add(paramType);
+                SymbolTable.getInstance().enter(param.name, paramType);
             }
         }
 
         /*******************/
         /* [3] Semant Body */
         /*******************/
-        body.semantMe();
+        for (AstStmt stmt : body) {
+            stmt.semantMe();
+        }
 
         /*****************/
         /* [4] End Scope */
@@ -125,7 +131,7 @@ public class AstFuncDec extends AstDec {
         /***************************************************/
         /* [5] Enter the Function Type to the Symbol Table */
         /***************************************************/
-        SymbolTable.getInstance().enter(name, new TypeFunction(returnType, name, type_list));
+        SymbolTable.getInstance().enter(name, new TypeFunction(returnType, name, paramTypeList));
 
         /************************************************************/
         /* [6] Return value is irrelevant for function declarations */

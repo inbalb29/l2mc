@@ -24,7 +24,7 @@ public class TypeClass extends Type {
 		this.dataMembers = dataMembers;
 	}
 
-	public TypeClassVarDec findClassMember(String name) {
+	public TypeClassVarDec findMemberInThisClass(String name) {
 		for (TypeClassVarDec member : dataMembers) {
 			if (member.name != null && member.name.equals(name)) {
 				return member;
@@ -46,14 +46,22 @@ public class TypeClass extends Type {
 	 * matches the grandparent signature as well and so on and so forth.
 	 */
 	/*****************************************************************************************/
-	public TypeClassVarDec findMemberInAncestor(String name) {
-		if (father != null) {
-			return father.findMemberInAncestor(name);
+	public TypeClassVarDec findMember(String name) {
+		// Search in this class's data members
+		for (TypeClassVarDec member : dataMembers) {
+			if (member.name != null && member.name.equals(name)) {
+				return member;
+			}
 		}
-		return findClassMember(name);
+		// Search in parent class
+		if (father != null) {
+			return father.findMember(name);
+		}
+		return null;
 	}
 
 	public void addDataMember(TypeClassVarDec member) {
 		this.dataMembers.add(member);
 	}
+
 }

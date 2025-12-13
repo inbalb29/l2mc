@@ -1,5 +1,9 @@
 package ast;
 
+import types.*;
+import symboltable.SymbolTable;
+import Exceptions.SemanticError;
+
 public class AstTypedef extends AstDec {
     public String name;
     public AstType elementType;
@@ -54,5 +58,33 @@ public class AstTypedef extends AstDec {
         /****************************************/
         if (elementType != null)
             AstGraphviz.getInstance().logEdge(serialNumber, elementType.serialNumber);
+    }
+
+    public Type semantMe() throws SemanticError {
+        /*********************************************/
+        /* [1] Verify array type not already defined */
+        /*********************************************/
+        if (SymbolTable.getInstance().find(name) != null) {
+            throw new SemanticError("type name  '" + name + "' already exists\n", lineNumber);
+        }
+
+        /*************************************************/
+        /* [2] Verify array type defined in global scope */
+        /*************************************************/
+        if (SymbolTable.getInstance().getLocalScope() != null) {
+            throw new SemanticError("Array type cannot be declared inside non global scope\n", lineNumber);
+        }
+
+        /***************************************************/
+        /* [3] Create array type and enter to symbol table */
+        /***************************************************/
+        Type innerType = elementType.semantMe();
+        TypeArray t = new TypeArray(name, innerType);
+        SymbolTable.getInstance().enter(name, t);
+
+        /**************************************************************/
+        /* [4] Return value is irrelevant for array type declarations */
+        /**************************************************************/
+        return null;
     }
 }

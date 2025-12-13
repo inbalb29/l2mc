@@ -1,15 +1,16 @@
 package ast;
 
-public class AstExpVarSubscript extends AstExpVar
-{
+/**
+ * @deprecated DONT USE
+ */
+public class AstExpVarSubscript extends AstExpVar {
 	public AstExpVar var;
 	public AstExp subscript;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpVarSubscript(AstExpVar var, AstExp subscript)
-	{
+	public AstExpVarSubscript(AstExpVar var, AstExp subscript) {
 		System.out.print("====================== var -> var [ exp ]\n");
 		this.var = var;
 		this.subscript = subscript;
@@ -18,8 +19,7 @@ public class AstExpVarSubscript extends AstExpVar
 	/*****************************************************/
 	/* The printing message for a subscript var AST node */
 	/*****************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/*************************************/
 		/* AST NODE TYPE = AST SUBSCRIPT VAR */
 		/*************************************/
@@ -28,7 +28,9 @@ public class AstExpVarSubscript extends AstExpVar
 		/****************************************/
 		/* RECURSIVELY PRINT VAR + SUBSRIPT ... */
 		/****************************************/
-		if (var != null) var.printMe();
-		if (subscript != null) subscript.printMe();
+		if (var != null)
+			var.printMe();
+		if (subscript != null)
+			subscript.printMe();
 	}
 }

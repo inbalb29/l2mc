@@ -1,5 +1,9 @@
 package ast;
 
+import types.*;
+import symboltable.SymbolTable;
+import Exceptions.SemanticError;
+
 public class AstType extends AstNode {
     public String name;
     public boolean isPrimitive;
@@ -59,5 +63,27 @@ public class AstType extends AstNode {
         AstGraphviz.getInstance().logNode(
                 serialNumber,
                 String.format("TYPE\n%s", name));
+    }
+
+    public Type semantMe() throws SemanticError {
+        if (isPrimitive == true) {
+            if (name == "int") {
+                return TypeInt.getInstance();
+            }
+            if (name == "string") {
+                return TypeString.getInstance();
+            }
+            if (name == "void") {
+                return TypeVoid.getInstance();
+            }
+        }
+
+        Type t = SymbolTable.getInstance().find(name);
+
+        if (t == null) {
+            throw new SemanticError("Type '" + name + "' is undefined\n", lineNumber);
+        }
+
+        return t;
     }
 }

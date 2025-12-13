@@ -1,7 +1,9 @@
 package ast;
 
-public class AstExpCall extends AstExp
-{
+/**
+ * @deprecated DONT USE
+ */
+public class AstExpCall extends AstExp {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
@@ -11,8 +13,7 @@ public class AstExpCall extends AstExp
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstExpCall(String funcName, AstExpList params)
-	{
+	public AstExpCall(String funcName, AstExpList params) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -25,28 +26,28 @@ public class AstExpCall extends AstExp
 	/************************************************/
 	/* The printing message for a call exp AST node */
 	/************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/********************************/
 		/* AST NODE TYPE = AST CALL EXP */
 		/********************************/
-		System.out.format("CALL(%s)\nWITH:\n",funcName);
+		System.out.format("CALL(%s)\nWITH:\n", funcName);
 
 		/***************************************/
 		/* RECURSIVELY PRINT params + body ... */
 		/***************************************/
-		if (params != null) params.printMe();
-		
+		if (params != null)
+			params.printMe();
+
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AstGraphviz.getInstance().logNode(
-                serialNumber,
-			String.format("CALL(%s)\nWITH",funcName));
-		
+				serialNumber,
+				String.format("CALL(%s)\nWITH", funcName));
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		AstGraphviz.getInstance().logEdge(serialNumber,params.serialNumber);
+		AstGraphviz.getInstance().logEdge(serialNumber, params.serialNumber);
 	}
 }

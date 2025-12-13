@@ -4,6 +4,9 @@ import types.*;
 import symboltable.*;
 import Exceptions.SemanticError;
 
+/**
+ * @deprecated DONT USE
+ */
 public class AstExpVarSimple extends AstExpVar {
 	/************************/
 	/* simple variable name */

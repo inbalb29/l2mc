@@ -2,19 +2,20 @@ package ast;
 
 import types.*;
 
-public class AstTypeNameList extends AstNode
-{
+/**
+ * @deprecated DONT USE
+ */
+public class AstTypeNameList extends AstNode {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
 	public AstTypeName head;
 	public AstTypeNameList tail;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AstTypeNameList(AstTypeName head, AstTypeNameList tail)
-	{
+	public AstTypeNameList(AstTypeName head, AstTypeNameList tail) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -27,8 +28,7 @@ public class AstTypeNameList extends AstNode
 	/******************************************************/
 	/* The printing message for a type name list AST node */
 	/******************************************************/
-	public void printMe()
-	{
+	public void printMe() {
 		/**************************************/
 		/* AST NODE TYPE = AST TYPE NAME LIST */
 		/**************************************/
@@ -37,36 +37,36 @@ public class AstTypeNameList extends AstNode
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (head != null) head.printMe();
-		if (tail != null) tail.printMe();
+		if (head != null)
+			head.printMe();
+		if (tail != null)
+			tail.printMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
 		AstGraphviz.getInstance().logNode(
 				serialNumber,
-			"TYPE-NAME\nLIST\n");
-		
+				"TYPE-NAME\nLIST\n");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (head != null) AstGraphviz.getInstance().logEdge(serialNumber,head.serialNumber);
-		if (tail != null) AstGraphviz.getInstance().logEdge(serialNumber,tail.serialNumber);
+		if (head != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, head.serialNumber);
+		if (tail != null)
+			AstGraphviz.getInstance().logEdge(serialNumber, tail.serialNumber);
 	}
 
-	public TypeList semantMe()
-	{
-		if (tail == null)
-		{
+	public TypeList semantMe() {
+		if (tail == null) {
 			return new TypeList(
-				head.semantMe(),
-				null);
-		}
-		else
-		{
+					head.semantMe(),
+					null);
+		} else {
 			return new TypeList(
-				head.semantMe(),
-				tail.semantMe());
+					head.semantMe(),
+					tail.semantMe());
 		}
 	}
 }

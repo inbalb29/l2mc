@@ -2,6 +2,9 @@ package ast;
 
 import types.*;
 
+/**
+ * @deprecated DONT USE
+ */
 public class AstExpList extends AstNode {
 	/****************/
 	/* DATA MEMBERS */

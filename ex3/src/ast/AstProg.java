@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.List;
+import types.*;
 
 public class AstProg extends AstNode {
     public List<AstDec> decs;
@@ -60,5 +61,13 @@ public class AstProg extends AstNode {
             if (dec != null)
                 AstGraphviz.getInstance().logEdge(serialNumber, dec.serialNumber);
         }
+    }
+
+    public Type semantMe() {
+        for (AstDec dec : decs) {
+            dec.semantMe();
+        }
+
+        return null;
     }
 }
