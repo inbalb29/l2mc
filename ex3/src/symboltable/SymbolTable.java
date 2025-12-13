@@ -7,6 +7,7 @@ package symboltable;
 /* GENERAL IMPORTS */
 /*******************/
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 /*******************/
 /* PROJECT IMPORTS */
@@ -333,23 +334,27 @@ public class SymbolTable {
 			/*****************************************/
 			instance.enter("int", TypeInt.getInstance());
 			instance.enter("string", TypeString.getInstance());
-
-			/*************************************/
-			/* [2] How should we handle void ??? */
-			/*************************************/
+			instance.enter("void", TypeVoid.getInstance());
 
 			/***************************************/
-			/* [3] Enter library function PrintInt */
+			/* [2] Enter library function PrintInt */
 			/***************************************/
 			instance.enter(
 					"PrintInt",
 					new TypeFunction(
 							TypeVoid.getInstance(),
 							"PrintInt",
-							new TypeList(
-									TypeInt.getInstance(),
-									null)));
+							Arrays.asList(TypeInt.getInstance())));
 
+			/******************************************/
+			/* [3] Enter library function PrintString */
+			/******************************************/
+			instance.enter(
+					"PrintString",
+					new TypeFunction(
+							TypeVoid.getInstance(),
+							"PrintString",
+							Arrays.asList(TypeString.getInstance())));
 		}
 		return instance;
 	}

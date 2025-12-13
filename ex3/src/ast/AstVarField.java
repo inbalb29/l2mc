@@ -1,7 +1,7 @@
 package ast;
 
-import types.*;
 import Exceptions.SemanticError;
+import types.*;
 
 public class AstVarField extends AstVar {
 	public AstVar var;
@@ -59,37 +59,43 @@ public class AstVarField extends AstVar {
 			AstGraphviz.getInstance().logEdge(serialNumber, var.serialNumber);
 	}
 
-	public Type semantMe() throws SemanticError {
-		Type t = null;
-		TypeClass tc = null;
-
+	@Override
+	public Type semantMe() {
 		/******************************/
 		/* [1] Recursively semant var */
 		/******************************/
-		if (var != null)
+		Type t = null;
+		if (var != null) {
 			t = var.semantMe();
+		}
+
+		if (t == null) {
+			throw new SemanticError("cannot access field of null variable", lineNumber);
+		}
 
 		/*********************************/
 		/* [2] Make sure type is a class */
 		/*********************************/
-		if (t.isClass() == false) {
-			throw new SemanticError("access '" + fieldName + "' field of a non-class variable\n", lineNumber);
-		} else {
-			tc = (TypeClass) t;
+		if (!t.isClass()) {
+			throw new SemanticError("access '" + fieldName + "' field of a non-class variable", lineNumber);
 		}
+
+		TypeClass tc = (TypeClass) t;
 
 		/************************************/
 		/* [3] Look for fiedlName inside tc */
 		/************************************/
-		for (TypeList it = tc.dataMembers; it != null; it = it.tail) {
-			if (it.head.name == fieldName) {
-				return it.head;
-			}
+		TypeClassVarDec memberType = tc.findMember(fieldName);
+
+		if (memberType == null) {
+			throw new SemanticError("field '" + fieldName + "' does not exist in class '" + tc.name + "'", lineNumber);
 		}
 
-		/*********************************************/
-		/* [4] fieldName does not exist in class var */
-		/*********************************************/
-		throw new SemanticError("field '" + fieldName + "' does not exist in class\n", lineNumber);
+		if (memberType.t instanceof TypeFunction) {
+			return ((TypeFunction) memberType.t).returnType;
+		}
+
+		// If it's a field, return the actual field type
+		return memberType.t;
 	}
 }
