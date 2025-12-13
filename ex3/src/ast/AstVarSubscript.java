@@ -1,8 +1,5 @@
 package ast;
 
-/**
- * @deprecated DONT USE
- */
 public class AstVarSubscript extends AstVar {
 	public AstVar var;
 	public AstExp subscript;

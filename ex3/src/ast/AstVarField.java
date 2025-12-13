@@ -3,9 +3,6 @@ package ast;
 import types.*;
 import Exceptions.SemanticError;
 
-/**
- * @deprecated DONT USE
- */
 public class AstVarField extends AstVar {
 	public AstVar var;
 	public String fieldName;
