@@ -80,12 +80,30 @@ public class AstStmtAssign extends AstStmt {
 
 		if (!varType.isClass() && !varType.isArray() && expType.isVoid()) {
 			throw new SemanticError(
-					"type '" + varType + "' cannot be assigned NIL\n",
+					"type '" + varType.name + "' cannot be assigned NIL\n",
 					lineNumber);
 		}
 
-		if (expType.isArray()) {
-			// TODO
+		if (expType.isArray() && !varType.isArray()) {
+			throw new SemanticError("non array type '" + varType.name + "' cannon be assigned array\n",
+					lineNumber);
+		}
+
+		if (varType.isArray() && expType.isArray()) {
+			if (varType.name != expType.name) {
+				throw new SemanticError(
+						"mismatching array types '" + varType.name + "', '" + expType.name +
+								"' for variable assignment\n",
+						lineNumber);
+			}
+
+			if (((TypeArray) varType).innerType.name != ((TypeArray) expType).innerType.name) {
+				throw new SemanticError(
+						"mismatching array inner types '" + ((TypeArray) varType).innerType.name +
+								"', '" + ((TypeArray) expType).innerType.name +
+								"' for variable assignment\n",
+						lineNumber);
+			}
 		}
 
 		if (varType.isClass() && expType.isClass()) {
@@ -94,13 +112,14 @@ public class AstStmtAssign extends AstStmt {
 					return null;
 				}
 			}
-			throw new SemanticError("assignment of mismatching classes '" + varType + "', '" + expType + "'\n",
+			throw new SemanticError(
+					"assignment of mismatching classes '" + varType.name + "', '" + expType.name + "'\n",
 					lineNumber);
 		}
 
 		if (varType != expType) {
 			throw new SemanticError(
-					"mismatching types '" + varType + "', '" + expType + "' for variable assignment\n",
+					"mismatching types '" + varType.name + "', '" + expType.name + "' for variable assignment\n",
 					lineNumber);
 		}
 		return null;

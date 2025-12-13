@@ -71,8 +71,8 @@ public class AstTypedef extends AstDec {
         /*************************************************/
         /* [2] Verify array type defined in global scope */
         /*************************************************/
-        if (SymbolTable.getInstance().getLocalScope() != null) {
-            throw new SemanticError("Array type cannot be declared inside non global scope\n", lineNumber);
+        if (!SymbolTable.getInstance().inGlobalScope()) {
+            throw new SemanticError("array type cannot be declared inside non global scope\n", lineNumber);
         }
 
         /***************************************************/

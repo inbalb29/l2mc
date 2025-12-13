@@ -105,7 +105,8 @@ public class AstCallExp extends AstExp {
             Type t = null;
 
             // If inside a class, try to resolve as a member (method) first
-            if (SymbolTable.getInstance().getLocalScope() instanceof TypeClass currentClass) {
+            TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
+            if (currentClass != null) {
                 TypeClassVarDec varDec = currentClass.findMember(funcName);
                 if (varDec != null) {
                     if (!(varDec.t instanceof TypeFunction)) {

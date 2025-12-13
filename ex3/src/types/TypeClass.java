@@ -24,6 +24,21 @@ public class TypeClass extends Type {
 		this.dataMembers = dataMembers;
 	}
 
+	@Override
+	public boolean isClass() {
+		return true;
+	}
+
+	public boolean isSubClassOf(TypeClass other) {
+		if (this == other) {
+			return true;
+		}
+		if (father != null) {
+			return father.isSubClassOf(other);
+		}
+		return false;
+	}
+
 	public TypeClassVarDec findMemberInThisClass(String name) {
 		for (TypeClassVarDec member : dataMembers) {
 			if (member.name != null && member.name.equals(name)) {

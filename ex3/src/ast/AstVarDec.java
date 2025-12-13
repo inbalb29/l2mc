@@ -97,7 +97,9 @@ public class AstVarDec extends AstDec {
 
         initType = initExp.semantMe();
         if (initType != t) {
-            throw new SemanticError("expression type '" + initType + "' does not match variable type '" + t + "'\n", lineNumber);
+            throw new SemanticError(
+                    "expression type '" + initType.name + "' does not match variable type '" + t.name + "'\n",
+                    lineNumber);
         }
 
         /************************************************/

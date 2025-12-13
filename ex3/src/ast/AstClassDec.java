@@ -88,7 +88,7 @@ public class AstClassDec extends AstDec {
             throw new SemanticError("type name  '" + name + "' already exists", lineNumber);
         }
 
-        if (SymbolTable.getInstance().getLocalScope() != null) {
+        if (!SymbolTable.getInstance().inGlobalScope()) {
             throw new SemanticError("Class '" + name + "' cannot be declared inside non global scope", lineNumber);
         }
         /*****************************************************************************************/
@@ -124,7 +124,7 @@ public class AstClassDec extends AstDec {
         /* [4] Begin Class Scope */
         /*************************/
         SymbolTable.getInstance().beginScope();
-        SymbolTable.getInstance().setLocalScope(t);
+        SymbolTable.getInstance().setCurrentClass(t);
 
         /*****************************************************************************************/
         /*
@@ -165,6 +165,7 @@ public class AstClassDec extends AstDec {
 
                 // Add valid datamember to class type
                 t.addDataMember(dataMember);
+                SymbolTable.getInstance().enter(dataMember.name, dataMemberType);
 
             } else if (field instanceof AstFuncDec funcDec) {
                 dataMemberType = funcDec.semantMe();
@@ -219,13 +220,14 @@ public class AstClassDec extends AstDec {
                 // class hasn't already declared dataMember AND ancestor also declared
                 // datamember as a method with the exact same signature
                 t.addDataMember(dataMember);
+                SymbolTable.getInstance().enter(dataMember.name, dataMemberType);
             }
         }
 
         /*****************/
         /* [6] End Scope */
         /*****************/
-        SymbolTable.getInstance().setLocalScope(null);
+        SymbolTable.getInstance().setCurrentClass(null);
         SymbolTable.getInstance().endScope();
 
         /*********************************************************/

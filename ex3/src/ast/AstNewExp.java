@@ -2,6 +2,7 @@ package ast;
 
 import types.*;
 import symboltable.SymbolTable;
+import Exceptions.SemanticError;
 
 public class AstNewExp extends AstExp {
     public AstType type;
@@ -67,6 +68,17 @@ public class AstNewExp extends AstExp {
     }
 
     public Type semantMe() {
+        Type newType = type.semantMe();
+        Type sizeExpType = sizeExp.semantMe();
 
+        if (newType.isArray() && !sizeExpType.isInt()) {
+            throw new SemanticError("array allocation size expression must be integer\n", lineNumber);
+        }
+
+        if (newType.isArray() && ((AstExpInt) sizeExp).value <= 0) {
+            throw new SemanticError("array allocation size expression must be greater than 0\n", lineNumber);
+        }
+
+        return newType;
     }
 }

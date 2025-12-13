@@ -83,16 +83,15 @@ public class AstFuncDec extends AstDec {
     }
 
     public Type semantMe() throws SemanticError {
-        String returnTypeName = returnType.name;
         Type returnType = null;
         List<Type> paramTypeList = new java.util.ArrayList<Type>();
 
         /*******************/
         /* [0] return type */
         /*******************/
-        returnType = SymbolTable.getInstance().find(returnTypeName);
+        returnType = SymbolTable.getInstance().find(this.returnType.name);
         if (returnType == null) {
-            throw new SemanticError("Non existing return type '" + returnTypeName + "' for function '" +
+            throw new SemanticError("non existing return type '" + this.returnType.name + "' for function '" +
                     name + "'\n", lineNumber);
         }
 
@@ -108,7 +107,7 @@ public class AstFuncDec extends AstDec {
             Type paramType = param.semantMe();
 
             if (paramType == null) {
-                throw new SemanticError("Non existing type '" + param.type.name +
+                throw new SemanticError("non existing type '" + param.type.name +
                         "' in function declaration\n", lineNumber);
             } else {
                 paramTypeList.add(paramType);
