@@ -1,8 +1,8 @@
 package ast;
 
-import types.*;
-import symboltable.SymbolTable;
 import Exceptions.SemanticError;
+import symboltable.SymbolTable;
+import types.*;
 
 public class AstType extends AstNode {
     public String name;
@@ -65,15 +65,16 @@ public class AstType extends AstNode {
                 String.format("TYPE\n%s", name));
     }
 
-    public Type semantMe() throws SemanticError {
+    @Override
+    public Type semantMe() {
         if (isPrimitive == true) {
-            if (name == "int") {
+            if (name.equals("int")) {
                 return TypeInt.getInstance();
             }
-            if (name == "string") {
+            if (name.equals("string")) {
                 return TypeString.getInstance();
             }
-            if (name == "void") {
+            if (name.equals("void")) {
                 return TypeVoid.getInstance();
             }
         }

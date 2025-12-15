@@ -1,7 +1,7 @@
 package ast;
 
-import types.*;
 import Exceptions.SemanticError;
+import types.*;
 
 public class AstStmtAssign extends AstStmt {
 	/***************/

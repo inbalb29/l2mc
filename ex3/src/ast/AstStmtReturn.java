@@ -1,8 +1,8 @@
 package ast;
 
-import types.*;
-import symboltable.SymbolTable;
 import Exceptions.SemanticError;
+import symboltable.SymbolTable;
+import types.*;
 
 public class AstStmtReturn extends AstStmt {
     public AstExp exp; // null for simple RETURN, non-null for RETURN exp
@@ -70,13 +70,13 @@ public class AstStmtReturn extends AstStmt {
 
         Type returnType = currFunc.returnType;
 
-        if (returnType == TypeVoid.getInstance()) {
+        if (returnType.isVoid()) {
             // Void function: return statement must be empty
             if (exp != null) {
                 throw new SemanticError("void function cannot return a value", lineNumber);
             }
         } else {
-            // Non-void function: must return a statement of campatible type
+            // Non-void function: must return a value of compatible type
             if (exp == null) {
                 throw new SemanticError("non-void function must return a value", lineNumber);
             }
@@ -94,8 +94,8 @@ public class AstStmtReturn extends AstStmt {
 
     private static boolean isReturnCompatible(Type returnType, Type expType, AstExp exp) {
         // Nil can be returned for array and class return types
-        if (expType == TypeNil.getInstance()) {
-            return (returnType.isArray() || returnType.isClass());
+        if (expType.isNil()) {
+            return returnType.isArray() || returnType.isClass();
         }
 
         // Same type
@@ -106,7 +106,7 @@ public class AstStmtReturn extends AstStmt {
         if (returnType.isClass() && expType.isClass()) {
             TypeClass returnClass = (TypeClass) returnType;
             TypeClass expClass = (TypeClass) expType;
-            return expClass.isSubClassOf(returnClass);
+            return expClass.isSubclassOf(returnClass);
         }
 
         return false;

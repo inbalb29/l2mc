@@ -1,8 +1,8 @@
 package ast;
 
-import types.*;
-import symboltable.SymbolTable;
 import Exceptions.SemanticError;
+import symboltable.SymbolTable;
+import types.*;
 
 public class AstNewExp extends AstExp {
     public AstType type;
@@ -67,6 +67,7 @@ public class AstNewExp extends AstExp {
             AstGraphviz.getInstance().logEdge(serialNumber, sizeExp.serialNumber);
     }
 
+    @Override
     public Type semantMe() {
         Type t = type.semantMe();
 
@@ -74,7 +75,7 @@ public class AstNewExp extends AstExp {
             /* Array allocation: new T[e] */
 
             Type sizeType = sizeExp.semantMe();
-            if (sizeType != TypeInt.getInstance()) {
+            if (!sizeType.isInt()) {
                 throw new SemanticError("array size must be of type int", lineNumber);
             }
 

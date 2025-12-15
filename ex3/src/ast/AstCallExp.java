@@ -153,8 +153,8 @@ public class AstCallExp extends AstExp {
     }
 
     private static boolean isArgumentCompatible(Type paramType, Type argType, AstExp argExp) {
-        if (argType == TypeNil.getInstance()) {
-            return paramType.isClass() || paramType.isArray();
+        if (argType.isNil()) {
+            return paramType.isArray() || paramType.isClass();
         }
 
         if (paramType == argType) {
@@ -164,7 +164,7 @@ public class AstCallExp extends AstExp {
         if (paramType.isClass() && argType.isClass()) {
             TypeClass paramClass = (TypeClass) paramType;
             TypeClass argClass = (TypeClass) argType;
-            return argClass.isSubClassOf(paramClass);
+            return argClass.isSubclassOf(paramClass);
         }
 
         return false;

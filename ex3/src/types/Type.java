@@ -32,4 +32,8 @@ public abstract class Type {
 	public boolean isVoid() {
 		return false;
 	}
+
+	public boolean isNil() {
+		return false;
+	}
 }

@@ -2,11 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
 
 import Exceptions.SemanticError;
-import java_cup.runtime.Symbol;
 import symboltable.SymbolTable;
 import types.*;
 

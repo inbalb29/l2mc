@@ -115,7 +115,7 @@ public class SymbolTable {
 	}
 
 	/***************************************************************************/
-	/* begine scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
+	/* begin scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
 	/***************************************************************************/
 	public void beginScope() {
 		/************************************************************************/
@@ -149,7 +149,7 @@ public class SymbolTable {
 		/**************************************************************************/
 		/* Pop elements from the symbol table stack until a SCOPE-BOUNDARY is hit */
 		/**************************************************************************/
-		while (top.name != "SCOPE-BOUNDARY") {
+		while (top != null && !top.name.equals("SCOPE-BOUNDARY")) {
 			table[top.index] = top.next;
 			topIndex = topIndex - 1;
 			top = top.prevtop;
@@ -157,9 +157,11 @@ public class SymbolTable {
 		/**************************************/
 		/* Pop the SCOPE-BOUNDARY sign itself */
 		/**************************************/
-		table[top.index] = top.next;
-		topIndex = topIndex - 1;
-		top = top.prevtop;
+		if (top != null) {
+			table[top.index] = top.next;
+			topIndex = topIndex - 1;
+			top = top.prevtop;
+		}
 
 		/************************/
 		/* Decrease Scope Depth */

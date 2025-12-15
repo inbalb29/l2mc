@@ -63,6 +63,7 @@ public class AstProg extends AstNode {
         }
     }
 
+    @Override
     public Type semantMe() {
         for (AstDec dec : decs) {
             if (dec != null) {

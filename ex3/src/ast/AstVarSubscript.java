@@ -1,7 +1,7 @@
 package ast;
 
-import types.*;
 import Exceptions.SemanticError;
+import types.*;
 
 public class AstVarSubscript extends AstVar {
 	public AstVar var;

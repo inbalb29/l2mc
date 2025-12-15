@@ -2,9 +2,9 @@ package ast;
 
 import java.util.List;
 
-import types.*;
-import symboltable.*;
 import Exceptions.SemanticError;
+import symboltable.*;
+import types.*;
 
 public class AstStmtIf extends AstStmt {
 	public AstExp cond;
@@ -93,7 +93,8 @@ public class AstStmtIf extends AstStmt {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/
-		if (cond.semantMe() != TypeInt.getInstance()) {
+		Type condType = cond.semantMe();
+		if (!condType.isInt()) {
 			throw new SemanticError("condition inside if statement must be of type int", lineNumber);
 		}
 

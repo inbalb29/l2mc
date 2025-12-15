@@ -1,8 +1,8 @@
 package ast;
 
-import types.*;
-import symboltable.SymbolTable;
 import Exceptions.SemanticError;
+import symboltable.SymbolTable;
+import types.*;
 
 public class AstTypedef extends AstDec {
     public String name;
@@ -80,7 +80,7 @@ public class AstTypedef extends AstDec {
         /* [3] Create array type and enter to symbol table */
         /***************************************************/
         Type innerType = elementType.semantMe();
-        if (innerType == TypeVoid.getInstance()) {
+        if (innerType.isVoid()) {
             throw new SemanticError("array cannot have be of type void", lineNumber);
         }
 

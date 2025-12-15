@@ -3,10 +3,9 @@ package ast;
 import java.util.ArrayList;
 import java.util.List;
 
+import Exceptions.SemanticError;
 import symboltable.SymbolTable;
 import types.*;
-import Exceptions.SemanticError;
-import java_cup.runtime.Symbol;
 
 public class AstFuncDec extends AstDec {
     public AstType returnType;
@@ -105,7 +104,7 @@ public class AstFuncDec extends AstDec {
             if (paramType == null) {
                 throw new SemanticError("parameter type '" + param.type.name + "' does not exist", lineNumber);
             }
-            if (paramType == TypeVoid.getInstance()) {
+            if (paramType.isVoid()) {
                 throw new SemanticError("parameter type cannot be void", lineNumber);
             }
             paramTypes.add(paramType);

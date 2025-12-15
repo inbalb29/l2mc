@@ -107,7 +107,7 @@ public class AstVarField extends AstVar {
 			throw new SemanticError("field '" + fieldName + "' not found in '" + tc.name + "'", lineNumber);
 		}
 
-		// If its a method return the methods return type
+		// If it's a method, return the methods return type
 		if (memberType.t instanceof TypeFunction) {
 			return ((TypeFunction) memberType.t).returnType;
 		}

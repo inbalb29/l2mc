@@ -1,8 +1,8 @@
 package ast;
 
+import Exceptions.SemanticError;
 import symboltable.SymbolTable;
 import types.*;
-import Exceptions.SemanticError;
 
 public class AstVarDec extends AstDec {
     public AstType type;
@@ -83,7 +83,7 @@ public class AstVarDec extends AstDec {
         }
 
         Type varType = type.semantMe();
-        if (varType == TypeVoid.getInstance()) {
+        if (varType.isVoid()) {
             throw new SemanticError("variable cannot be declared with type void", lineNumber);
         }
 
@@ -101,7 +101,7 @@ public class AstVarDec extends AstDec {
         /* [3] Enter the Identifier to the Symbol Table */
         if (SymbolTable.getInstance().getCurrentClass() == null
                 || SymbolTable.getInstance().getCurrentFunction() != null) {
-            // Normal variable declaration. Members are entered in classDec */
+            // Normal variable declaration. Members are entered in classDec
             SymbolTable.getInstance().enter(name, varType);
         }
 
@@ -109,9 +109,9 @@ public class AstVarDec extends AstDec {
     }
 
     public static boolean isAssignmentCompatible(Type lhs, Type rhs, AstExp rhsExp) {
-        // Nil can be asigned to class or array types
-        if (rhs == TypeNil.getInstance()) {
-            return lhs.isClass() || lhs.isArray();
+        // Nil can be assigned to arrays and classes
+        if (rhs.isNil()) {
+            return lhs.isArray() || lhs.isClass();
         }
 
         if (rhsExp instanceof AstNewExp newExp) {
@@ -137,7 +137,7 @@ public class AstVarDec extends AstDec {
 
                 TypeClass lhsClass = (TypeClass) lhs;
                 TypeClass rhsClass = (TypeClass) classType;
-                return rhsClass.isSubClassOf(lhsClass);
+                return rhsClass.isSubclassOf(lhsClass);
             }
         }
 
@@ -149,7 +149,7 @@ public class AstVarDec extends AstDec {
         if (lhs.isClass() && rhs.isClass()) {
             TypeClass lhsClass = (TypeClass) lhs;
             TypeClass rhsClass = (TypeClass) rhs;
-            return rhsClass.isSubClassOf(lhsClass);
+            return rhsClass.isSubclassOf(lhsClass);
         }
 
         return false;

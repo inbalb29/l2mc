@@ -83,10 +83,10 @@ public class AstExpBinop extends AstExp {
 		switch (op) {
 			case PLUS:
 				// + can be int + int or string + string
-				if (t1 == TypeInt.getInstance() && t2 == TypeInt.getInstance()) {
+				if (t1.isInt() && t2.isInt()) {
 					return TypeInt.getInstance();
 				}
-				if (t1 == TypeString.getInstance() && t2 == TypeString.getInstance()) {
+				if (t1.isString() && t2.isString()) {
 					return TypeString.getInstance();
 				}
 				throw new SemanticError("invalid operand type for + operator", lineNumber);
@@ -95,13 +95,13 @@ public class AstExpBinop extends AstExp {
 			case LT:
 			case GT:
 				// Only int operands allowed
-				if (t1 == TypeInt.getInstance() && t2 == TypeInt.getInstance()) {
+				if (t1.isInt() && t2.isInt()) {
 					return TypeInt.getInstance();
 				}
 				throw new SemanticError("invalid operand type for " + op.getSymbol() + " operator", lineNumber);
 			case DIVIDE:
 				// Only int operands allowed, and right operand cannot be constant zero
-				if (t1 != TypeInt.getInstance() || t2 != TypeInt.getInstance()) {
+				if (!t1.isInt() || !t2.isInt()) {
 					throw new SemanticError("invalid operand type for / operator", lineNumber);
 				}
 				if (right instanceof AstExpInt) {
@@ -124,13 +124,13 @@ public class AstExpBinop extends AstExp {
 	 */
 	private Type checkEqualityCompatibility(Type t1, Type t2) {
 		// nil can be compared with arrays and classes
-		if (t1 == TypeNil.getInstance()) {
+		if (t1.isNil()) {
 			if (t2.isArray() || t2.isClass()) {
 				return TypeInt.getInstance();
 			}
 			throw new SemanticError("cannot compare nil with non-array/non-class type", lineNumber);
 		}
-		if (t2 == TypeNil.getInstance()) {
+		if (t2.isNil()) {
 			if (t1.isArray() || t1.isClass()) {
 				return TypeInt.getInstance();
 			}
@@ -138,7 +138,7 @@ public class AstExpBinop extends AstExp {
 		}
 
 		// Primitive types: must be exactly same type
-		if (t1 == TypeInt.getInstance() || t1 == TypeString.getInstance()) {
+		if (t1.isInt() || t1.isString()) {
 			if (t1 == t2) {
 				return TypeInt.getInstance();
 			}
@@ -157,7 +157,7 @@ public class AstExpBinop extends AstExp {
 		if (t1.isClass() && t2.isClass()) {
 			TypeClass c1 = (TypeClass) t1;
 			TypeClass c2 = (TypeClass) t2;
-			if (c1.isSubClassOf(c2) || c2.isSubClassOf(c1)) {
+			if (c1.isSubclassOf(c2) || c2.isSubclassOf(c1)) {
 				return TypeInt.getInstance();
 			}
 			throw new SemanticError("class types are not comparable", lineNumber);

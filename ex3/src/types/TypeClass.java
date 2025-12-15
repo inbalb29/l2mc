@@ -21,7 +21,7 @@ public class TypeClass extends Type {
 	public TypeClass(TypeClass father, String name, List<TypeClassVarDec> dataMembers) {
 		this.name = name;
 		this.father = father;
-		this.dataMembers = dataMembers;
+		this.dataMembers = dataMembers != null ? dataMembers : List.of();
 	}
 
 	@Override
@@ -29,38 +29,19 @@ public class TypeClass extends Type {
 		return true;
 	}
 
-	public boolean isSubClassOf(TypeClass other) {
+	public boolean isSubclassOf(TypeClass other) {
 		if (this == other) {
 			return true;
 		}
 		if (father != null) {
-			return father.isSubClassOf(other);
+			return father.isSubclassOf(other);
 		}
 		return false;
 	}
 
-	public TypeClassVarDec findMemberInThisClass(String name) {
-		for (TypeClassVarDec member : dataMembers) {
-			if (member.name != null && member.name.equals(name)) {
-				return member;
-			}
-		}
-		return null;
-	}
-
-	/*****************************************************************************************/
-	/*
-	 * Method Overriding Validation Logic:
-	 * We only need to check the nearest ancestor (immediate superclass).
-	 * * Reasoning (Transitivity):
-	 * 1. The superclass is already semantically valid.
-	 * 2. If the superclass overrides a method from a grandparent, their signatures
-	 * match.
-	 * 3. Therefore, if the current class matches the superclass signature, it
-	 * implicitly
-	 * matches the grandparent signature as well and so on and so forth.
+	/**
+	 * Find a member (field or method) in this class or its superclasses
 	 */
-	/*****************************************************************************************/
 	public TypeClassVarDec findMember(String name) {
 		// Search in this class's data members
 		for (TypeClassVarDec member : dataMembers) {
@@ -71,6 +52,18 @@ public class TypeClass extends Type {
 		// Search in parent class
 		if (father != null) {
 			return father.findMember(name);
+		}
+		return null;
+	}
+
+	/**
+	 * Find a member only in this class (not superclasses)
+	 */
+	public TypeClassVarDec findMemberInThisClass(String name) {
+		for (TypeClassVarDec member : dataMembers) {
+			if (member.name != null && member.name.equals(name)) {
+				return member;
+			}
 		}
 		return null;
 	}

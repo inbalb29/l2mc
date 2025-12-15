@@ -22,4 +22,9 @@ public class TypeNil extends Type {
         }
         return instance;
     }
+
+    @Override
+    public boolean isNil() {
+        return true;
+    }
 }

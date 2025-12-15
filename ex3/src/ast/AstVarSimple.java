@@ -1,8 +1,8 @@
 package ast;
 
+import Exceptions.SemanticError;
 import symboltable.SymbolTable;
 import types.*;
-import Exceptions.SemanticError;
 
 public class AstVarSimple extends AstVar {
 	/************************/

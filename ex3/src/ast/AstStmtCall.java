@@ -57,7 +57,7 @@ public class AstStmtCall extends AstStmt {
 
     public Type semantMe() {
         if (callExp != null) {
-            return callExp.semantMe();
+            callExp.semantMe();
         }
         return null;
     }
