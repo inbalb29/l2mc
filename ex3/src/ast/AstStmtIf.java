@@ -94,7 +94,7 @@ public class AstStmtIf extends AstStmt {
 		/* [0] Semant the Condition */
 		/****************************/
 		if (cond.semantMe() != TypeInt.getInstance()) {
-			throw new SemanticError("condition inside if statement is not integral", lineNumber);
+			throw new SemanticError("condition inside if statement must be of type int", lineNumber);
 		}
 
 		/*************************/

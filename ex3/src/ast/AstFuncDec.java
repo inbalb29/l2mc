@@ -145,6 +145,6 @@ public class AstFuncDec extends AstDec {
         SymbolTable.getInstance().setCurrentFunction(null);
         SymbolTable.getInstance().endScope();
 
-        return null;
+        return funcType;
     }
 }

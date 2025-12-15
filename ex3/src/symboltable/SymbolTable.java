@@ -30,6 +30,7 @@ public class SymbolTable {
 	// If local scope is null - we're in the global scope.
 	private TypeClass currentClass = null;
 	private TypeFunction currentFunction = null;
+	private int scopeDepth = 0;
 
 	/**************************************************************/
 	/* A very primitive hash function for exposition purposes ... */
@@ -127,6 +128,11 @@ public class SymbolTable {
 				"SCOPE-BOUNDARY",
 				new TypeForScopeBoundaries("NONE"));
 
+		/************************/
+		/* Increase Scope Depth */
+		/************************/
+		scopeDepth++;
+
 		/*********************************************/
 		/* Print the symbol table after every change */
 		/*********************************************/
@@ -155,6 +161,11 @@ public class SymbolTable {
 		topIndex = topIndex - 1;
 		top = top.prevtop;
 
+		/************************/
+		/* Decrease Scope Depth */
+		/************************/
+		scopeDepth--;
+
 		/*********************************************/
 		/* Print the symbol table after every change */
 		/*********************************************/
@@ -178,19 +189,97 @@ public class SymbolTable {
 	}
 
 	public boolean inGlobalScope() {
-		return currentClass == null && currentFunction == null;
+		return scopeDepth == 0;
+	}
+
+	/**
+	 * Resolves the closest accessible {@code Type} for the given identifier name,
+	 * following the language's specific scope resolution rules.
+	 * <p>
+	 * The search hierarchy depends on the current scope:
+	 * </p>
+	 * <ul>
+	 * <li>If inside a method: searches Local/Condition/While Blocks ->
+	 * Class/Ancestors -> Global.</li>
+	 * <li>If inside a class (but outside a method): searches Class -> Ancestors ->
+	 * Global.</li>
+	 * <li>If in global/function/condition/while block scope (outside any class):
+	 * searches function/condition/while scope
+	 * then global.</li>
+	 * </ul>
+	 * 
+	 * @param name The identifier name (variable, type, or member) to resolve.
+	 * @return The resolved {@code Type} from the closest scope, or {@code null} if
+	 *         not found.
+	 * 
+	 */
+	public Type resolveClosestType(String name) {
+		// We're in global/function scope, simply look up in symbol table.
+		if (getCurrentClass() == null) {
+			return this.find(name);
+		}
+		// We're inside the scope of a class.
+		else {
+			// We're inside a method, we need to search local scope -> method scope ->
+			// current class -> ancestors -> global
+			if (getCurrentFunction() != null) {
+				// [1] Look in Block Scope (All relevant if, else, while and function scopes to
+				// ensure we check local/block -> class -> global variables)
+				Type t = findInBlockScope(name);
+				if (t != null) {
+					return t;
+				}
+				// [2] Look in Class and Ancestor Scope
+				TypeClassVarDec member = getCurrentClass().findMember(name);
+				if (member != null) {
+					return member.t;
+				}
+				// [3] Look in Global Scope
+				return this.find(name);
+			}
+			// We're not inside a method, we need to search current class -> ancestors ->
+			// global
+			else {
+				// [1] Look in Class and Ancestor Scope
+				TypeClassVarDec member = getCurrentClass().findMember(name);
+				if (member != null) {
+					return member.t;
+				}
+				// [2] Look in Global Scope
+				return this.find(name);
+			}
+		}
 	}
 
 	// findInLocalScope searches the stack for the Symbol until it hits a Scope
 	// Boundary
 	public Type findInLocalScope(String name) {
-
-		for (SymbolTableEntry e = top; e.name.equals("SCOPE-BOUNDARY") != true; e = e.prevtop) {
+		for (SymbolTableEntry e = top; e != null && e.name.equals("SCOPE-BOUNDARY") != true; e = e.prevtop) {
 			if (name.equals(e.name)) {
 				return e.type;
 			}
 		}
 
+		return null;
+	}
+
+	// findInBlockScope searches the stack for the Symbol until it reaches the
+	// global scope to ensure class members are checked before global variables, as
+	// per resolution rules.
+	// Essentially looks through all if, else, while and function scopes,
+	// technically also through current class scope
+	// But that's fine as worst case resolveClosestType will repeat the checks
+	// there, but it ensures that if not found in local scopes,
+	// we still check class members before global variables.
+	public Type findInBlockScope(String name) {
+		int scopeBoundariesTillGlobal = scopeDepth;
+		for (SymbolTableEntry e = top; e != null && scopeBoundariesTillGlobal > 0; e = e.prevtop) {
+			if (name.equals(e.name)) {
+				return e.type;
+			} else if (e.name.equals("SCOPE-BOUNDARY")) {
+				scopeBoundariesTillGlobal--;
+			}
+		}
 		return null;
 	}
 

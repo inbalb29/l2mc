@@ -72,9 +72,6 @@ public class AstNewExp extends AstExp {
 
         if (sizeExp != null) {
             /* Array allocation: new T[e] */
-            if (!t.isArray()) {
-                throw new SemanticError("cannot allocate non-array type '" + type.name + "' with new[]", lineNumber);
-            }
 
             Type sizeType = sizeExp.semantMe();
             if (sizeType != TypeInt.getInstance()) {
@@ -84,6 +81,8 @@ public class AstNewExp extends AstExp {
             if (sizeExp instanceof AstExpInt size && size.value <= 0) {
                 throw new SemanticError("array size must be greater than 0", lineNumber);
             }
+
+            return new TypeArray(t.name + "[]", t);
         } else {
             /* Object allocation: new T */
             if (!t.isClass()) {

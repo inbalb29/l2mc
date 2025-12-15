@@ -105,8 +105,7 @@ public class AstVarDec extends AstDec {
             SymbolTable.getInstance().enter(name, varType);
         }
 
-        // Return value is irrelevant for variable declarations
-        return null;
+        return varType;
     }
 
     public static boolean isAssignmentCompatible(Type lhs, Type rhs, AstExp rhsExp) {

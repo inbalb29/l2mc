@@ -48,10 +48,11 @@ public class AstVarSimple extends AstVar {
 				String.format("SIMPLE\nVAR\n(%s)", name));
 	}
 
+	@Override
 	public Type semantMe() {
 		Type t;
 
-		t = SymbolTable.getInstance().find(name);
+		t = SymbolTable.getInstance().resolveClosestType(name);
 		if (t == null) {
 			throw new SemanticError("variable '" + name + "' is undefined", lineNumber);
 		}

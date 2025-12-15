@@ -62,34 +62,37 @@ public class AstVarSubscript extends AstVar {
 			AstGraphviz.getInstance().logEdge(serialNumber, subscript.serialNumber);
 	}
 
+	@Override
 	public Type semantMe() {
 		/****************************************************************************************************
-		 * Accessing an array: Elements of an array can be accessed using v[e], with the
+		 * Accessing an array: Elements of an array can be accessed using arrType[e],
+		 * with the
 		 * following rules:
-		 * • The type of the variable v must be of an array.
+		 * • The type of the variable arrType must be of an array.
 		 * • The subscript expression e must be of type int.
 		 * • If e is a constant expression, it must be greater than or equal to zero
-		 * • The resulting type is the element type T of the array that v is defined
+		 * • The resulting type is the element type T of the array that arrType is
+		 * defined
 		 * over.
 		 ****************************************************************************************************/
 
 		/*******************************************************************/
-		/* [1] Semant var (i.e. v) and check that its type is indeed class */
+		/* [1] Semant var (i.e. arrType) and check that its type is indeed class */
 		/*******************************************************************/
-		Type v_type = null;
+		Type varType = null;
 		if (var != null) {
-			v_type = var.semantMe();
+			varType = var.semantMe();
 		}
 
-		if (v_type == null) {
-			throw new SemanticError("Cannot find array: '" + var + "', array undefined", lineNumber);
+		if (varType == null) {
+			throw new SemanticError("cannot subscript undefined variable", lineNumber);
 		}
 
-		if (!v_type.isArray()) {
-			throw new SemanticError("Cannot use array notation to access non array object: '" + var + "'", lineNumber);
+		if (!varType.isArray()) {
+			throw new SemanticError("cannot subscript non- array type'" + varType.name + "'", lineNumber);
 		}
 
-		TypeArray v = (TypeArray) v_type;
+		TypeArray arrType = (TypeArray) varType;
 
 		/************************************/
 		/* [2] Verify subscript expression */
@@ -97,29 +100,30 @@ public class AstVarSubscript extends AstVar {
 		/* and if constant then >= 0 */
 		/************************************/
 
-		Type e_type = null;
+		Type subscriptType = null;
 		if (subscript != null) {
-			e_type = subscript.semantMe();
+			subscriptType = subscript.semantMe();
 		}
 
-		if (e_type == null) {
+		if (subscriptType == null) {
 			throw new SemanticError(
-					"Array subscript: '" + subscript + "' not found, cannot access array using undefined identifier ",
+					"Array subscript type not found, cannot access array using undefined identifier ",
 					lineNumber);
 		}
 
-		if (!v_type.isInt()) {
-			throw new SemanticError("Subscript expression: '" + subscript + "' must be of type int", lineNumber);
+		if (!subscriptType.isInt()) {
+			throw new SemanticError("array subscript must be of type int", lineNumber);
 		}
 
-		TypeInt e = (TypeInt) e_type;
+		TypeInt e = (TypeInt) subscriptType;
 
 		// Check if subscript is constant, and if it is verify >= 0.
-		if (subscript instanceof AstExpInt && ((AstExpInt) subscript).value < 0) {
-			throw new SemanticError("Constant subscript expression: '" + subscript + "' must be greater than 0",
+		if (subscript instanceof AstExpInt index && index.value < 0) {
+			throw new SemanticError(
+					"array subscript expression '" + subscriptType.name + "' must be greater than 0",
 					lineNumber);
 		}
 
-		return v.innerType;
+		return arrType.innerType;
 	}
 }

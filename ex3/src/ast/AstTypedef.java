@@ -60,25 +60,30 @@ public class AstTypedef extends AstDec {
             AstGraphviz.getInstance().logEdge(serialNumber, elementType.serialNumber);
     }
 
-    public Type semantMe() throws SemanticError {
+    @Override
+    public Type semantMe() {
         /*********************************************/
         /* [1] Verify array type not already defined */
         /*********************************************/
         if (SymbolTable.getInstance().find(name) != null) {
-            throw new SemanticError("type name  '" + name + "' already exists\n", lineNumber);
+            throw new SemanticError("array type'" + name + "' already exists", lineNumber);
         }
 
         /*************************************************/
         /* [2] Verify array type defined in global scope */
         /*************************************************/
         if (!SymbolTable.getInstance().inGlobalScope()) {
-            throw new SemanticError("array type cannot be declared inside non global scope\n", lineNumber);
+            throw new SemanticError("array type cannot be declared inside non global scope", lineNumber);
         }
 
         /***************************************************/
         /* [3] Create array type and enter to symbol table */
         /***************************************************/
         Type innerType = elementType.semantMe();
+        if (innerType == TypeVoid.getInstance()) {
+            throw new SemanticError("array cannot have be of type void", lineNumber);
+        }
+
         TypeArray t = new TypeArray(name, innerType);
         SymbolTable.getInstance().enter(name, t);
 

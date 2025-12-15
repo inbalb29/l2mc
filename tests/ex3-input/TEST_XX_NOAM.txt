@@ -1,0 +1,14 @@
+class Parent {
+    int z;
+}
+
+class Child extends Parent {
+    void hi() {
+        while (1) {
+            string z := "hello";
+            if (z = "hi") {
+                z := "there";
+            }
+        }
+    }
+}

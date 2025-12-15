@@ -149,20 +149,21 @@ public class AstClassDec extends AstDec {
             Type dataMemberType;
             TypeClassVarDec dataMember;
             if (field instanceof AstVarDec varDec) {
-                varDec.semantMe();
-                dataMemberType = SymbolTable.getInstance().find(varDec.name);
+                dataMemberType = varDec.semantMe();
                 dataMember = new TypeClassVarDec(dataMemberType, varDec.name);
 
                 // No duplicate in same class
-                if (t.findMemberInThisClass(varDec.name) != null) {
-                    throw new SemanticError("Field: '" + varDec.name
-                            + "' already defined as field or method in class. (Shadowing not allowed)", lineNumber);
+                if (t.findMemberInThisClass(dataMember.name) != null) {
+                    throw new SemanticError("Field: '" + dataMember.name
+                            + "' already defined as field or method in class. (Shadowing not allowed)",
+                            field.lineNumber);
                 }
 
                 // No shadowing from parent classes
-                if (t.father != null && t.father.findMember(varDec.name) != null) {
-                    throw new SemanticError("Field: '" + varDec.name
-                            + "' already defined as field or method in superclass (Shadowing not allowed)", lineNumber);
+                if (t.father != null && t.father.findMember(dataMember.name) != null) {
+                    throw new SemanticError("Field: '" + dataMember.name
+                            + "' already defined as field or method in superclass (Shadowing not allowed)",
+                            field.lineNumber);
                 }
 
                 // Add valid datamember to class type
@@ -170,8 +171,7 @@ public class AstClassDec extends AstDec {
                 SymbolTable.getInstance().enter(dataMember.name, dataMemberType);
 
             } else if (field instanceof AstFuncDec funcDec) {
-                funcDec.semantMe();
-                dataMemberType = SymbolTable.getInstance().find(funcDec.name);
+                dataMemberType = funcDec.semantMe();
                 dataMember = new TypeClassVarDec(dataMemberType, funcDec.name);
 
                 // No Method overloading
@@ -179,7 +179,7 @@ public class AstClassDec extends AstDec {
                     throw new SemanticError(
                             "Method: '" + dataMember.name
                                     + "' already defined as field or method in current class (Overloading/Shadowing not allowed)",
-                            lineNumber);
+                            field.lineNumber);
                 }
 
                 TypeClassVarDec ancestorMember;
@@ -206,7 +206,7 @@ public class AstClassDec extends AstDec {
                         if (!mydataMemberFunc.isValidOverride(ancestordataMemberFunc)) {
                             throw new SemanticError("Method: '" + dataMember.name
                                     + "' is an illegal override (different signatures) of an ancestor method.",
-                                    lineNumber);
+                                    field.lineNumber);
                         }
                     }
                     // AncestorMember isn't a function type so must be a field.
@@ -218,7 +218,7 @@ public class AstClassDec extends AstDec {
                     // AstVarDec)
                     else {
                         throw new SemanticError("Method: '" + dataMember.name
-                                + "' already defined as field in ancestor. (Shadowing not allowed).", lineNumber);
+                                + "' already defined as field in ancestor. (Shadowing not allowed).", field.lineNumber);
                     }
                 }
 

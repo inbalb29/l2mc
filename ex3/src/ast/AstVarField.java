@@ -63,9 +63,9 @@ public class AstVarField extends AstVar {
 	public Type semantMe() {
 		/****************************************************************************************************
 		 * Variable Field Access i.e. Accessing a Class Rules
-		 * Members of a class can be accessed using v.f, with the following rules:
+		 * Members of a class can be accessed using tc.f, with the following rules:
 		 *
-		 * • The variable v must have a class type.
+		 * • The variable tc must have a class type.
 		 *
 		 * • The name f must be a previously defined member of that class or one of its
 		 * superclasses.
@@ -78,34 +78,33 @@ public class AstVarField extends AstVar {
 		 ****************************************************************************************************/
 
 		/*******************************************************************/
-		/* [1] Semant var (i.e. v) and check that its type is indeed class */
+		/* [1] Semant var (i.e. tc) and check that its type is indeed class */
 		/*******************************************************************/
-		Type v_type = null;
+		Type t = null;
 		if (var != null) {
-			v_type = var.semantMe();
+			t = var.semantMe();
 		}
 
-		if (v_type == null) {
+		if (t == null) {
 			throw new SemanticError("cannot access field of null variable", lineNumber);
 		}
 
-		if (!v_type.isClass()) {
-			throw new SemanticError("Cannot access field: '" + fieldName + "' of a non-class variable: '" + var + "'",
+		if (!t.isClass()) {
+			throw new SemanticError("cannot access field '" + fieldName + "' of non-class type'" + t.name + "'",
 					lineNumber);
 		}
 
-		TypeClass v = (TypeClass) v_type;
+		TypeClass tc = (TypeClass) t;
 
 		/****************************************/
 		/* [2] Verify thatfieldname (i.e. f) */
 		/* is a previously defined method */
-		/* inside v's class or superclass */
+		/* inside tc's class or superclass */
 		/****************************************/
-		TypeClassVarDec memberType = v.findMember(fieldName);
+		TypeClassVarDec memberType = tc.findMember(fieldName);
 
 		if (memberType == null) {
-			throw new SemanticError("Field: '" + fieldName + "' not previously defined in class: '" + v.name
-					+ "' or one of its superclasses", lineNumber);
+			throw new SemanticError("field '" + fieldName + "' not found in '" + tc.name + "'", lineNumber);
 		}
 
 		// If its a method return the methods return type
