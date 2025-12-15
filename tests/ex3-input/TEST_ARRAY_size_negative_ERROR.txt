@@ -3,6 +3,6 @@ array IntArray = int[];
 
 void main()
 {
-    IntArray arr := new int[0-5];
+    IntArray arr := new int[-5];
     PrintInt(1);
 }

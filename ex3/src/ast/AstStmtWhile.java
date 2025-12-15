@@ -68,7 +68,8 @@ public class AstStmtWhile extends AstStmt {
 		}
 	}
 
-	public Type semantMe() throws SemanticError {
+	@Override
+	public Type semantMe() {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/

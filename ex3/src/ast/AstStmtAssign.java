@@ -69,59 +69,31 @@ public class AstStmtAssign extends AstStmt {
 			AstGraphviz.getInstance().logEdge(serialNumber, exp.serialNumber);
 	}
 
-	public Type semantMe() throws SemanticError {
+	@Override
+	public Type semantMe() {
 		Type varType = null;
 		Type expType = null;
 
-		if (var != null)
+		if (var != null) {
 			varType = var.semantMe();
-		if (exp != null)
+		}
+		if (exp != null) {
 			expType = exp.semantMe();
+		}
 
-		if (!varType.isClass() && !varType.isArray() && expType.isVoid()) {
+		if (varType == null) {
+			throw new SemanticError("assignment to undefined variable", lineNumber);
+		}
+
+		if (expType == null) {
+			throw new SemanticError("invalid expression in assignment", lineNumber);
+		}
+
+		if (!AstVarDec.isAssignmentCompatible(varType, expType, exp)) {
 			throw new SemanticError(
-					"type '" + varType.name + "' cannot be assigned NIL\n",
-					lineNumber);
+					"type mismatch: '" + expType.name + "' cannot be assigned to '" + varType.name + "'", lineNumber);
 		}
 
-		if (expType.isArray() && !varType.isArray()) {
-			throw new SemanticError("non array type '" + varType.name + "' cannon be assigned array\n",
-					lineNumber);
-		}
-
-		if (varType.isArray() && expType.isArray()) {
-			if (varType.name != expType.name) {
-				throw new SemanticError(
-						"mismatching array types '" + varType.name + "', '" + expType.name +
-								"' for variable assignment\n",
-						lineNumber);
-			}
-
-			if (((TypeArray) varType).innerType.name != ((TypeArray) expType).innerType.name) {
-				throw new SemanticError(
-						"mismatching array inner types '" + ((TypeArray) varType).innerType.name +
-								"', '" + ((TypeArray) expType).innerType.name +
-								"' for variable assignment\n",
-						lineNumber);
-			}
-		}
-
-		if (varType.isClass() && expType.isClass()) {
-			for (TypeClass ancestor = (TypeClass) expType; ancestor != null; ancestor = ancestor.father) {
-				if (ancestor.name.equals(varType.name)) {
-					return null;
-				}
-			}
-			throw new SemanticError(
-					"assignment of mismatching classes '" + varType.name + "', '" + expType.name + "'\n",
-					lineNumber);
-		}
-
-		if (varType != expType) {
-			throw new SemanticError(
-					"mismatching types '" + varType.name + "', '" + expType.name + "' for variable assignment\n",
-					lineNumber);
-		}
 		return null;
 	}
 }

@@ -37,7 +37,8 @@ public class AstExpNil extends AstExp {
                 "NIL");
     }
 
+    @Override
     public Type semantMe() {
-        return TypeVoid.getInstance();
+        return TypeNil.getInstance();
     }
 }

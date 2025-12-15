@@ -1,10 +1,12 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import symboltable.SymbolTable;
 import types.*;
 import Exceptions.SemanticError;
+import java_cup.runtime.Symbol;
 
 public class AstFuncDec extends AstDec {
     public AstType returnType;
@@ -82,59 +84,67 @@ public class AstFuncDec extends AstDec {
         }
     }
 
-    public Type semantMe() throws SemanticError {
-        Type returnType = null;
-        List<Type> paramTypeList = new java.util.ArrayList<Type>();
+    @Override
+    public Type semantMe() {
 
-        /*******************/
-        /* [0] return type */
-        /*******************/
-        returnType = SymbolTable.getInstance().find(this.returnType.name);
-        if (returnType == null) {
-            throw new SemanticError("non existing return type '" + this.returnType.name + "' for function '" +
-                    name + "'\n", lineNumber);
+        /* [1] Check if function name already exists in global scope */
+        if (SymbolTable.getInstance().inGlobalScope() && SymbolTable.getInstance().find(name) != null) {
+            throw new SemanticError("function '" + name + "' already exists", lineNumber);
         }
 
-        /****************************/
-        /* [1] Begin Function Scope */
-        /****************************/
-        SymbolTable.getInstance().beginScope();
+        /* [2] Check return type exists */
+        Type retType = SymbolTable.getInstance().find(returnType.name);
+        if (retType == null) {
+            throw new SemanticError("return type '" + returnType.name + "' does not exist", lineNumber);
+        }
 
-        /***************************/
-        /* [2] Semant Input Params */
-        /***************************/
+        /* [3] Build parameter type list and check them */
+        List<Type> paramTypes = new ArrayList<>();
         for (AstParam param : params) {
-            Type paramType = param.semantMe();
-
+            Type paramType = SymbolTable.getInstance().find(param.type.name);
             if (paramType == null) {
-                throw new SemanticError("non existing type '" + param.type.name +
-                        "' in function declaration\n", lineNumber);
-            } else {
-                paramTypeList.add(paramType);
-                SymbolTable.getInstance().enter(param.name, paramType);
+                throw new SemanticError("parameter type '" + param.type.name + "' does not exist", lineNumber);
             }
+            if (paramType == TypeVoid.getInstance()) {
+                throw new SemanticError("parameter type cannot be void", lineNumber);
+            }
+            paramTypes.add(paramType);
         }
 
-        /*******************/
-        /* [3] Semant Body */
-        /*******************/
+        /* [4] Create function type and enter to symbol table */
+        TypeFunction funcType = new TypeFunction(retType, name, paramTypes);
+
+        // Methods are entered into the symbol table when their class is declared
+        if (SymbolTable.getInstance().inGlobalScope()) {
+            SymbolTable.getInstance().enter(name, funcType);
+        }
+
+        /* [5] Begin function scope */
+        SymbolTable.getInstance().beginScope();
+        SymbolTable.getInstance().setCurrentFunction(funcType);
+
+        /* [6] Enter parameters into scope */
+        for (int i = 0; i < params.size(); i++) {
+            AstParam param = params.get(i);
+            if (SymbolTable.getInstance().findInLocalScope(param.name) != null) {
+                throw new SemanticError("duplicate parameter name '" + param.name + "'", lineNumber);
+            }
+            SymbolTable.getInstance().enter(param.name, paramTypes.get(i));
+        }
+
+        /* [7] Semant function body */
         for (AstStmt stmt : body) {
-            stmt.semantMe();
+            if (stmt != null) {
+                stmt.semantMe();
+            }
         }
 
         /*****************/
         /* [4] End Scope */
         /*****************/
+        SymbolTable.getInstance().setCurrentFunction(null);
         SymbolTable.getInstance().endScope();
 
-        /***************************************************/
-        /* [5] Enter the Function Type to the Symbol Table */
-        /***************************************************/
-        SymbolTable.getInstance().enter(name, new TypeFunction(returnType, name, paramTypeList));
-
-        /************************************************************/
-        /* [6] Return value is irrelevant for function declarations */
-        /************************************************************/
         return null;
     }
 }

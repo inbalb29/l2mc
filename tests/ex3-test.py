@@ -10,6 +10,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.resolve() / "ex3"
 INPUT_DIR = Path(__file__).parent / "ex3-input"
 EXPECTED_OUTPUT_DIR = Path(__file__).parent / "ex3-expected_output"
 TEMP_OUTPUT_DIR = Path(__file__).parent / "output"
+ERROR_OUTPUT_DIR = Path(__file__).parent / "ex3-error_output"
 
 def run_command(cmd, cwd=None, check=True):
     """Run a shell command and return the result."""
@@ -59,8 +60,7 @@ def main():
         result = subprocess.run(
             ["java", "-jar", "SEMANT", str(input_file), str(temp_output_file)],
             cwd=PROJECT_ROOT,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True
         )
         
@@ -71,10 +71,10 @@ def main():
         except FileNotFoundError:
             actual_output = ""
         
-        # Check for stderr output
-        if result.stderr.strip():
-            print(f"    ⚠ {input_file.name} - stderr output:")
-            print(f"      {result.stderr.strip()}")
+        # # Check for stderr output
+        # if result.stderr.strip():
+        #     print(f"    ⚠ {input_file.name} - stderr output:")
+        #     print(f"      {result.stderr.strip()}")
         
         # Read the expected output
         with open(expected_output_file, 'r') as f:
@@ -88,6 +88,20 @@ def main():
             print(f"    ✗ {input_file.name}")
             print(f"      - Expected: {repr(expected_output)}")
             print(f"      - Got:      {repr(actual_output)}")
+            err_base = input_file.stem
+            stdout_text = result.stdout or ""
+            stderr_text = result.stderr or ""
+            # Save error outputs if any
+            if stdout_text or stderr_text or result.returncode != 0:
+                ERROR_OUTPUT_DIR.mkdir(exist_ok=True)
+                if stdout_text:
+                    stdout_path = ERROR_OUTPUT_DIR / f"{err_base}_stdout.txt"
+                    stdout_path.write_text(stdout_text)
+                    print(f"      - Saved stdout to {stdout_path.relative_to(Path(__file__).parent)}")
+                if stderr_text:
+                    stderr_path = ERROR_OUTPUT_DIR / f"{err_base}_stderr.txt"
+                    stderr_path.write_text(stderr_text)
+                    print(f"      - Saved stderr to {stderr_path.relative_to(Path(__file__).parent)}")
             failed += 1
     
     # Summary

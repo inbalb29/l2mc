@@ -1,7 +1,6 @@
 package types;
 
-public class TypeString extends Type
-{
+public class TypeString extends Type {
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
@@ -10,18 +9,22 @@ public class TypeString extends Type
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected TypeString() {}
+	protected TypeString() {
+	}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	public static TypeString getInstance()
-	{
-		if (instance == null)
-		{
+	public static TypeString getInstance() {
+		if (instance == null) {
 			instance = new TypeString();
 			instance.name = "string";
 		}
 		return instance;
+	}
+
+	@Override
+	public boolean isString() {
+		return true;
 	}
 }

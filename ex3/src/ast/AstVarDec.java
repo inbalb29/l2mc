@@ -76,40 +76,83 @@ public class AstVarDec extends AstDec {
             AstGraphviz.getInstance().logEdge(serialNumber, initExp.serialNumber);
     }
 
-    public Type semantMe() throws SemanticError {
-        Type t;
-        Type initType;
-
-        /****************************/
-        /* [1] Check If Type exists */
-        /****************************/
-        t = SymbolTable.getInstance().find(type.name);
-        if (t == null) {
-            throw new SemanticError("non existing type '" + type.name + "'\n", lineNumber);
+    @Override
+    public Type semantMe() {
+        if (SymbolTable.getInstance().findInLocalScope(name) != null) {
+            throw new SemanticError("variable '" + name + "' already exists in scope", lineNumber);
         }
 
-        /**************************************/
-        /* [2] Check That Name does NOT exist */
-        /**************************************/
-        if (SymbolTable.getInstance().find(name) != null) {
-            throw new SemanticError("variable '" + name + "' already exists in scope\n", lineNumber);
+        Type varType = type.semantMe();
+        if (varType == TypeVoid.getInstance()) {
+            throw new SemanticError("variable cannot be declared with type void", lineNumber);
         }
 
-        initType = initExp.semantMe();
-        if (initType != t) {
-            throw new SemanticError(
-                    "expression type '" + initType.name + "' does not match variable type '" + t.name + "'\n",
-                    lineNumber);
+        if (initExp != null) {
+            Type initType = initExp.semantMe();
+
+            if (!isAssignmentCompatible(varType, initType, initExp)) {
+                throw new SemanticError(
+                        "initialization type mismatch: '" + initType.name + "' cannot be assigned to '" + varType.name
+                                + "'",
+                        lineNumber);
+            }
         }
 
-        /************************************************/
         /* [3] Enter the Identifier to the Symbol Table */
-        /************************************************/
-        SymbolTable.getInstance().enter(name, t);
+        if (SymbolTable.getInstance().getCurrentClass() == null
+                || SymbolTable.getInstance().getCurrentFunction() != null) {
+            // Normal variable declaration. Members are entered in classDec */
+            SymbolTable.getInstance().enter(name, varType);
+        }
 
-        /************************************************************/
-        /* [4] Return value is irrelevant for variable declarations */
-        /************************************************************/
+        // Return value is irrelevant for variable declarations
         return null;
+    }
+
+    public static boolean isAssignmentCompatible(Type lhs, Type rhs, AstExp rhsExp) {
+        // Nil can be asigned to class or array types
+        if (rhs == TypeNil.getInstance()) {
+            return lhs.isClass() || lhs.isArray();
+        }
+
+        if (rhsExp instanceof AstNewExp newExp) {
+            if (newExp.sizeExp != null) {
+                // Array allocation: lhs must be an array type
+                if (!lhs.isArray()) {
+                    return false;
+                }
+
+                TypeArray arrType = (TypeArray) lhs;
+                Type elemType = newExp.type.semantMe();
+                return arrType.innerType == elemType;
+            } else {
+                // Class allocation: new T
+                if (!lhs.isClass()) {
+                    return false;
+                }
+
+                Type classType = newExp.type.semantMe();
+                if (!classType.isClass()) {
+                    return false;
+                }
+
+                TypeClass lhsClass = (TypeClass) lhs;
+                TypeClass rhsClass = (TypeClass) classType;
+                return rhsClass.isSubClassOf(lhsClass);
+            }
+        }
+
+        if (lhs == rhs) {
+            return true;
+        }
+
+        // For class types, check inheritance
+        if (lhs.isClass() && rhs.isClass()) {
+            TypeClass lhsClass = (TypeClass) lhs;
+            TypeClass rhsClass = (TypeClass) rhs;
+            return rhsClass.isSubClassOf(lhsClass);
+        }
+
+        return false;
     }
 }

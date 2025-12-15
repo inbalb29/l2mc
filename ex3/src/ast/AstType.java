@@ -79,9 +79,12 @@ public class AstType extends AstNode {
         }
 
         Type t = SymbolTable.getInstance().find(name);
-
         if (t == null) {
-            throw new SemanticError("type '" + name + "' is undefined\n", lineNumber);
+            throw new SemanticError("type '" + name + "' does not exist", lineNumber);
+        }
+
+        if (!t.isClass() && !t.isArray()) {
+            throw new SemanticError("type '" + name + "' is not a valid type", lineNumber);
         }
 
         return t;

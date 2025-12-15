@@ -61,21 +61,22 @@ public class Main {
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
 		} catch (LexerError e) {
-			writeError(outputFileName, "ERROR");
+			writeError(outputFileName, "ERROR", e);
 		} catch (ParserError e) {
-			writeError(outputFileName, "ERROR(" + e.getLine() + ")");
+			writeError(outputFileName, "ERROR(" + e.getLine() + ")", e);
 		} catch (SemanticError e) {
-			writeError(outputFileName, "ERROR(" + e.getLine() + ")");
+			writeError(outputFileName, "ERROR(" + e.getLine() + ")", e);
 		} catch (Throwable e) {
-			writeError(outputFileName, "ERROR");
+			writeError(outputFileName, "ERROR", e);
 		}
 	}
 
-	private static void writeError(String outputFileName, String errorMessage) {
+	private static void writeError(String outputFileName, String errorMessage, Throwable e) {
 		try (PrintWriter errorWriter = new PrintWriter(outputFileName)) {
 			errorWriter.print(errorMessage);
 		} catch (FileNotFoundException ex) {
 			ex.printStackTrace();
 		}
+		e.printStackTrace();
 	}
 }

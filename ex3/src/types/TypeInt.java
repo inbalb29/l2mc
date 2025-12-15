@@ -1,7 +1,6 @@
 package types;
 
-public class TypeInt extends Type
-{
+public class TypeInt extends Type {
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
@@ -10,18 +9,22 @@ public class TypeInt extends Type
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected TypeInt() {}
+	protected TypeInt() {
+	}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	public static TypeInt getInstance()
-	{
-		if (instance == null)
-		{
+	public static TypeInt getInstance() {
+		if (instance == null) {
 			instance = new TypeInt();
 			instance.name = "int";
 		}
 		return instance;
+	}
+
+	@Override
+	public boolean isInt() {
+		return true;
 	}
 }

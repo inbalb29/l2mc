@@ -43,6 +43,7 @@ public class AstExpString extends AstExp {
 				String.format("STRING\n\"%s\"", value));
 	}
 
+	@Override
 	public Type semantMe() {
 		return TypeString.getInstance();
 	}

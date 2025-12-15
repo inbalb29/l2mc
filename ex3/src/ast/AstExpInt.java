@@ -43,6 +43,7 @@ public class AstExpInt extends AstExp {
 				String.format("INT(%d)", value));
 	}
 
+	@Override
 	public Type semantMe() {
 		return TypeInt.getInstance();
 	}

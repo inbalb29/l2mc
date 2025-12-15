@@ -61,41 +61,60 @@ public class AstVarField extends AstVar {
 
 	@Override
 	public Type semantMe() {
-		/******************************/
-		/* [1] Recursively semant var */
-		/******************************/
-		Type t = null;
+		/****************************************************************************************************
+		 * Variable Field Access i.e. Accessing a Class Rules
+		 * Members of a class can be accessed using v.f, with the following rules:
+		 *
+		 * • The variable v must have a class type.
+		 *
+		 * • The name f must be a previously defined member of that class or one of its
+		 * superclasses.
+		 *
+		 *
+		 * • The resulting type is the field's type (for fields) or the method's return
+		 * type (for methods).
+		 *
+		 * /
+		 ****************************************************************************************************/
+
+		/*******************************************************************/
+		/* [1] Semant var (i.e. v) and check that its type is indeed class */
+		/*******************************************************************/
+		Type v_type = null;
 		if (var != null) {
-			t = var.semantMe();
+			v_type = var.semantMe();
 		}
 
-		if (t == null) {
+		if (v_type == null) {
 			throw new SemanticError("cannot access field of null variable", lineNumber);
 		}
 
-		/*********************************/
-		/* [2] Make sure type is a class */
-		/*********************************/
-		if (!t.isClass()) {
-			throw new SemanticError("access '" + fieldName + "' field of a non-class variable", lineNumber);
+		if (!v_type.isClass()) {
+			throw new SemanticError("Cannot access field: '" + fieldName + "' of a non-class variable: '" + var + "'",
+					lineNumber);
 		}
 
-		TypeClass tc = (TypeClass) t;
+		TypeClass v = (TypeClass) v_type;
 
-		/************************************/
-		/* [3] Look for fiedlName inside tc */
-		/************************************/
-		TypeClassVarDec memberType = tc.findMember(fieldName);
+		/****************************************/
+		/* [2] Verify thatfieldname (i.e. f) */
+		/* is a previously defined method */
+		/* inside v's class or superclass */
+		/****************************************/
+		TypeClassVarDec memberType = v.findMember(fieldName);
 
 		if (memberType == null) {
-			throw new SemanticError("field '" + fieldName + "' does not exist in class '" + tc.name + "'", lineNumber);
+			throw new SemanticError("Field: '" + fieldName + "' not previously defined in class: '" + v.name
+					+ "' or one of its superclasses", lineNumber);
 		}
 
+		// If its a method return the methods return type
 		if (memberType.t instanceof TypeFunction) {
 			return ((TypeFunction) memberType.t).returnType;
 		}
 
-		// If it's a field, return the actual field type
+		// Wasn't a method so must be a field, and if it's a field, return the actual
+		// field's field type
 		return memberType.t;
 	}
 }

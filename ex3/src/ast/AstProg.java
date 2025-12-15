@@ -65,7 +65,9 @@ public class AstProg extends AstNode {
 
     public Type semantMe() {
         for (AstDec dec : decs) {
-            dec.semantMe();
+            if (dec != null) {
+                dec.semantMe();
+            }
         }
 
         return null;

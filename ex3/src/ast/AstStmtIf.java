@@ -88,7 +88,8 @@ public class AstStmtIf extends AstStmt {
 		}
 	}
 
-	public Type semantMe() throws SemanticError {
+	@Override
+	public Type semantMe() {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/
@@ -97,30 +98,40 @@ public class AstStmtIf extends AstStmt {
 		}
 
 		/*************************/
-		/* [1] Begin If Scope */
+		/* [1] Begin then Scope */
 		/*************************/
 		SymbolTable.getInstance().beginScope();
 
 		/***************************/
-		/* [2] Semant Data Members */
+		/* [2] Semant then body */
 		/***************************/
 		for (AstStmt stmt : thenBody) {
-			stmt.semantMe();
-		}
-		if (elseBody != null) {
-			for (AstStmt stmt : elseBody) {
+			if (stmt != null) {
 				stmt.semantMe();
 			}
 		}
 
-		/*****************/
-		/* [3] End Scope */
-		/*****************/
+		/***********************/
+		/* [3] End then Scope */
+		/***********************/
 		SymbolTable.getInstance().endScope();
 
-		/***************************************************/
-		/* [4] Return value is irrelevant for if statement */
-		/**************************************************/
+		/***********************************/
+		/* [4] Semant else body if present */
+		/***********************************/
+		if (elseBody != null) {
+			SymbolTable.getInstance().beginScope();
+
+			for (AstStmt stmt : elseBody) {
+				if (stmt != null) {
+					stmt.semantMe();
+				}
+			}
+
+			SymbolTable.getInstance().endScope();
+		}
+
+		// Return value is irrelevant for if statement
 		return null;
 	}
 }

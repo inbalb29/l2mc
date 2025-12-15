@@ -55,7 +55,11 @@ public class AstExpVar extends AstExp {
 
 	}
 
+	@Override
 	public Type semantMe() {
+		if (var == null) {
+			return null;
+		}
 		return var.semantMe();
 	}
 }

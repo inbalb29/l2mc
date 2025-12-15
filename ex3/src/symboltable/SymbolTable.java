@@ -181,59 +181,17 @@ public class SymbolTable {
 		return currentClass == null && currentFunction == null;
 	}
 
-	public Type resolveClosestType(String name) {
-		// We're in global/function scope, simply look up in symbol table.
-		if (getCurrentClass() == null) {
-			return this.find(name);
-		}
-		// We're inside the scope of a class.
-		else {
-			// We're inside a method, we need to search method scope -> current class ->
-			// ancestors -> global
-			if (getCurrentFunction() != null) {
-				// [1] Look in Local Scope (Parameters and Local Variables)
-				Type t = findInLocalScope(name);
-				if (t != null) {
-					return t;
-				}
-
-				// [2] Look in Class and Ancestor Scope
-				TypeClassVarDec member = getCurrentClass().findMember(name);
-				if (member != null) {
-					return member.t;
-				}
-
-				// [3] Look in Global Scope
-				return this.find(name);
-			}
-			// We're not inside a method, we need to search current class -> ancestors ->
-			// global
-			else {
-				// [1] Look in Class and Ancestor Scope
-				TypeClassVarDec member = getCurrentClass().findMember(name);
-				if (member != null) {
-					return member.t;
-				}
-
-				// [2] Look in Global Scope
-				return this.find(name);
-			}
-		}
-	}
-
 	// findInLocalScope searches the stack for the Symbol until it hits a Scope
 	// Boundary
 	public Type findInLocalScope(String name) {
-		SymbolTableEntry e;
 
-		for (e = table[hash(name)]; e != null && e.name != "SCOPE-BOUNDARY"; e = e.next) {
+		for (SymbolTableEntry e = top; e.name.equals("SCOPE-BOUNDARY") != true; e = e.prevtop) {
 			if (name.equals(e.name)) {
 				return e.type;
 			}
 		}
 
 		return null;
-
 	}
 
 	public static int n = 0;
