@@ -27,9 +27,19 @@ public class SymbolTable {
 	private SymbolTableEntry top;
 	private int topIndex = 0;
 
-	// If local scope is null - we're in the global scope.
+	/**
+	 * Current class being processed
+	 */
 	private TypeClass currentClass = null;
+
+	/**
+	 * Current function being processed
+	 */
 	private TypeFunction currentFunction = null;
+
+	/**
+	 * Number of scope boundaries currently in the symbol table
+	 */
 	private int scopeDepth = 0;
 
 	/**************************************************************/
@@ -114,6 +124,41 @@ public class SymbolTable {
 		return null;
 	}
 
+	/**
+	 * Checks if a name exists in the current scope (not outer)
+	 */
+	public boolean existsInCurrentScope(String name) {
+		for (SymbolTableEntry e = top; e != null && e.name.equals("SCOPE-BOUNDARY") != true; e = e.prevtop) {
+			if (name.equals(e.name)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Searches the stack for the symbol until it reaches the global scope to
+	 * ensure class members are checked before global variables, as per
+	 * resolution rules.
+	 * Essentially looks through all 'if', 'else', 'while' and function scopes,
+	 * technically also through current class scope
+	 * But that's fine as worst case `resolveClosestType` will repeat the checks
+	 * there, but it ensures that if not found in local scopes,
+	 * we still check class members before global variables.
+	 */
+	public Type findInLocalScope(String name) {
+		int boundariesSeen = scopeDepth;
+		for (SymbolTableEntry e = top; e != null && boundariesSeen > 0; e = e.prevtop) {
+			if (e.name.equals(name)) {
+				return e.type;
+			} else if (e.name.equals("SCOPE-BOUNDARY")) {
+				boundariesSeen--;
+			}
+		}
+		return null;
+	}
+
 	/***************************************************************************/
 	/* begin scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
 	/***************************************************************************/
@@ -126,7 +171,11 @@ public class SymbolTable {
 		/************************************************************************/
 		enter(
 				"SCOPE-BOUNDARY",
-				new TypeForScopeBoundaries("NONE"));
+				new Type() {
+					{
+						this.name = "SCOPE-BOUNDARY";
+					}
+				});
 
 		/************************/
 		/* Increase Scope Depth */
@@ -174,6 +223,9 @@ public class SymbolTable {
 		printMe();
 	}
 
+	/*******************/
+	/* Getters/Setters */
+	/*******************/
 	public TypeClass getCurrentClass() {
 		return currentClass;
 	}
@@ -227,7 +279,7 @@ public class SymbolTable {
 			if (getCurrentFunction() != null) {
 				// [1] Look in Block Scope (All relevant if, else, while and function scopes to
 				// ensure we check local/block -> class -> global variables)
-				Type t = findInBlockScope(name);
+				Type t = findInLocalScope(name);
 				if (t != null) {
 					return t;
 				}
@@ -251,38 +303,6 @@ public class SymbolTable {
 				return this.find(name);
 			}
 		}
-	}
-
-	// findInLocalScope searches the stack for the Symbol until it hits a Scope
-	// Boundary
-	public Type findInLocalScope(String name) {
-		for (SymbolTableEntry e = top; e != null && e.name.equals("SCOPE-BOUNDARY") != true; e = e.prevtop) {
-			if (name.equals(e.name)) {
-				return e.type;
-			}
-		}
-
-		return null;
-	}
-
-	// findInBlockScope searches the stack for the Symbol until it reaches the
-	// global scope to ensure class members are checked before global variables, as
-	// per resolution rules.
-	// Essentially looks through all if, else, while and function scopes,
-	// technically also through current class scope
-	// But that's fine as worst case resolveClosestType will repeat the checks
-	// there, but it ensures that if not found in local scopes,
-	// we still check class members before global variables.
-	public Type findInBlockScope(String name) {
-		int scopeBoundariesTillGlobal = scopeDepth;
-		for (SymbolTableEntry e = top; e != null && scopeBoundariesTillGlobal > 0; e = e.prevtop) {
-			if (name.equals(e.name)) {
-				return e.type;
-			} else if (e.name.equals("SCOPE-BOUNDARY")) {
-				scopeBoundariesTillGlobal--;
-			}
-		}
-		return null;
 	}
 
 	public static int n = 0;

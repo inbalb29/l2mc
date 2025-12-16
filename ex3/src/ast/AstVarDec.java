@@ -78,7 +78,7 @@ public class AstVarDec extends AstDec {
 
     @Override
     public Type semantMe() {
-        if (SymbolTable.getInstance().findInLocalScope(name) != null) {
+        if (SymbolTable.getInstance().existsInCurrentScope(name)) {
             throw new SemanticError("variable '" + name + "' already exists in scope", lineNumber);
         }
 

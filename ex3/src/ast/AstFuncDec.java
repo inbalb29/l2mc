@@ -87,7 +87,7 @@ public class AstFuncDec extends AstDec {
     public Type semantMe() {
 
         /* [1] Check if function name already exists in global scope */
-        if (SymbolTable.getInstance().inGlobalScope() && SymbolTable.getInstance().find(name) != null) {
+        if (SymbolTable.getInstance().inGlobalScope() && SymbolTable.getInstance().existsInCurrentScope(name)) {
             throw new SemanticError("function '" + name + "' already exists", lineNumber);
         }
 
@@ -125,7 +125,7 @@ public class AstFuncDec extends AstDec {
         /* [6] Enter parameters into scope */
         for (int i = 0; i < params.size(); i++) {
             AstParam param = params.get(i);
-            if (SymbolTable.getInstance().findInLocalScope(param.name) != null) {
+            if (SymbolTable.getInstance().existsInCurrentScope(param.name)) {
                 throw new SemanticError("duplicate parameter name '" + param.name + "'", lineNumber);
             }
             SymbolTable.getInstance().enter(param.name, paramTypes.get(i));
