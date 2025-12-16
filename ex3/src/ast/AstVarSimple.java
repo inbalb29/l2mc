@@ -50,11 +50,35 @@ public class AstVarSimple extends AstVar {
 
 	@Override
 	public Type semantMe() {
-		Type t;
+		Type t = null;
 
-		t = SymbolTable.getInstance().resolveClosestType(name);
+		// Look up the variable using normal symbol table lookup
+		// This finds local variables, parameters, and outer scope variables
+		t = SymbolTable.getInstance().find(name);
+
+		// If we're in a class context, class fields can shadow global variables
+		// but not local variables. We need to check if what we found is at global scope
+		// vs. a local variable. If it's global, class field takes precedence.
+		TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
+		if (currentClass != null) {
+			boolean foundInLocalScope = SymbolTable.getInstance().existsInNestedScopes(name);
+			if (!foundInLocalScope) {
+				Type classFieldType = currentClass.findMember(name);
+				if (classFieldType != null) {
+					// The symbol table result is either null or at global scope
+					// Class field takes precedence
+					t = classFieldType;
+				}
+			}
+		}
+
 		if (t == null) {
 			throw new SemanticError("variable '" + name + "' is undefined", lineNumber);
+		}
+
+		// If we got a TypeClassField, return its actual type
+		if (t instanceof TypeClassField) {
+			return ((TypeClassField) t).fieldType;
 		}
 
 		return t;

@@ -147,16 +147,16 @@ public class SymbolTable {
 	 * there, but it ensures that if not found in local scopes,
 	 * we still check class members before global variables.
 	 */
-	public Type findInLocalScope(String name) {
+	public boolean existsInNestedScopes(String name) {
 		int boundariesSeen = scopeDepth;
 		for (SymbolTableEntry e = top; e != null && boundariesSeen > 0; e = e.prevtop) {
 			if (e.name.equals(name)) {
-				return e.type;
+				return true;
 			} else if (e.name.equals("SCOPE-BOUNDARY")) {
 				boundariesSeen--;
 			}
 		}
-		return null;
+		return false;
 	}
 
 	/***************************************************************************/
@@ -244,71 +244,6 @@ public class SymbolTable {
 
 	public boolean inGlobalScope() {
 		return scopeDepth == 0;
-	}
-
-	/**
-	 * Resolves the closest accessible {@code Type} for the given identifier name,
-	 * following the language's specific scope resolution rules.
-	 * <p>
-	 * The search hierarchy depends on the current scope:
-	 * </p>
-	 * <ul>
-	 * <li>If inside a method: searches Local/Condition/While Blocks ->
-	 * Class/Ancestors -> Global.</li>
-	 * <li>If inside a class (but outside a method): searches Class -> Ancestors ->
-	 * Global.</li>
-	 * <li>If in global/function/condition/while block scope (outside any class):
-	 * searches function/condition/while scope
-	 * then global.</li>
-	 * </ul>
-	 * 
-	 * @param name The identifier name (variable, type, or member) to resolve.
-	 * @return The resolved {@code Type} from the closest scope, or {@code null} if
-	 *         not found.
-	 * 
-	 */
-	public Type resolveClosestType(String name) {
-		// We're in global/function scope, simply look up in symbol table.
-		if (getCurrentClass() == null) {
-			return this.find(name);
-		}
-		// We're inside the scope of a class.
-		else {
-			// We're inside a method, we need to search local scope -> method scope ->
-			// current class -> ancestors -> global
-			if (getCurrentFunction() != null) {
-				// [1] Look in Block Scope (All relevant if, else, while and function scopes to
-				// ensure we check local/block -> class -> global variables)
-				Type t = findInLocalScope(name);
-				if (t != null) {
-					return t;
-				}
-				// [2] Look in Class and Ancestor Scope
-				Type member = getCurrentClass().findMember(name);
-				if (member != null) {
-					if (member instanceof TypeClassField f) {
-						return f.fieldType;
-					}
-					return member;
-				}
-				// [3] Look in Global Scope
-				return this.find(name);
-			}
-			// We're not inside a method, we need to search current class -> ancestors ->
-			// global
-			else {
-				// [1] Look in Class and Ancestor Scope
-				Type member = getCurrentClass().findMember(name);
-				if (member != null) {
-					if (member instanceof TypeClassField f) {
-						return f.fieldType;
-					}
-					return member;
-				}
-				// [2] Look in Global Scope
-				return this.find(name);
-			}
-		}
 	}
 
 	public static int n = 0;
