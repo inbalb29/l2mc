@@ -87,34 +87,34 @@ public class AstCallExp extends AstExp {
             }
 
             TypeClass classType = (TypeClass) objType;
-            TypeClassVarDec memberType = classType.findMember(funcName);
+            Type memberType = classType.findMember(funcName);
 
             if (memberType == null) {
                 throw new SemanticError("method '" + funcName + "' not found in class '" + classType.name + "'",
                         lineNumber);
             }
 
-            if (!(memberType.t instanceof TypeFunction)) {
+            if (!(memberType instanceof TypeFunction)) {
                 throw new SemanticError("cannot call non-method '" + funcName + "' in class '" + classType.name + "'",
                         lineNumber);
             }
 
-            funcType = (TypeFunction) memberType.t;
+            funcType = (TypeFunction) memberType;
         } else {
             /* Simple function call, or method call from within a class */
+            TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
             Type t = null;
 
             // If inside a class, try to resolve as a member (method) first
-            TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
             if (currentClass != null) {
-                TypeClassVarDec varDec = currentClass.findMember(funcName);
-                if (varDec != null) {
-                    if (!(varDec.t instanceof TypeFunction)) {
+                t = currentClass.findMember(funcName);
+                if (t != null) {
+                    if (!(t instanceof TypeFunction)) {
                         throw new SemanticError(
                                 "cannot call non-method '" + funcName + "' in class '" + currentClass.name + "'",
                                 lineNumber);
                     }
-                    funcType = (TypeFunction) varDec.t;
+                    funcType = (TypeFunction) t;
                 }
             }
 

@@ -284,9 +284,12 @@ public class SymbolTable {
 					return t;
 				}
 				// [2] Look in Class and Ancestor Scope
-				TypeClassVarDec member = getCurrentClass().findMember(name);
+				Type member = getCurrentClass().findMember(name);
 				if (member != null) {
-					return member.t;
+					if (member instanceof TypeClassField f) {
+						return f.fieldType;
+					}
+					return member;
 				}
 				// [3] Look in Global Scope
 				return this.find(name);
@@ -295,9 +298,12 @@ public class SymbolTable {
 			// global
 			else {
 				// [1] Look in Class and Ancestor Scope
-				TypeClassVarDec member = getCurrentClass().findMember(name);
+				Type member = getCurrentClass().findMember(name);
 				if (member != null) {
-					return member.t;
+					if (member instanceof TypeClassField f) {
+						return f.fieldType;
+					}
+					return member;
 				}
 				// [2] Look in Global Scope
 				return this.find(name);

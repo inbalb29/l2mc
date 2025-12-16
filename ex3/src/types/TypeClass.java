@@ -13,12 +13,12 @@ public class TypeClass extends Type {
 	/* Note that data members coming from the AST are */
 	/* packed together with the class methods */
 	/**************************************************/
-	public List<TypeClassVarDec> dataMembers;
+	public List<Type> dataMembers;
 
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
-	public TypeClass(TypeClass father, String name, List<TypeClassVarDec> dataMembers) {
+	public TypeClass(TypeClass father, String name, List<Type> dataMembers) {
 		this.name = name;
 		this.father = father;
 		this.dataMembers = dataMembers != null ? dataMembers : List.of();
@@ -42,9 +42,9 @@ public class TypeClass extends Type {
 	/**
 	 * Find a member (field or method) in this class or its superclasses
 	 */
-	public TypeClassVarDec findMember(String name) {
+	public Type findMember(String name) {
 		// Search in this class's data members
-		for (TypeClassVarDec member : dataMembers) {
+		for (Type member : dataMembers) {
 			if (member.name != null && member.name.equals(name)) {
 				return member;
 			}
@@ -59,8 +59,8 @@ public class TypeClass extends Type {
 	/**
 	 * Find a member only in this class (not superclasses)
 	 */
-	public TypeClassVarDec findMemberInThisClass(String name) {
-		for (TypeClassVarDec member : dataMembers) {
+	public Type findMemberInThisClass(String name) {
+		for (Type member : dataMembers) {
 			if (member.name != null && member.name.equals(name)) {
 				return member;
 			}
@@ -68,7 +68,7 @@ public class TypeClass extends Type {
 		return null;
 	}
 
-	public void addDataMember(TypeClassVarDec member) {
+	public void addDataMember(Type member) {
 		this.dataMembers.add(member);
 	}
 
