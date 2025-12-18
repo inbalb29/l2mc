@@ -56,6 +56,10 @@ Implements a lexical scanner based on JFlex to tokenize the L language. The inpu
 
 Extends the lexical scanner with a CUP-based parser to generate an Abstract Syntax Tree (AST) from the tokenized input. The output is a text file indicating whether the input is syntactically correct.
 
+## Exercise 3: Semantic Analysis
+
+Implements a semantic analyzer that recursively scans the AST produced by CUP and checks for semantic errors. The output is a text file indicating whether the input is semantically correct. When the input is correct, the semantic analyzer adds metadata to the AST for use in later exercises.
+
 ## License
 
 This project is distributed under the GPL-3.0 License. See the
