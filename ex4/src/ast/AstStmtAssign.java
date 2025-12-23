@@ -1,6 +1,8 @@
 package ast;
 
 import Exceptions.SemanticError;
+import ir.*;
+import temp.Temp;
 import types.*;
 
 public class AstStmtAssign extends AstStmt {
@@ -93,6 +95,13 @@ public class AstStmtAssign extends AstStmt {
 			throw new SemanticError(
 					"type mismatch: '" + expType.name + "' cannot be assigned to '" + varType.name + "'", lineNumber);
 		}
+
+		return null;
+	}
+
+	public Temp irMe() {
+		Temp src = exp.irMe();
+		Ir.getInstance().AddIrCommand(new IrCommandStore(((AstVarSimple) var).name, src));
 
 		return null;
 	}

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Exceptions.SemanticError;
+import ir.*;
 import symboltable.SymbolTable;
+import temp.Temp;
 import types.*;
 
 public class AstFuncDec extends AstDec {
@@ -145,5 +147,17 @@ public class AstFuncDec extends AstDec {
         SymbolTable.getInstance().endScope();
 
         return funcType;
+    }
+
+    public Temp irMe() {
+        Ir.getInstance().AddIrCommand(new IrCommandLabel("main"));
+        if (body != null && !body.isEmpty()) {
+            for (AstStmt stmt : body) {
+                if (stmt != null) {
+                    stmt.irMe();
+                }
+            }
+        }
+        return null;
     }
 }

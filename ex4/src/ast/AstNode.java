@@ -1,5 +1,6 @@
 package ast;
 
+import temp.Temp;
 import types.Type;
 
 public abstract class AstNode {
@@ -22,6 +23,13 @@ public abstract class AstNode {
 	/* The default semantic action for an AST node */
 	/***********************************************/
 	public Type semantMe() {
+		return null;
+	}
+
+	/*****************************************/
+	/* The default IR action for an AST node */
+	/*****************************************/
+	public Temp irMe() {
 		return null;
 	}
 }

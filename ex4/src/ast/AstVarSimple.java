@@ -1,7 +1,10 @@
 package ast;
 
 import Exceptions.SemanticError;
+import ir.*;
 import symboltable.SymbolTable;
+import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstVarSimple extends AstVar {
@@ -81,6 +84,12 @@ public class AstVarSimple extends AstVar {
 			return ((TypeClassField) t).fieldType;
 		}
 
+		return t;
+	}
+
+	public Temp irMe() {
+		Temp t = TempFactory.getInstance().getFreshTemp();
+		Ir.getInstance().AddIrCommand(new IrCommandLoad(t, name));
 		return t;
 	}
 }

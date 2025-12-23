@@ -1,6 +1,8 @@
 package ast;
 
 import Exceptions.SemanticError;
+import ir.*;
+import temp.*;
 import types.*;
 
 public class AstExpBinop extends AstExp {
@@ -164,5 +166,45 @@ public class AstExpBinop extends AstExp {
 		}
 
 		throw new SemanticError("type mismatch in equality comparison", lineNumber);
+	}
+
+	public Temp irMe() {
+		Temp t1 = null;
+		Temp t2 = null;
+		Temp dst = TempFactory.getInstance().getFreshTemp();
+
+		if (left != null)
+			t1 = left.irMe();
+		if (right != null)
+			t2 = right.irMe();
+
+		switch (op.getSymbol()) {
+			case '+':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(dst, t1, t2));
+				break;
+			case '-':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopSubIntegers(dst, t1, t2));
+				break;
+			case '*':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopMulIntegers(dst, t1, t2));
+				break;
+			case '/':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopDivIntegers(dst, t1, t2));
+				break;
+			case '<':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopLtIntegers(dst, t1, t2));
+				break;
+			case '>':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopGtIntegers(dst, t1, t2));
+				break;
+			case '=':
+				Ir.getInstance().AddIrCommand(new IrCommandBinopEqIntegers(dst, t1, t2));
+				break;
+			default:
+				// Unreachable
+				break;
+		}
+
+		return dst;
 	}
 }

@@ -1,7 +1,9 @@
 package ast;
 
 import Exceptions.SemanticError;
+import ir.*;
 import symboltable.SymbolTable;
+import temp.Temp;
 import types.*;
 
 public class AstVarDec extends AstDec {
@@ -153,5 +155,14 @@ public class AstVarDec extends AstDec {
         }
 
         return false;
+    }
+
+    public Temp irMe() {
+        Ir.getInstance().AddIrCommand(new IrCommandAllocate(name));
+
+        if (initExp != null) {
+            Ir.getInstance().AddIrCommand(new IrCommandStore(name, initExp.irMe()));
+        }
+        return null;
     }
 }

@@ -50,14 +50,19 @@ public class Main {
 			/**************************/
 			ast.semantMe();
 
-			/*************************/
-			/* [8] Close output file */
-			/*************************/
-			fileWriter.print("OK");
+			/**********************/
+			/* [8] IR the AST ... */
+			/**********************/
+			ast.irMe();
+
+			/**************************/
+			/* [9] Close output file */
+			/**************************/
+			fileWriter.print("!OK");
 			fileWriter.close();
 
 			/*************************************/
-			/* [9] Finalize AST GRAPHIZ DOT file */
+			/* [10] Finalize AST GRAPHIZ DOT file */
 			/*************************************/
 			AstGraphviz.getInstance().finalizeFile();
 		} catch (LexerError e) {

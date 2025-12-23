@@ -3,7 +3,9 @@ package ast;
 import java.util.List;
 
 import Exceptions.SemanticError;
+import ir.*;
 import symboltable.SymbolTable;
+import temp.Temp;
 import types.*;
 
 public class AstCallExp extends AstExp {
@@ -168,5 +170,17 @@ public class AstCallExp extends AstExp {
         }
 
         return false;
+    }
+
+    public Temp irMe() {
+        Temp t = null;
+
+        if (args != null && !args.isEmpty()) {
+            t = args.get(0).irMe();
+        }
+
+        Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+
+        return null;
     }
 }
