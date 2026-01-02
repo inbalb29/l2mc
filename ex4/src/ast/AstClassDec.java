@@ -124,9 +124,10 @@ public class AstClassDec extends AstDec {
         SymbolTable.getInstance().beginScope();
         SymbolTable.getInstance().setCurrentClass(classType);
 
-        /*********************************************/
-        /* [5] Process each field/method declaration */
-        /*********************************************/
+        /***************************************************************/
+        /* [5] Process each field/method declaration in order */
+        /* (each member can only reference previously defined members) */
+        /***************************************************************/
         for (AstDec field : this.fields) {
             if (field instanceof AstVarDec varDec) {
                 Type fieldType = varDec.semantMe();
@@ -152,7 +153,8 @@ public class AstClassDec extends AstDec {
                 classType.addDataMember(fieldMember);
                 SymbolTable.getInstance().enter(varDec.name, fieldType);
             } else if (field instanceof AstFuncDec funcDec) {
-                TypeFunction fieldType = (TypeFunction) funcDec.semantMe();
+                // Build method signature
+                TypeFunction funcType = funcDec.buildSignature();
 
                 // No Method overloading
                 if (classType.findMemberInThisClass(funcDec.name) != null) {
@@ -176,7 +178,7 @@ public class AstClassDec extends AstDec {
 
                     // Check for valid override (same signature)
                     TypeFunction parentFunc = (TypeFunction) ancestorMember;
-                    if (!fieldType.isValidOverride(parentFunc)) {
+                    if (!funcType.isValidOverride(parentFunc)) {
                         throw new SemanticError(
                                 "method override '" + funcDec.name
                                         + "' has incompatible signature with inherited method in '" + parentType.name
@@ -185,8 +187,12 @@ public class AstClassDec extends AstDec {
                     }
                 }
 
-                classType.addDataMember(fieldType);
-                SymbolTable.getInstance().enter(funcDec.name, fieldType);
+                // Add method signature to class
+                classType.addDataMember(funcType);
+                SymbolTable.getInstance().enter(funcDec.name, funcType);
+
+                // Analyze the body
+                funcDec.semantBody(funcType);
             }
         }
 

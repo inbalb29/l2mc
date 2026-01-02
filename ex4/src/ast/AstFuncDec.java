@@ -85,9 +85,12 @@ public class AstFuncDec extends AstDec {
         }
     }
 
-    @Override
-    public Type semantMe() {
-
+    /**
+     * Build the function signature (return type + parameters)
+     * without analyzing the body.
+     * This allows methods to be referenced before their bodies are analyzed.
+     */
+    public TypeFunction buildSignature() {
         /* [1] Check if function name already exists in global scope */
         if (SymbolTable.getInstance().inGlobalScope() && SymbolTable.getInstance().existsInCurrentScope(name)) {
             throw new SemanticError("function '" + name + "' already exists", lineNumber);
@@ -112,39 +115,49 @@ public class AstFuncDec extends AstDec {
             paramTypes.add(paramType);
         }
 
-        /* [4] Create function type and enter to symbol table */
-        TypeFunction funcType = new TypeFunction(retType, name, paramTypes);
+        /* [4] Create function type */
+        return new TypeFunction(retType, name, paramTypes);
+    }
 
-        // Methods are entered into the symbol table when their class is declared
-        if (SymbolTable.getInstance().inGlobalScope()) {
-            SymbolTable.getInstance().enter(name, funcType);
-        }
-
-        /* [5] Begin function scope */
+    /**
+     * Analyze the function body. Should be called after buildSignature().
+     */
+    public void semantBody(TypeFunction funcType) {
+        /* [1] Begin function scope */
         SymbolTable.getInstance().beginScope();
         SymbolTable.getInstance().setCurrentFunction(funcType);
 
-        /* [6] Enter parameters into scope */
+        /* [2] Enter parameters into scope */
         for (int i = 0; i < params.size(); i++) {
             AstParam param = params.get(i);
             if (SymbolTable.getInstance().existsInCurrentScope(param.name)) {
                 throw new SemanticError("duplicate parameter name '" + param.name + "'", lineNumber);
             }
-            SymbolTable.getInstance().enter(param.name, paramTypes.get(i));
+            SymbolTable.getInstance().enter(param.name, funcType.params.get(i));
         }
 
-        /* [7] Semant function body */
+        /* [3] Semant function body */
         for (AstStmt stmt : body) {
             if (stmt != null) {
                 stmt.semantMe();
             }
         }
 
-        /*****************/
         /* [4] End Scope */
-        /*****************/
         SymbolTable.getInstance().setCurrentFunction(null);
         SymbolTable.getInstance().endScope();
+    }
+
+    @Override
+    public Type semantMe() {
+        TypeFunction funcType = buildSignature();
+
+        // Methods are entered into the symbol table when their class is declared
+        if (SymbolTable.getInstance().inGlobalScope()) {
+            SymbolTable.getInstance().enter(name, funcType);
+        }
+
+        semantBody(funcType);
 
         return funcType;
     }
