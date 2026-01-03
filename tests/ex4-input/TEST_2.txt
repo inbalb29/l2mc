@@ -1,0 +1,7 @@
+int x;
+
+void main()
+{
+    x := 5;
+    PrintInt(x);
+}
