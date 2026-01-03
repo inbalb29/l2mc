@@ -158,10 +158,11 @@ public class AstVarDec extends AstDec {
     }
 
     public Temp irMe() {
-        Ir.getInstance().AddIrCommand(new IrCommandAllocate(name));
+        String qualifiedName = Ir.getInstance().getQualifiedName(name);
+        Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName));
 
         if (initExp != null) {
-            Ir.getInstance().AddIrCommand(new IrCommandStore(name, initExp.irMe()));
+            Ir.getInstance().AddIrCommand(new IrCommandStore(qualifiedName, initExp.irMe()));
         }
         return null;
     }

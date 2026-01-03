@@ -12,14 +12,17 @@ package ir;
 /*******************/
 import temp.*;
 
-public class IrCommandStore extends IrCommand
-{
+public class IrCommandStore extends IrCommand {
 	String varName;
 	Temp src;
-	
-	public IrCommandStore(String varName, Temp src)
-	{
-		this.src      = src;
+
+	public IrCommandStore(String varName, Temp src) {
+		this.src = src;
 		this.varName = varName;
+	}
+
+	@Override
+	public String getDefinedVariable() {
+		return varName;
 	}
 }

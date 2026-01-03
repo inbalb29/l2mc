@@ -38,6 +38,7 @@ ex*/input/
 **/Parser.java
 **/PARSER
 **/SEMANT
+**/ANALYZER
 **/TokenNames.java
 # For ex1, this was coded by hand
 !ex1/TokenNames.java

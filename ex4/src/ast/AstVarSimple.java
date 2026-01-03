@@ -89,7 +89,8 @@ public class AstVarSimple extends AstVar {
 
 	public Temp irMe() {
 		Temp t = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(t, name));
+		String qualifiedName = Ir.getInstance().getQualifiedName(name);
+		Ir.getInstance().AddIrCommand(new IrCommandLoad(t, qualifiedName));
 		return t;
 	}
 }

@@ -12,12 +12,10 @@ package ir;
 /*******************/
 import temp.*;
 
-public class IrCommandPrintInt extends IrCommand
-{
+public class IrCommandPrintInt extends IrCommand {
 	Temp t;
-	
-	public IrCommandPrintInt(Temp t)
-	{
+
+	public IrCommandPrintInt(Temp t) {
 		this.t = t;
 	}
 }

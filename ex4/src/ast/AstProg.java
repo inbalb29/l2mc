@@ -1,6 +1,8 @@
 package ast;
 
 import java.util.List;
+
+import temp.Temp;
 import types.*;
 
 public class AstProg extends AstNode {
@@ -68,6 +70,25 @@ public class AstProg extends AstNode {
         for (AstDec dec : decs) {
             if (dec != null) {
                 dec.semantMe();
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Temp irMe() {
+        // IR for each global variale declaration/initialization
+        for (AstDec dec : decs) {
+            if (dec != null && dec instanceof AstVarDec) {
+                dec.irMe();
+            }
+        }
+
+        // IR for each function
+        for (AstDec dec : decs) {
+            if (dec != null && dec instanceof AstFuncDec) {
+                dec.irMe();
             }
         }
 

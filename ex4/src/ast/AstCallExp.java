@@ -173,6 +173,7 @@ public class AstCallExp extends AstExp {
     }
 
     public Temp irMe() {
+        // Atm only print int function is supported in subset of L language.
         Temp t = null;
 
         if (args != null && !args.isEmpty()) {

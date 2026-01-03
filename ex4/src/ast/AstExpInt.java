@@ -51,8 +51,13 @@ public class AstExpInt extends AstExp {
 	}
 
 	public Temp irMe() {
+		// Create a fresh register to "hold" the int value
 		Temp t = TempFactory.getInstance().getFreshTemp();
+
+		// Create the IR command to load the int value into the register
+		// I.e. t = value // li $t, value
 		Ir.getInstance().AddIrCommand(new IRcommandConstInt(t, value));
+
 		return t;
 	}
 }

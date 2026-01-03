@@ -164,6 +164,7 @@ public class AstFuncDec extends AstDec {
 
     public Temp irMe() {
         Ir.getInstance().AddIrCommand(new IrCommandLabel("main"));
+        Ir.getInstance().beginScope();
         if (body != null && !body.isEmpty()) {
             for (AstStmt stmt : body) {
                 if (stmt != null) {
@@ -171,6 +172,7 @@ public class AstFuncDec extends AstDec {
                 }
             }
         }
+        Ir.getInstance().endScope();
         return null;
     }
 }

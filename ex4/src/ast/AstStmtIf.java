@@ -3,7 +3,9 @@ package ast;
 import java.util.List;
 
 import Exceptions.SemanticError;
+import ir.*;
 import symboltable.*;
+import temp.Temp;
 import types.*;
 
 public class AstStmtIf extends AstStmt {
@@ -133,6 +135,51 @@ public class AstStmtIf extends AstStmt {
 		}
 
 		// Return value is irrelevant for if statement
+		return null;
+	}
+
+	@Override
+	public Temp irMe() {
+		/* [1] Allocate fresh labels */
+		String labelElse = IrCommand.getFreshLabel("else");
+		String labelEnd = IrCommand.getFreshLabel("endif");
+
+		/* [2] IR condition */
+		Temp condTemp = cond.irMe();
+
+		/* [3] Jump conditionally to else/end */
+		if (elseBody != null) {
+			Ir.getInstance().AddIrCommand(new IrCommandJumpIfEqToZero(condTemp, labelElse));
+		} else {
+			Ir.getInstance().AddIrCommand(new IrCommandJumpIfEqToZero(condTemp, labelEnd));
+		}
+
+		/* [4] IR then body */
+		Ir.getInstance().beginScope();
+		for (AstStmt stmt : thenBody) {
+			if (stmt != null) {
+				stmt.irMe();
+			}
+		}
+		Ir.getInstance().endScope();
+
+		/* [5] Handle else clause if any */
+		if (elseBody != null) {
+			Ir.getInstance().AddIrCommand(new IrCommandJumpLabel(labelEnd));
+			Ir.getInstance().AddIrCommand(new IrCommandLabel(labelElse));
+
+			Ir.getInstance().beginScope();
+			for (AstStmt stmt : elseBody) {
+				if (stmt != null) {
+					stmt.irMe();
+				}
+			}
+			Ir.getInstance().endScope();
+		}
+
+		/* [6] End label */
+		Ir.getInstance().AddIrCommand(new IrCommandLabel(labelEnd));
+
 		return null;
 	}
 }

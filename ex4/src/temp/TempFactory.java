@@ -11,15 +11,13 @@ package temp;
 /* PROJECT IMPORTS */
 /*******************/
 
-public class TempFactory
-{
-	private int counter=0;
-	
-	public Temp getFreshTemp()
-	{
+public class TempFactory {
+	private int counter = 0;
+
+	public Temp getFreshTemp() {
 		return new Temp(counter++);
 	}
-	
+
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
@@ -28,15 +26,14 @@ public class TempFactory
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected TempFactory() {}
+	protected TempFactory() {
+	}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	public static TempFactory getInstance()
-	{
-		if (instance == null)
-		{
+	public static TempFactory getInstance() {
+		if (instance == null) {
 			/*******************************/
 			/* [0] The instance itself ... */
 			/*******************************/

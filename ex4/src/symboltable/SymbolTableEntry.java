@@ -11,13 +11,12 @@ import types.*;
 /**********************/
 /* SYMBOL TABLE ENTRY */
 /**********************/
-public class SymbolTableEntry
-{
+public class SymbolTableEntry {
 	/*********/
 	/* index */
 	/*********/
 	int index;
-	
+
 	/********/
 	/* name */
 	/********/
@@ -38,18 +37,17 @@ public class SymbolTableEntry
 	/* The prevtopIndex is just for debug purposes ... */
 	/****************************************************/
 	public int prevtopIndex;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
 	public SymbolTableEntry(
-		String name,
-		Type type,
-		int index,
-		SymbolTableEntry next,
-		SymbolTableEntry prevtop,
-		int prevtopIndex)
-	{
+			String name,
+			Type type,
+			int index,
+			SymbolTableEntry next,
+			SymbolTableEntry prevtop,
+			int prevtopIndex) {
 		this.index = index;
 		this.name = name;
 		this.type = type;

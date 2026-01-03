@@ -11,17 +11,14 @@ package temp;
 /* PROJECT IMPORTS */
 /*******************/
 
-public class Temp
-{
-	private int serial=0;
-	
-	public Temp(int serial)
-	{
+public class Temp {
+	private int serial = 0;
+
+	public Temp(int serial) {
 		this.serial = serial;
 	}
-	
-	public int getSerialNumber()
-	{
+
+	public int getSerialNumber() {
 		return serial;
 	}
 }

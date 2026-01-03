@@ -55,6 +55,11 @@ public class Main {
 			/**********************/
 			ast.irMe();
 
+			/**
+			 * Analysis analysis = new Analysis();
+			 * List<String> unusedvars = analysis.analyze();
+			 */
+
 			/**************************/
 			/* [9] Close output file */
 			/**************************/
