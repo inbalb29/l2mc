@@ -115,8 +115,6 @@ public class AstVarSubscript extends AstVar {
 			throw new SemanticError("array subscript must be of type int", lineNumber);
 		}
 
-		TypeInt e = (TypeInt) subscriptType;
-
 		// Check if subscript is constant, and if it is verify >= 0.
 		if (subscript instanceof AstExpInt index && index.value < 0) {
 			throw new SemanticError(

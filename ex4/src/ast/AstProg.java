@@ -2,6 +2,7 @@ package ast;
 
 import java.util.List;
 
+import symboltable.SymbolTable;
 import temp.Temp;
 import types.*;
 
@@ -23,7 +24,6 @@ public class AstProg extends AstNode {
         /*******************************/
         decs = new java.util.ArrayList<AstDec>();
         decs.add(dec);
-        this.decs = decs;
         this.lineNumber = lineNumber;
     }
 
@@ -67,9 +67,32 @@ public class AstProg extends AstNode {
 
     @Override
     public Type semantMe() {
+        // Collect all global declarations
         for (AstDec dec : decs) {
             if (dec != null) {
-                dec.semantMe();
+                if (dec instanceof AstVarDec varDec) {
+                    varDec.declareGlobal();
+                } else if (dec instanceof AstFuncDec funcDec) {
+                    TypeFunction funcType = funcDec.buildSignature();
+                    SymbolTable.getInstance().enter(funcDec.name, funcType);
+                } else if (dec instanceof AstClassDec classDec) {
+                    classDec.semantMe();
+                } else if (dec instanceof AstTypedef typeDef) {
+                    typeDef.semantMe();
+                }
+            }
+        }
+
+        // Analyze global initializations and function bodies
+        for (AstDec dec : decs) {
+            if (dec != null) {
+                if (dec instanceof AstVarDec varDec) {
+                    varDec.semantGlobalInit();
+                } else if (dec instanceof AstFuncDec funcDec) {
+                    TypeFunction funcType = (TypeFunction) SymbolTable.getInstance().find(funcDec.name);
+                    funcDec.semantBody(funcType);
+                }
+                // Classes and array type defs already handled in pass 1
             }
         }
 

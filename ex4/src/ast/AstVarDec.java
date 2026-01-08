@@ -78,6 +78,42 @@ public class AstVarDec extends AstDec {
             AstGraphviz.getInstance().logEdge(serialNumber, initExp.serialNumber);
     }
 
+    /**
+     * Declare the global variable name and type in the symbol table without
+     * analyzing the initialization expression, to allow for forward references.
+     */
+    public Type declareGlobal() {
+        if (SymbolTable.getInstance().existsInCurrentScope(name)) {
+            throw new SemanticError("variable '" + name + "' already exists in scope", lineNumber);
+        }
+
+        Type varType = type.semantMe();
+        if (varType.isVoid()) {
+            throw new SemanticError("variable cannot be declared with type void", lineNumber);
+        }
+
+        SymbolTable.getInstance().enter(name, varType);
+        return varType;
+    }
+
+    /**
+     * Analyze the global variable initialization expression after all globals
+     * have been declared.
+     */
+    public void semantGlobalInit() {
+        if (initExp != null) {
+            Type varType = SymbolTable.getInstance().find(name);
+            Type initType = initExp.semantMe();
+
+            if (!isAssignmentCompatible(varType, initType, initExp)) {
+                throw new SemanticError(
+                        "initialization type mismatch: '" + initType.name + "' cannot be assigned to '" + varType.name
+                                + "'",
+                        lineNumber);
+            }
+        }
+    }
+
     @Override
     public Type semantMe() {
         if (SymbolTable.getInstance().existsInCurrentScope(name)) {
@@ -158,7 +194,7 @@ public class AstVarDec extends AstDec {
     }
 
     public Temp irMe() {
-        String qualifiedName = Ir.getInstance().getQualifiedName(name);
+        String qualifiedName = Ir.getInstance().registerVariable(name);
         Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName));
 
         if (initExp != null) {

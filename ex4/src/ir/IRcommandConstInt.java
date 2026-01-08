@@ -13,8 +13,8 @@ package ir;
 import temp.*;
 
 public class IRcommandConstInt extends IrCommand {
-	Temp t;
-	int value;
+	public Temp t;
+	public int value;
 
 	public IRcommandConstInt(Temp t, int value) {
 		this.t = t;
