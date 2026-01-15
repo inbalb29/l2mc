@@ -1,0 +1,8 @@
+int g;
+int y;
+
+void main()
+{
+    PrintInt(g);
+    PrintInt(y);
+}

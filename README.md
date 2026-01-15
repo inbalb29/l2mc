@@ -60,6 +60,10 @@ Extends the lexical scanner with a CUP-based parser to generate an Abstract Synt
 
 Implements a semantic analyzer that recursively scans the AST produced by CUP and checks for semantic errors. The output is a text file indicating whether the input is semantically correct. When the input is correct, the semantic analyzer adds metadata to the AST for use in later exercises.
 
+## Exercise 4: Data Flow Analysis
+
+Implements a dataflow analysis for detecting uninitializzed variables. Recursively traverses the AST and generates an intermediate representation (IR) of the program. Then, it constructs a control-flow graph (CFG) from the IR and computes the result of the analysis using chaotic iterations. The output is a text file indicating whether the input has no uninitialized variables, and if it does, a list of the uninitialized variables.
+
 ## License
 
 This project is distributed under the GPL-3.0 License. See the
