@@ -38,7 +38,8 @@ public class SymbolTable {
 	private TypeFunction currentFunction = null;
 
 	/**
-	 * Number of scope boundaries currently in the symbol table
+	 * Number of scope boundaries currently in the symbol table.
+	 * Also used to generate unique qualified names for IR.
 	 */
 	private int scopeDepth = 0;
 
@@ -88,23 +89,30 @@ public class SymbolTable {
 		/******************************************************************************/
 		SymbolTableEntry next = table[hashValue];
 
+		/****************************************************/
+		/* [3] Compute qualified name for IR generation */
+		/* Global scope (depth 0) uses original name */
+		/* Nested scopes use name@depth format */
+		/****************************************************/
+		String qualifiedName = (scopeDepth == 0) ? name : name + "@" + scopeDepth;
+
 		/**************************************************************************/
-		/* [3] Prepare a new symbol table entry with name, type, next and prevtop */
+		/* [4] Prepare a new symbol table entry with name, type, next and prevtop */
 		/**************************************************************************/
-		SymbolTableEntry e = new SymbolTableEntry(name, t, hashValue, next, top, topIndex++);
+		SymbolTableEntry e = new SymbolTableEntry(name, t, qualifiedName, hashValue, next, top, topIndex++);
 
 		/**********************************************/
-		/* [4] Update the top of the symbol table ... */
+		/* [5] Update the top of the symbol table ... */
 		/**********************************************/
 		top = e;
 
 		/****************************************/
-		/* [5] Enter the new entry to the table */
+		/* [6] Enter the new entry to the table */
 		/****************************************/
 		table[hashValue] = e;
 
 		/**************************/
-		/* [6] Print Symbol Table */
+		/* [7] Print Symbol Table */
 		/**************************/
 		printMe();
 	}
@@ -122,6 +130,22 @@ public class SymbolTable {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Find the qualified name for a variable (for IR generation).
+	 * Returns the qualified name of the innermost variable with this name.
+	 */
+	public String findQualifiedName(String name) {
+		SymbolTableEntry e;
+
+		for (e = table[hash(name)]; e != null; e = e.next) {
+			if (name.equals(e.name)) {
+				return e.qualifiedName;
+			}
+		}
+
+		return name; // fallback to original name
 	}
 
 	/**
@@ -246,6 +270,8 @@ public class SymbolTable {
 		return scopeDepth == 0;
 	}
 
+	/**********************************************/
+	/* IR Scope Management for qualified names */
 	public static int n = 0;
 
 	public void printMe() {

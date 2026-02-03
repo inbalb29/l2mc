@@ -129,13 +129,11 @@ public class AstStmtWhile extends AstStmt {
 		/*******************/
 		/* [5] body.IRme() */
 		/*******************/
-		Ir.getInstance().beginScope();
 		for (AstStmt stmt : body) {
 			if (stmt != null) {
 				stmt.irMe();
 			}
 		}
-		Ir.getInstance().endScope();
 
 		/******************************/
 		/* [6] Jump to the loop entry */

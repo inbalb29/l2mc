@@ -155,26 +155,22 @@ public class AstStmtIf extends AstStmt {
 		}
 
 		/* [4] IR then body */
-		Ir.getInstance().beginScope();
 		for (AstStmt stmt : thenBody) {
 			if (stmt != null) {
 				stmt.irMe();
 			}
 		}
-		Ir.getInstance().endScope();
 
 		/* [5] Handle else clause if any */
 		if (elseBody != null) {
 			Ir.getInstance().AddIrCommand(new IrCommandJumpLabel(labelEnd));
 			Ir.getInstance().AddIrCommand(new IrCommandLabel(labelElse));
 
-			Ir.getInstance().beginScope();
 			for (AstStmt stmt : elseBody) {
 				if (stmt != null) {
 					stmt.irMe();
 				}
 			}
-			Ir.getInstance().endScope();
 		}
 
 		/* [6] End label */

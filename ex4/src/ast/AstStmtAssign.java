@@ -101,7 +101,7 @@ public class AstStmtAssign extends AstStmt {
 
 	public Temp irMe() {
 		Temp src = exp.irMe();
-		String qualifiedName = Ir.getInstance().getQualifiedName(((AstVarSimple) var).name);
+		String qualifiedName = ((AstVarSimple) var).qualifiedName;
 		Ir.getInstance().AddIrCommand(new IrCommandStore(qualifiedName, src));
 
 		return null;

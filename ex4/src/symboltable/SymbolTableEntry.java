@@ -27,6 +27,11 @@ public class SymbolTableEntry {
 	/******************/
 	public Type type;
 
+	/************************************/
+	/* Qualified name for IR generation */
+	/************************************/
+	public String qualifiedName;
+
 	/*********************************************/
 	/* prevtop and next symbol table entries ... */
 	/*********************************************/
@@ -44,6 +49,7 @@ public class SymbolTableEntry {
 	public SymbolTableEntry(
 			String name,
 			Type type,
+			String qualifiedName,
 			int index,
 			SymbolTableEntry next,
 			SymbolTableEntry prevtop,
@@ -51,6 +57,7 @@ public class SymbolTableEntry {
 		this.index = index;
 		this.name = name;
 		this.type = type;
+		this.qualifiedName = qualifiedName;
 		this.next = next;
 		this.prevtop = prevtop;
 		this.prevtopIndex = prevtopIndex;

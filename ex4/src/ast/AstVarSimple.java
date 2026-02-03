@@ -12,6 +12,7 @@ public class AstVarSimple extends AstVar {
 	/* simple variable name */
 	/************************/
 	public String name;
+	public String qualifiedName; // Set during semantMe for IR generation
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -79,6 +80,9 @@ public class AstVarSimple extends AstVar {
 			throw new SemanticError("variable '" + name + "' is undefined", lineNumber);
 		}
 
+		// Store qualified name for IR generation
+		this.qualifiedName = SymbolTable.getInstance().findQualifiedName(name);
+
 		// If we got a TypeClassField, return its actual type
 		if (t instanceof TypeClassField) {
 			return ((TypeClassField) t).fieldType;
@@ -89,7 +93,6 @@ public class AstVarSimple extends AstVar {
 
 	public Temp irMe() {
 		Temp t = TempFactory.getInstance().getFreshTemp();
-		String qualifiedName = Ir.getInstance().getQualifiedName(name);
 		Ir.getInstance().AddIrCommand(new IrCommandLoad(t, qualifiedName));
 		return t;
 	}

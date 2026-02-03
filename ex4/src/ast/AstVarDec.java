@@ -10,6 +10,7 @@ public class AstVarDec extends AstDec {
     public AstType type;
     public String name;
     public AstExp initExp; // Can be null if no initialization
+    public String qualifiedName; // Set during semantMe for IR generation
 
     /******************/
     /* CONSTRUCTOR(S) */
@@ -93,6 +94,8 @@ public class AstVarDec extends AstDec {
         }
 
         SymbolTable.getInstance().enter(name, varType);
+        // Store qualified name for IR generation
+        this.qualifiedName = SymbolTable.getInstance().findQualifiedName(name);
         return varType;
     }
 
@@ -141,6 +144,8 @@ public class AstVarDec extends AstDec {
                 || SymbolTable.getInstance().getCurrentFunction() != null) {
             // Normal variable declaration. Members are entered in classDec
             SymbolTable.getInstance().enter(name, varType);
+            // Store qualified name for IR generation
+            this.qualifiedName = SymbolTable.getInstance().findQualifiedName(name);
         }
 
         return varType;
@@ -194,7 +199,6 @@ public class AstVarDec extends AstDec {
     }
 
     public Temp irMe() {
-        String qualifiedName = Ir.getInstance().registerVariable(name);
         Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName));
 
         if (initExp != null) {
