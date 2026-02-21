@@ -1,11 +1,16 @@
 package ast;
 
 import Exceptions.SemanticError;
+import codegen.ClassLayout;
+import ir.*;
+import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstVarField extends AstVar {
 	public AstVar var;
 	public String fieldName;
+	public TypeClass resolvedClass; // Set during semantMe for IR generation
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -82,6 +87,7 @@ public class AstVarField extends AstVar {
 		}
 
 		TypeClass tc = (TypeClass) t;
+		this.resolvedClass = tc; // Store for IR generation
 
 		/************************************/
 		/* [3] Look for fieldName inside tc */
@@ -103,5 +109,16 @@ public class AstVarField extends AstVar {
 		}
 
 		return memberType;
+	}
+
+	@Override
+	public Temp irMe() {
+		Temp objTemp = var.irMe();
+		Ir.getInstance().AddIrCommand(new IrCommandCheckNullPtr(objTemp));
+		ClassLayout layout = ClassLayout.getLayout(resolvedClass.name);
+		int fieldOffset = layout.getFieldOffset(fieldName);
+		Temp dst = TempFactory.getInstance().getFreshTemp();
+		Ir.getInstance().AddIrCommand(new IrCommandFieldGet(dst, objTemp, fieldOffset));
+		return dst;
 	}
 }

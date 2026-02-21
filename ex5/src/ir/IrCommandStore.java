@@ -13,6 +13,8 @@ package ir;
 import temp.*;
 import mips.*;
 
+import java.util.Set;
+
 public class IrCommandStore extends IrCommand {
 	public String varName;
 	public Temp src;
@@ -25,6 +27,11 @@ public class IrCommandStore extends IrCommand {
 	@Override
 	public String getDefinedVariable() {
 		return varName;
+	}
+
+	@Override
+	public Set<Integer> getUsedTemps() {
+		return Set.of(src.getSerialNumber());
 	}
 
 	/***************/

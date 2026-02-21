@@ -1,7 +1,10 @@
 package ast;
 
 import Exceptions.SemanticError;
-import symboltable.SymbolTable;
+import codegen.ClassLayout;
+import ir.*;
+import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstNewExp extends AstExp {
@@ -92,5 +95,76 @@ public class AstNewExp extends AstExp {
         }
 
         return t;
+    }
+
+    @Override
+    public Temp irMe() {
+        if (sizeExp != null) {
+            return irMeArray();
+        } else {
+            return irMeObject();
+        }
+    }
+
+    private Temp irMeArray() {
+        Temp sizeTemp = sizeExp.irMe();
+
+        // Compute (size + 1) * 4 bytes for [length][elem0]...[elemN-1]
+        Temp oneTemp = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IRcommandConstInt(oneTemp, 1));
+        Temp totalTemp = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(totalTemp, sizeTemp, oneTemp));
+        Temp fourTemp = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IRcommandConstInt(fourTemp, 4));
+        Temp bytesTemp = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IrCommandBinopMulIntegers(bytesTemp, totalTemp, fourTemp));
+
+        // Malloc
+        Temp arrTemp = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IrCommandMalloc(arrTemp, bytesTemp));
+
+        // Store length at offset 0
+        Ir.getInstance().AddIrCommand(new IrCommandFieldSet(arrTemp, 0, sizeTemp));
+
+        // Zero-initialize all elements
+        Ir.getInstance().AddIrCommand(new IrCommandZeroInitArray(arrTemp, sizeTemp));
+
+        return arrTemp;
+    }
+
+    private Temp irMeObject() {
+        ClassLayout layout = ClassLayout.getLayout(type.name);
+
+        // Malloc object
+        Temp objTemp = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IrCommandMalloc(objTemp, layout.objectSize));
+
+        // Store vtable pointer at offset 0
+        if (!layout.vtable.isEmpty()) {
+            Temp vtableAddr = TempFactory.getInstance().getFreshTemp();
+            Ir.getInstance().AddIrCommand(new IrCommandLoadAddress(vtableAddr, layout.vtableLabel));
+            Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objTemp, 0, vtableAddr));
+        } else {
+            // Even with no methods, store 0 at vtable slot
+            Temp zeroTemp = TempFactory.getInstance().getFreshTemp();
+            Ir.getInstance().AddIrCommand(new IRcommandConstInt(zeroTemp, 0));
+            Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objTemp, 0, zeroTemp));
+        }
+
+        // Initialize each field
+        for (ClassLayout.FieldInfo fi : layout.fields) {
+            Temp valTemp = TempFactory.getInstance().getFreshTemp();
+            if (fi.initValue instanceof Integer intVal) {
+                Ir.getInstance().AddIrCommand(new IRcommandConstInt(valTemp, intVal));
+            } else if (fi.initValue instanceof String strVal) {
+                String label = ClassLayout.getOrCreateStringLabel(strVal);
+                Ir.getInstance().AddIrCommand(new IrCommandLoadAddress(valTemp, label));
+            } else {
+                Ir.getInstance().AddIrCommand(new IRcommandConstInt(valTemp, 0));
+            }
+            Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objTemp, fi.offset, valTemp));
+        }
+
+        return objTemp;
     }
 }

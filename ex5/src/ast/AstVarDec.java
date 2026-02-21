@@ -1,6 +1,7 @@
 package ast;
 
 import Exceptions.SemanticError;
+import codegen.ClassLayout;
 import ir.*;
 import symboltable.SymbolTable;
 import temp.Temp;
@@ -199,10 +200,27 @@ public class AstVarDec extends AstDec {
     }
 
     public Temp irMe() {
-        Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName));
+        IrContext ctx = IrContext.getInstance();
 
-        if (initExp != null) {
-            Ir.getInstance().AddIrCommand(new IrCommandStore(qualifiedName, initExp.irMe()));
+        if (ctx.isInFunction()) {
+            // Local variable: allocate frame slot
+            ctx.addLocal(qualifiedName);
+            if (initExp != null) {
+                Temp initTemp = initExp.irMe();
+                Ir.getInstance().AddIrCommand(
+                        new IrCommandStoreFrame(ctx.getFrameOffset(qualifiedName), initTemp));
+            }
+        } else {
+            // Global variable: allocate in .data section
+            ctx.addGlobal(qualifiedName);
+            if (initExp instanceof AstExpInt intExp) {
+                Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName, intExp.value));
+            } else if (initExp instanceof AstExpString strExp) {
+                String label = ClassLayout.getOrCreateStringLabel(strExp.value);
+                Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName, label));
+            } else {
+                Ir.getInstance().AddIrCommand(new IrCommandAllocate(qualifiedName));
+            }
         }
         return null;
     }

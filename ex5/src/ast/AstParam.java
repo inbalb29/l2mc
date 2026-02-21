@@ -3,6 +3,7 @@ package ast;
 public class AstParam extends AstNode {
     public AstType type;
     public String name;
+    public String qualifiedName; // Set during semantMe for IR generation
 
     /******************/
     /* CONSTRUCTOR(S) */

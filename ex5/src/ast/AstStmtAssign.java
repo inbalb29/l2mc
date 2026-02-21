@@ -1,8 +1,10 @@
 package ast;
 
 import Exceptions.SemanticError;
+import codegen.ClassLayout;
 import ir.*;
 import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstStmtAssign extends AstStmt {
@@ -100,10 +102,42 @@ public class AstStmtAssign extends AstStmt {
 	}
 
 	public Temp irMe() {
-		Temp src = exp.irMe();
-		String qualifiedName = ((AstVarSimple) var).qualifiedName;
-		Ir.getInstance().AddIrCommand(new IrCommandStore(qualifiedName, src));
+		if (var instanceof AstVarSimple simple) {
+			Temp src = exp.irMe();
+			assignToSimple(simple, src);
+		} else if (var instanceof AstVarField field) {
+			// Evaluate LHS object before RHS (left-to-right evaluation)
+			Temp objTemp = field.var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNullPtr(objTemp));
+			Temp src = exp.irMe();
+			ClassLayout layout = ClassLayout.getLayout(field.resolvedClass.name);
+			int fieldOffset = layout.getFieldOffset(field.fieldName);
+			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(objTemp, fieldOffset, src));
+		} else if (var instanceof AstVarSubscript subscript) {
+			// Evaluate LHS array and index before RHS (left-to-right evaluation)
+			Temp arrTemp = subscript.var.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandCheckNullPtr(arrTemp));
+			Temp idxTemp = subscript.subscript.irMe();
+			Temp src = exp.irMe();
+			Ir.getInstance().AddIrCommand(new IrCommandArraySet(arrTemp, idxTemp, src));
+		}
 
 		return null;
+	}
+
+	private void assignToSimple(AstVarSimple simple, Temp src) {
+		IrContext ctx = IrContext.getInstance();
+		if (ctx.isInFunction() && ctx.hasFrameOffset(simple.qualifiedName)) {
+			Ir.getInstance().AddIrCommand(
+					new IrCommandStoreFrame(ctx.getFrameOffset(simple.qualifiedName), src));
+		} else if (simple.isClassField && ctx.isMethod()) {
+			ClassLayout layout = ClassLayout.getLayout(ctx.getClassName());
+			int fieldOffset = layout.getFieldOffset(simple.name);
+			Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+			Ir.getInstance().AddIrCommand(new IrCommandLoadFrame(thisTemp, ctx.getThisParamOffset()));
+			Ir.getInstance().AddIrCommand(new IrCommandFieldSet(thisTemp, fieldOffset, src));
+		} else {
+			Ir.getInstance().AddIrCommand(new IrCommandStore(simple.qualifiedName, src));
+		}
 	}
 }

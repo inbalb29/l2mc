@@ -1,5 +1,9 @@
 package ast;
 
+import codegen.ClassLayout;
+import ir.*;
+import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstExpString extends AstExp {
@@ -46,5 +50,13 @@ public class AstExpString extends AstExp {
 	@Override
 	public Type semantMe() {
 		return TypeString.getInstance();
+	}
+
+	@Override
+	public Temp irMe() {
+		String label = ClassLayout.getOrCreateStringLabel(value);
+		Temp t = TempFactory.getInstance().getFreshTemp();
+		Ir.getInstance().AddIrCommand(new IrCommandLoadAddress(t, label));
+		return t;
 	}
 }

@@ -1,14 +1,9 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import Exceptions.*;
-import analysis.DataFlowAnalysis;
 import ast.*;
+import codegen.RegisterAllocationFailed;
 import ir.*;
-import java_cup.Lexer;
 import mips.*;
 
 public class Main {
@@ -17,7 +12,6 @@ public class Main {
 		Parser p;
 		AstProg ast;
 		FileReader fileReader;
-		PrintWriter fileWriter;
 		String inputFileName = argv[0];
 		String outputFileName = argv[1];
 
@@ -27,60 +21,63 @@ public class Main {
 			/********************************/
 			fileReader = new FileReader(inputFileName);
 
-			/********************************/
-			/* [2] Initialize a file writer */
-			/********************************/
-			fileWriter = new PrintWriter(outputFileName);
-
 			/******************************/
-			/* [3] Initialize a new lexer */
+			/* [2] Initialize a new lexer */
 			/******************************/
 			l = new Lexer(fileReader);
 
 			/*******************************/
-			/* [4] Initialize a new parser */
+			/* [3] Initialize a new parser */
 			/*******************************/
 			p = new Parser(l);
 
 			/***********************************/
-			/* [5] 3 ... 2 ... 1 ... Parse !!! */
+			/* [4] 3 ... 2 ... 1 ... Parse !!! */
 			/***********************************/
 			ast = (AstProg) p.parse().value;
 
 			/*************************/
-			/* [6] Print the AST ... */
+			/* [5] Print the AST ... */
 			/*************************/
 			ast.printMe();
 
 			/**************************/
-			/* [7] Semant the AST ... */
+			/* [6] Semant the AST ... */
 			/**************************/
 			ast.semantMe();
 
 			/**********************/
-			/* [8] IR the AST ... */
+			/* [7] IR the AST ... */
 			/**********************/
 			ast.irMe();
 
+			/*****************************/
+			/* [8] Register Allocation */
+			/*****************************/
+			Ir.getInstance().allocateRegisters();
+
+			/*************************************/
+			/* [9] Initialize MIPS output file */
+			/*************************************/
+			MipsGenerator.init(outputFileName);
+
 			/***********************/
-			/* [9] MIPS the Ir ... */
+			/* [10] MIPS the Ir */
 			/***********************/
 			Ir.getInstance().mipsMe();
 
 			/**************************************/
-			/* [10] Finalize AST GRAPHIZ DOT file */
+			/* [11] Finalize AST GRAPHIZ DOT file */
 			/**************************************/
 			AstGraphviz.getInstance().finalizeFile();
 
 			/***************************/
-			/* [11] Finalize MIPS file */
+			/* [12] Finalize MIPS file */
 			/***************************/
 			MipsGenerator.getInstance().finalizeFile();
 
-			/**************************/
-			/* [12] Close output file */
-			/**************************/
-			fileWriter.close();
+		} catch (RegisterAllocationFailed e) {
+			writeError(outputFileName, "Register Allocation Failed", e);
 		} catch (LexerError e) {
 			writeError(outputFileName, "ERROR", e);
 		} catch (ParserError e) {

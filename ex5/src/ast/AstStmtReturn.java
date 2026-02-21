@@ -1,7 +1,9 @@
 package ast;
 
 import Exceptions.SemanticError;
+import ir.*;
 import symboltable.SymbolTable;
+import temp.Temp;
 import types.*;
 
 public class AstStmtReturn extends AstStmt {
@@ -110,5 +112,15 @@ public class AstStmtReturn extends AstStmt {
         }
 
         return false;
+    }
+
+    @Override
+    public Temp irMe() {
+        Temp retVal = null;
+        if (exp != null) {
+            retVal = exp.irMe();
+        }
+        Ir.getInstance().AddIrCommand(new IrCommandReturn(retVal));
+        return null;
     }
 }

@@ -13,6 +13,8 @@ package ir;
 import temp.*;
 import mips.*;
 
+import java.util.Set;
+
 public class IrCommandJumpIfEqToZero extends IrCommand {
 	Temp t;
 	String labelName;
@@ -20,6 +22,11 @@ public class IrCommandJumpIfEqToZero extends IrCommand {
 	public IrCommandJumpIfEqToZero(Temp t, String labelName) {
 		this.t = t;
 		this.labelName = labelName;
+	}
+
+	@Override
+	public Set<Integer> getUsedTemps() {
+		return Set.of(t.getSerialNumber());
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package ast;
 
 import Exceptions.SemanticError;
+import ir.*;
+import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstVarSubscript extends AstVar {
@@ -123,5 +126,15 @@ public class AstVarSubscript extends AstVar {
 		}
 
 		return arrType.innerType;
+	}
+
+	@Override
+	public Temp irMe() {
+		Temp arrTemp = var.irMe();
+		Ir.getInstance().AddIrCommand(new IrCommandCheckNullPtr(arrTemp));
+		Temp idxTemp = subscript.irMe();
+		Temp dst = TempFactory.getInstance().getFreshTemp();
+		Ir.getInstance().AddIrCommand(new IrCommandArrayGet(dst, arrTemp, idxTemp));
+		return dst;
 	}
 }

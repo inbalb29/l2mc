@@ -183,6 +183,26 @@ public class SymbolTable {
 		return false;
 	}
 
+	/**
+	 * Searches for a symbol in function-local scopes only (method scope
+	 * and deeper), excluding the class scope and global scope.
+	 * Used to detect local variables/params that shadow class fields.
+	 */
+	public boolean existsInFunctionScope(String name) {
+		int maxBoundaries = scopeDepth - 1;
+		int seen = 0;
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop) {
+			if (e.name.equals("SCOPE-BOUNDARY")) {
+				seen++;
+				if (seen >= maxBoundaries)
+					break;
+			} else if (e.name.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/***************************************************************************/
 	/* begin scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
 	/***************************************************************************/

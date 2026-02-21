@@ -1,5 +1,8 @@
 package ast;
 
+import ir.*;
+import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstExpNil extends AstExp {
@@ -40,5 +43,12 @@ public class AstExpNil extends AstExp {
     @Override
     public Type semantMe() {
         return TypeNil.getInstance();
+    }
+
+    @Override
+    public Temp irMe() {
+        Temp t = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IRcommandConstInt(t, 0));
+        return t;
     }
 }

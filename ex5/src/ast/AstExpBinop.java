@@ -9,6 +9,7 @@ public class AstExpBinop extends AstExp {
 	public BinOp op;
 	public AstExp left;
 	public AstExp right;
+	public boolean isStringOp = false; // Set during semantMe for IR generation
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -89,6 +90,7 @@ public class AstExpBinop extends AstExp {
 					return TypeInt.getInstance();
 				}
 				if (t1.isString() && t2.isString()) {
+					this.isStringOp = true;
 					return TypeString.getInstance();
 				}
 				throw new SemanticError("invalid operand type for + operator", lineNumber);
@@ -142,6 +144,9 @@ public class AstExpBinop extends AstExp {
 		// Primitive types: must be exactly same type
 		if (t1.isInt() || t1.isString()) {
 			if (t1 == t2) {
+				if (t1.isString()) {
+					this.isStringOp = true;
+				}
 				return TypeInt.getInstance();
 			}
 			throw new SemanticError("type mismatch in equality comparison", lineNumber);
@@ -177,6 +182,15 @@ public class AstExpBinop extends AstExp {
 			t1 = left.irMe();
 		if (right != null)
 			t2 = right.irMe();
+
+		if (isStringOp) {
+			if (op == BinOp.PLUS) {
+				Ir.getInstance().AddIrCommand(new IrCommandStringConcat(dst, t1, t2));
+			} else {
+				Ir.getInstance().AddIrCommand(new IrCommandStringEq(dst, t1, t2));
+			}
+			return dst;
+		}
 
 		switch (op.getSymbol()) {
 			case '+':

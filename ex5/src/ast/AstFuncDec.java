@@ -134,6 +134,7 @@ public class AstFuncDec extends AstDec {
                 throw new SemanticError("duplicate parameter name '" + param.name + "'", lineNumber);
             }
             SymbolTable.getInstance().enter(param.name, funcType.params.get(i));
+            param.qualifiedName = SymbolTable.getInstance().findQualifiedName(param.name);
         }
 
         /* [3] Semant function body */
@@ -163,14 +164,49 @@ public class AstFuncDec extends AstDec {
     }
 
     public Temp irMe() {
-        Ir.getInstance().AddIrCommand(new IrCommandLabel("main"));
-        if (body != null && !body.isEmpty()) {
+        return irMe(null);
+    }
+
+    public Temp irMe(TypeClass ownerClass) {
+        IrContext ctx = IrContext.getInstance();
+        boolean isMethod = (ownerClass != null);
+        String funcLabel;
+        if (isMethod) {
+            funcLabel = ownerClass.name + "_" + name;
+        } else {
+            funcLabel = "main".equals(name) ? "user_main" : name;
+        }
+
+        ctx.enterFunction(name, isMethod, ownerClass);
+
+        // Register 'this' as first parameter for methods
+        if (isMethod) {
+            ctx.addParam("this");
+        }
+
+        // Register parameters
+        for (AstParam param : params) {
+            ctx.addParam(param.qualifiedName);
+        }
+
+        // Begin IR function (numLocals will be updated after body)
+        Ir.getInstance().beginFunction(funcLabel, ctx.getNumParams(), 0, isMethod);
+
+        // Generate body
+        if (body != null) {
             for (AstStmt stmt : body) {
                 if (stmt != null) {
                     stmt.irMe();
                 }
             }
         }
+
+        // Update numLocals
+        Ir.getInstance().getCurrentFunction().setNumLocals(ctx.getNumLocals());
+
+        Ir.getInstance().endFunction();
+        ctx.exitFunction();
+
         return null;
     }
 }

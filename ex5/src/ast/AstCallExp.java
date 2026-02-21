@@ -1,17 +1,22 @@
 package ast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Exceptions.SemanticError;
+import codegen.ClassLayout;
 import ir.*;
 import symboltable.SymbolTable;
 import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstCallExp extends AstExp {
     public AstVar object; // null for simple function calls, non-null for method calls
     public String funcName;
     public List<AstExp> args;
+    public boolean isMethodCall = false; // Set during semantMe for IR generation
+    public TypeClass resolvedCallClass = null; // Set during semantMe for IR generation
 
     /******************/
     /* CONSTRUCTOR(S) */
@@ -102,6 +107,8 @@ public class AstCallExp extends AstExp {
             }
 
             funcType = (TypeFunction) memberType;
+            this.isMethodCall = true;
+            this.resolvedCallClass = classType;
         } else {
             /* Simple function call, or method call from within a class */
             TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
@@ -117,6 +124,8 @@ public class AstCallExp extends AstExp {
                                 lineNumber);
                     }
                     funcType = (TypeFunction) t;
+                    this.isMethodCall = true;
+                    this.resolvedCallClass = currentClass;
                 }
             }
 
@@ -173,15 +182,54 @@ public class AstCallExp extends AstExp {
     }
 
     public Temp irMe() {
-        // Atm only print int function is supported in subset of L language.
-        Temp t = null;
+        IrContext ctx = IrContext.getInstance();
 
-        if (args != null && !args.isEmpty()) {
-            t = args.get(0).irMe();
+        // Handle builtins
+        if (!isMethodCall && "PrintInt".equals(funcName)) {
+            Temp argTemp = args.get(0).irMe();
+            Ir.getInstance().AddIrCommand(new IrCommandPrintInt(argTemp));
+            return null;
+        }
+        if (!isMethodCall && "PrintString".equals(funcName)) {
+            Temp argTemp = args.get(0).irMe();
+            Ir.getInstance().AddIrCommand(new IrCommandPrintString(argTemp));
+            return null;
         }
 
-        Ir.getInstance().AddIrCommand(new IrCommandPrintInt(t));
+        // Evaluate arguments
+        List<Temp> argTemps = new ArrayList<>();
+        for (AstExp arg : args) {
+            argTemps.add(arg.irMe());
+        }
 
-        return null;
+        Temp dst = TempFactory.getInstance().getFreshTemp();
+
+        if (isMethodCall) {
+            // Virtual method call
+            ClassLayout layout = ClassLayout.getLayout(resolvedCallClass.name);
+            int vtableIndex = layout.getMethodVtableIndex(funcName);
+            int vtableOffset = vtableIndex * 4;
+
+            Temp objTemp;
+            if (object != null) {
+                // Explicit receiver: obj.method(args)
+                objTemp = object.irMe();
+            } else {
+                // Implicit 'this': called from within the class
+                objTemp = TempFactory.getInstance().getFreshTemp();
+                Ir.getInstance().AddIrCommand(
+                        new IrCommandLoadFrame(objTemp, ctx.getThisParamOffset()));
+            }
+            Ir.getInstance().AddIrCommand(new IrCommandCheckNullPtr(objTemp));
+            Ir.getInstance().AddIrCommand(
+                    new IrCommandVirtualCall(dst, objTemp, vtableOffset, argTemps));
+        } else {
+            // Regular function call
+            String funcLabel = "main".equals(funcName) ? "user_main" : funcName;
+            Ir.getInstance().AddIrCommand(
+                    new IrCommandCallFunc(dst, funcLabel, argTemps));
+        }
+
+        return dst;
     }
 }

@@ -60,6 +60,16 @@ public abstract class IrCommand {
 		return null;
 	}
 
+	// For register allocation: temporaries used (read) by this command
+	public Set<Integer> getUsedTemps() {
+		return Collections.emptySet();
+	}
+
+	// For register allocation: temporary defined (written) by this command
+	public Integer getDefinedTemp() {
+		return null;
+	}
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/

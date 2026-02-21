@@ -1,6 +1,7 @@
 package ast;
 
 import Exceptions.SemanticError;
+import codegen.ClassLayout;
 import ir.*;
 import symboltable.SymbolTable;
 import temp.Temp;
@@ -13,6 +14,7 @@ public class AstVarSimple extends AstVar {
 	/************************/
 	public String name;
 	public String qualifiedName; // Set during semantMe for IR generation
+	public boolean isClassField = false; // Set during semantMe for IR generation
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -65,13 +67,16 @@ public class AstVarSimple extends AstVar {
 		// vs. a local variable. If it's global, class field takes precedence.
 		TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
 		if (currentClass != null) {
-			boolean foundInLocalScope = SymbolTable.getInstance().existsInNestedScopes(name);
+			boolean foundInLocalScope = SymbolTable.getInstance().existsInFunctionScope(name);
 			if (!foundInLocalScope) {
 				Type classFieldType = currentClass.findMember(name);
 				if (classFieldType != null) {
 					// The symbol table result is either null or at global scope
 					// Class field takes precedence
 					t = classFieldType;
+					if (classFieldType instanceof TypeClassField) {
+						this.isClassField = true;
+					}
 				}
 			}
 		}
@@ -93,7 +98,22 @@ public class AstVarSimple extends AstVar {
 
 	public Temp irMe() {
 		Temp t = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(t, qualifiedName));
+		IrContext ctx = IrContext.getInstance();
+
+		if (ctx.isInFunction() && ctx.hasFrameOffset(qualifiedName)) {
+			// Local or parameter variable
+			Ir.getInstance().AddIrCommand(new IrCommandLoadFrame(t, ctx.getFrameOffset(qualifiedName)));
+		} else if (isClassField && ctx.isMethod()) {
+			// Implicit class field access: load this, then field get
+			ClassLayout layout = ClassLayout.getLayout(ctx.getClassName());
+			int fieldOffset = layout.getFieldOffset(name);
+			Temp thisTemp = TempFactory.getInstance().getFreshTemp();
+			Ir.getInstance().AddIrCommand(new IrCommandLoadFrame(thisTemp, ctx.getThisParamOffset()));
+			Ir.getInstance().AddIrCommand(new IrCommandFieldGet(t, thisTemp, fieldOffset));
+		} else {
+			// Global variable
+			Ir.getInstance().AddIrCommand(new IrCommandLoad(t, qualifiedName));
+		}
 		return t;
 	}
 }

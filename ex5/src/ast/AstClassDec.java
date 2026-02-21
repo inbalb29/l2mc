@@ -5,6 +5,7 @@ import java.util.List;
 
 import Exceptions.SemanticError;
 import symboltable.SymbolTable;
+import temp.Temp;
 import types.*;
 
 public class AstClassDec extends AstDec {
@@ -205,6 +206,21 @@ public class AstClassDec extends AstDec {
         /*********************************************************/
         /* [7] Return value is irrelevant for class declarations */
         /*********************************************************/
+        return null;
+    }
+
+    @Override
+    public Temp irMe() {
+        Type t = SymbolTable.getInstance().find(name);
+        if (!(t instanceof TypeClass tc))
+            return null;
+
+        // Generate IR for each method in the class
+        for (AstDec field : fields) {
+            if (field instanceof AstFuncDec funcDec) {
+                funcDec.irMe(tc);
+            }
+        }
         return null;
     }
 }

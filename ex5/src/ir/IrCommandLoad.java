@@ -30,6 +30,11 @@ public class IrCommandLoad extends IrCommand {
 		return Collections.singleton(varName);
 	}
 
+	@Override
+	public Integer getDefinedTemp() {
+		return dst.getSerialNumber();
+	}
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/

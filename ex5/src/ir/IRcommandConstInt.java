@@ -22,6 +22,11 @@ public class IRcommandConstInt extends IrCommand {
 		this.value = value;
 	}
 
+	@Override
+	public Integer getDefinedTemp() {
+		return t.getSerialNumber();
+	}
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/

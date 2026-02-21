@@ -1,7 +1,11 @@
 package ast;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
+import codegen.ClassLayout;
 import symboltable.SymbolTable;
 import temp.Temp;
 import types.*;
@@ -101,16 +105,51 @@ public class AstProg extends AstNode {
 
     @Override
     public Temp irMe() {
-        // IR for each global variale declaration/initialization
+        // Phase 1: Compute class layouts for all classes
+        Map<String, List<ClassLayout.FieldInitInfo>> classFieldInits = new HashMap<>();
+        for (AstDec dec : decs) {
+            if (dec instanceof AstClassDec classDec) {
+                List<ClassLayout.FieldInitInfo> inits = new ArrayList<>();
+                for (AstDec field : classDec.fields) {
+                    if (field instanceof AstVarDec varDec) {
+                        Object initVal = null;
+                        if (varDec.initExp instanceof AstExpInt intExp) {
+                            initVal = intExp.value;
+                        } else if (varDec.initExp instanceof AstExpString strExp) {
+                            initVal = strExp.value;
+                        }
+                        inits.add(new ClassLayout.FieldInitInfo(varDec.name, initVal));
+                    }
+                }
+                classFieldInits.put(classDec.name, inits);
+            }
+        }
+        for (AstDec dec : decs) {
+            if (dec instanceof AstClassDec classDec) {
+                Type t = SymbolTable.getInstance().find(classDec.name);
+                if (t instanceof TypeClass tc) {
+                    ClassLayout.computeLayout(tc, classFieldInits);
+                }
+            }
+        }
+
+        // Phase 2: Global variable declarations
         for (AstDec dec : decs) {
             if (dec != null && dec instanceof AstVarDec) {
                 dec.irMe();
             }
         }
 
-        // IR for each function
+        // Phase 3: Global functions
         for (AstDec dec : decs) {
             if (dec != null && dec instanceof AstFuncDec) {
+                dec.irMe();
+            }
+        }
+
+        // Phase 4: Class methods
+        for (AstDec dec : decs) {
+            if (dec != null && dec instanceof AstClassDec) {
                 dec.irMe();
             }
         }
