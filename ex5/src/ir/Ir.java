@@ -27,6 +27,15 @@ public class Ir {
 		return commands;
 	}
 
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public void mipsMe() {
+		for (IrCommand cmd : commands) {
+			cmd.mipsMe();
+		}
+	}
+
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/

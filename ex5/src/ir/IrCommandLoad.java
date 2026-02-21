@@ -14,6 +14,7 @@ import java.util.Set;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 public class IrCommandLoad extends IrCommand {
 	public Temp dst;
@@ -27,5 +28,12 @@ public class IrCommandLoad extends IrCommand {
 	@Override
 	public Set<String> getUsedVariables() {
 		return Collections.singleton(varName);
+	}
+
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public void mipsMe() {
+		MipsGenerator.getInstance().load(dst, varName);
 	}
 }

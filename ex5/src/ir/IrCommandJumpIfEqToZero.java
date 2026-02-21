@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 public class IrCommandJumpIfEqToZero extends IrCommand {
 	Temp t;
@@ -29,5 +30,12 @@ public class IrCommandJumpIfEqToZero extends IrCommand {
 	@Override
 	public String getJumpTarget() {
 		return labelName;
+	}
+
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public void mipsMe() {
+		MipsGenerator.getInstance().beqz(t, labelName);
 	}
 }

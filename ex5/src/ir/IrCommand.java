@@ -59,4 +59,9 @@ public abstract class IrCommand {
 	public String getLabelName() {
 		return null;
 	}
+
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public abstract void mipsMe();
 }

@@ -10,6 +10,7 @@ package ir;
 /*******************/
 /* PROJECT IMPORTS */
 /*******************/
+import mips.*;
 
 public class IrCommandAllocate extends IrCommand {
 	String varName;
@@ -18,7 +19,10 @@ public class IrCommandAllocate extends IrCommand {
 		this.varName = varName;
 	}
 
-	public String getAllocatedVariable() {
-		return varName;
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public void mipsMe() {
+		MipsGenerator.getInstance().allocate(varName);
 	}
 }

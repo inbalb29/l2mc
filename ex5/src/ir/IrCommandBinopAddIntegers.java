@@ -3,6 +3,8 @@
 /***********/
 package ir;
 
+import mips.MipsGenerator;
+
 /*******************/
 /* GENERAL IMPORTS */
 /*******************/
@@ -17,4 +19,10 @@ public class IrCommandBinopAddIntegers extends IrCommandBinop {
 		super(dst, t1, t2);
 	}
 
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public void mipsMe() {
+		MipsGenerator.getInstance().add(dst, t1, t2);
+	}
 }

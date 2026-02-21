@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +7,9 @@ import java.util.Set;
 import Exceptions.*;
 import analysis.DataFlowAnalysis;
 import ast.*;
-import ir.Ir;
+import ir.*;
+import java_cup.Lexer;
+import mips.*;
 
 public class Main {
 	static public void main(String argv[]) {
@@ -61,34 +62,25 @@ public class Main {
 			/**********************/
 			ast.irMe();
 
-			/*******************************************/
-			/* [9] Run uninitialized variable analysis */
-			/*******************************************/
-			DataFlowAnalysis analysis = new DataFlowAnalysis();
-			Set<String> uninitVars = analysis.analyze(Ir.getInstance().getCommands());
-
-			/*********************/
-			/* [10] Write output */
-			/*********************/
-			if (uninitVars.isEmpty()) {
-				fileWriter.print("!OK");
-			} else {
-				// Output sorted variable names, one per line
-				List<String> sortedVars = new ArrayList<>(uninitVars);
-				Collections.sort(sortedVars);
-				for (int i = 0; i < sortedVars.size(); i++) {
-					fileWriter.print(sortedVars.get(i));
-					if (i < sortedVars.size() - 1) {
-						fileWriter.println();
-					}
-				}
-			}
-			fileWriter.close();
+			/***********************/
+			/* [9] MIPS the Ir ... */
+			/***********************/
+			Ir.getInstance().mipsMe();
 
 			/**************************************/
 			/* [10] Finalize AST GRAPHIZ DOT file */
 			/**************************************/
 			AstGraphviz.getInstance().finalizeFile();
+
+			/***************************/
+			/* [11] Finalize MIPS file */
+			/***************************/
+			MipsGenerator.getInstance().finalizeFile();
+
+			/**************************/
+			/* [12] Close output file */
+			/**************************/
+			fileWriter.close();
 		} catch (LexerError e) {
 			writeError(outputFileName, "ERROR", e);
 		} catch (ParserError e) {

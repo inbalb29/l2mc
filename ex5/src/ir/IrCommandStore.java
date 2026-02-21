@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 public class IrCommandStore extends IrCommand {
 	public String varName;
@@ -24,5 +25,12 @@ public class IrCommandStore extends IrCommand {
 	@Override
 	public String getDefinedVariable() {
 		return varName;
+	}
+
+	/***************/
+	/* MIPS me !!! */
+	/***************/
+	public void mipsMe() {
+		MipsGenerator.getInstance().store(varName, src);
 	}
 }
