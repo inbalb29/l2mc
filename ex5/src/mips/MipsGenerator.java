@@ -149,11 +149,12 @@ public class MipsGenerator {
 		int n = saturationCounter++;
 		String d = reg(dst), r1 = reg(oprnd1), r2 = reg(oprnd2);
 		fileWriter.format("\tbeq %s,$zero,__div_by_zero_error\n", r2);
+		// Compute sign check before mflo can clobber r1/r2 (dst may alias them)
+		fileWriter.format("\txor $v1,%s,%s\n", r1, r2);
 		fileWriter.format("\tdiv %s,%s\n", r1, r2);
 		fileWriter.format("\tmflo %s\n", d);
-		fileWriter.format("\tmfhi $v1\n");
-		fileWriter.format("\tbeq $v1,$zero,__div_done_%d\n", n);
-		fileWriter.format("\txor $v1,%s,%s\n", r1, r2);
+		fileWriter.format("\tmfhi $a0\n");
+		fileWriter.format("\tbeq $a0,$zero,__div_done_%d\n", n);
 		fileWriter.format("\tbgez $v1,__div_done_%d\n", n);
 		fileWriter.format("\taddi %s,%s,-1\n", d, d);
 		fileWriter.format("__div_done_%d:\n", n);

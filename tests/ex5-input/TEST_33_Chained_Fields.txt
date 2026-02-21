@@ -1,0 +1,22 @@
+class Inner
+{
+    int val := 42;
+}
+
+class Middle
+{
+    Inner inner;
+}
+
+class Outer
+{
+    Middle middle;
+}
+
+void main()
+{
+    Outer o := new Outer;
+    o.middle := new Middle;
+    o.middle.inner := new Inner;
+    PrintInt(o.middle.inner.val);
+}

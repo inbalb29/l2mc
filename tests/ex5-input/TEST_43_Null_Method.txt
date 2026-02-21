@@ -1,0 +1,10 @@
+class Foo
+{
+    int bar() { return 42; }
+}
+
+void main()
+{
+    Foo f := nil;
+    PrintInt(f.bar());
+}

@@ -1,0 +1,15 @@
+class Base
+{
+    int foo(int x) { return x; }
+}
+
+class Child extends Base
+{
+    int foo(int x, int y) { return x + y; }
+}
+
+void main()
+{
+    Child c := new Child;
+    PrintInt(c.foo(1, 2));
+}

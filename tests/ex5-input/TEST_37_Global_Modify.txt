@@ -1,0 +1,16 @@
+int counter := 0;
+
+void bump()
+{
+    counter := counter + 1;
+}
+
+void main()
+{
+    bump();
+    bump();
+    bump();
+    PrintInt(counter);
+    counter := counter + 100;
+    PrintInt(counter);
+}

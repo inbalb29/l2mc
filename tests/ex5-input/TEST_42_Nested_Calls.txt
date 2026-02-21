@@ -1,0 +1,15 @@
+int double(int x)
+{
+    return x + x;
+}
+
+int triple(int x)
+{
+    return x + x + x;
+}
+
+void main()
+{
+    PrintInt(double(triple(2)) + 1);
+    PrintInt(triple(double(3)));
+}

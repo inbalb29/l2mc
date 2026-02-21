@@ -1,0 +1,12 @@
+array IntArray = int[];
+
+void main()
+{
+    IntArray a := new int[3];
+    a[0] := 10;
+    a[1] := 20;
+    a[2] := 30;
+    PrintInt(a[2]);
+    int b := a[3];
+    PrintInt(b);
+}

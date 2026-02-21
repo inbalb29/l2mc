@@ -1,0 +1,10 @@
+class Foo
+{
+    int x := 1;
+}
+
+void main()
+{
+    Foo f := new Foo;
+    f.bar();
+}

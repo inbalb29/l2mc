@@ -1,0 +1,12 @@
+array StringArray = string[];
+
+void main()
+{
+    StringArray sa := new string[3];
+    sa[0] := "abc";
+    sa[1] := "def";
+    sa[2] := sa[0] + sa[1];
+    PrintString(sa[2]);
+    PrintInt(sa[0] = sa[1]);
+    PrintInt(sa[0] = "abc");
+}

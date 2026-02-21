@@ -1,0 +1,23 @@
+void main()
+{
+    int i := 1;
+    while (i < 20)
+    {
+        if (i*i > 100)
+        {
+            PrintInt(i);
+        }
+        else
+        {
+            if (i*i > 50)
+            {
+                PrintInt(0 - i);
+            }
+            else
+            {
+                PrintInt(0);
+            }
+        }
+        i := i + 1;
+    }
+}

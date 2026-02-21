@@ -1,0 +1,22 @@
+array IntArray = int[];
+
+class Box
+{
+    int val;
+    Box next;
+}
+
+void main()
+{
+    IntArray arr := nil;
+    Box d := nil;
+    PrintInt(arr = nil);
+    PrintInt(d = nil);
+    Box a := new Box;
+    Box b := new Box;
+    Box c := a;
+    PrintInt(a = nil);
+    PrintInt(a = c);
+    PrintInt(a = b);
+    PrintInt(a.next = nil);
+}

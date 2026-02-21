@@ -1,0 +1,20 @@
+void printRange(int start, int end)
+{
+    if (start > end)
+    {
+        return;
+    }
+    int i := start;
+    while (i < end + 1)
+    {
+        PrintInt(i);
+        i := i + 1;
+    }
+}
+
+void main()
+{
+    printRange(1, 5);
+    printRange(10, 3);
+    printRange(7, 7);
+}

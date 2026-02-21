@@ -1,0 +1,29 @@
+class Animal
+{
+    int legs := 4;
+    string speak() { return "moo"; }
+    int getLegs() { return legs; }
+}
+
+class Dog extends Animal
+{
+    string speak() { return "woof"; }
+}
+
+class Puppy extends Dog
+{
+    string speak() { return "yip"; }
+}
+
+void main()
+{
+    Animal a := new Animal;
+    Animal b := new Dog;
+    Animal c := new Puppy;
+    PrintString(a.speak());
+    PrintString(b.speak());
+    PrintString(c.speak());
+    PrintInt(a.getLegs());
+    PrintInt(b.getLegs());
+    PrintInt(c.getLegs());
+}
