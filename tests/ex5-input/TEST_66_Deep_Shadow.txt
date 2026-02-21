@@ -1,0 +1,20 @@
+int x := 100;
+
+int readX()
+{
+    return x;
+}
+
+void main()
+{
+    PrintInt(x);
+    int x := 200;
+    PrintInt(x);
+    if (1)
+    {
+        int x := 300;
+        PrintInt(x);
+    }
+    PrintInt(x);
+    PrintInt(readX());
+}

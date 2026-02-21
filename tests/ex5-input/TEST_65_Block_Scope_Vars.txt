@@ -1,0 +1,22 @@
+void main()
+{
+    int x := 1;
+    if (x)
+    {
+        int x := 2;
+        PrintInt(x);
+        if (x)
+        {
+            int x := 3;
+            PrintInt(x);
+        }
+    }
+    PrintInt(x);
+    int y := 0;
+    while (y < 3)
+    {
+        int z := y * 10;
+        PrintInt(z);
+        y := y + 1;
+    }
+}

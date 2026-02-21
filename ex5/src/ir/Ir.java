@@ -8,6 +8,11 @@ public class Ir {
 	private List<IrCommand> globalCommands = new ArrayList<>();
 	private List<IrFunction> functions = new ArrayList<>();
 	private IrFunction currentFunction = null;
+	private boolean hasGlobalInit = false;
+
+	public void setHasGlobalInit() {
+		this.hasGlobalInit = true;
+	}
 
 	public void AddIrCommand(IrCommand cmd) {
 		if (currentFunction != null) {
@@ -70,7 +75,7 @@ public class Ir {
 		}
 
 		// Generate main entry point and error handlers
-		gen.mainEntryPoint();
+		gen.mainEntryPoint(hasGlobalInit);
 	}
 
 	private static Ir instance = null;

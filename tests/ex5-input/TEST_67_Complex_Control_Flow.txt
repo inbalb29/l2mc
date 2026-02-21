@@ -1,0 +1,29 @@
+int g0 := 10;
+int g1 := g0 + g0;
+string hel := "hel";
+string greeting := hel + "lo";
+
+void main()
+{
+    int x := g1 + 5;
+    PrintInt(x);
+    int y := 0;
+    while (y < 3)
+    {
+        int acc := 0;
+        int j := 0;
+        while (j < y + 1)
+        {
+            acc := acc + j;
+            j := j + 1;
+        }
+        PrintInt(acc);
+        y := y + 1;
+    }
+    if (0)
+    {
+        PrintInt(-1);
+    }
+    PrintString(greeting);
+    PrintInt(g0);
+}

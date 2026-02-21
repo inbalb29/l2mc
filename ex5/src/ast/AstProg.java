@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 import codegen.ClassLayout;
+import ir.Ir;
+import ir.IrCommandStore;
+import ir.IrContext;
 import symboltable.SymbolTable;
 import temp.Temp;
 import types.*;
@@ -138,6 +141,29 @@ public class AstProg extends AstNode {
             if (dec != null && dec instanceof AstVarDec) {
                 dec.irMe();
             }
+        }
+
+        // Phase 2.5: Runtime initialization for non-constant global initializers
+        List<AstVarDec> nonConstGlobalInits = new ArrayList<>();
+        for (AstDec dec : decs) {
+            if (dec instanceof AstVarDec varDec && varDec.initExp != null
+                && !(varDec.initExp instanceof AstExpInt)
+                && !(varDec.initExp instanceof AstExpString)) {
+                nonConstGlobalInits.add(varDec);
+            }
+        }
+        if (!nonConstGlobalInits.isEmpty()) {
+            IrContext.getInstance().enterFunction("__init_globals", false, null);
+            Ir.getInstance().beginFunction("__init_globals", 0, 0, false);
+            Ir.getInstance().setHasGlobalInit();
+            for (AstVarDec varDec : nonConstGlobalInits) {
+                Temp t = varDec.initExp.irMe();
+                Ir.getInstance().AddIrCommand(new IrCommandStore(varDec.qualifiedName, t));
+            }
+            Ir.getInstance().getCurrentFunction().setNumLocals(
+                IrContext.getInstance().getNumLocals());
+            Ir.getInstance().endFunction();
+            IrContext.getInstance().exitFunction();
         }
 
         // Phase 3: Global functions

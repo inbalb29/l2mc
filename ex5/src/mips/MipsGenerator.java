@@ -78,8 +78,11 @@ public class MipsGenerator {
 		fileWriter.format("\tjr $ra\n");
 	}
 
-	public void mainEntryPoint() {
+	public void mainEntryPoint(boolean hasGlobalInit) {
 		fileWriter.format(".text\nmain:\n");
+		if (hasGlobalInit) {
+			fileWriter.format("\tjal __init_globals\n");
+		}
 		fileWriter.format("\tjal user_main\n");
 		fileWriter.format("\tli $v0,10\n");
 		fileWriter.format("\tsyscall\n");
