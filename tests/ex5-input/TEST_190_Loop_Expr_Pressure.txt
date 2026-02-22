@@ -1,0 +1,14 @@
+void main()
+{
+    int sum := 0;
+    int i := 0;
+    while (i < 5)
+    {
+        int x := i * i;
+        int y := i + 1;
+        int z := x * y;
+        sum := sum + z;
+        i := i + 1;
+    }
+    PrintInt(sum);
+}
