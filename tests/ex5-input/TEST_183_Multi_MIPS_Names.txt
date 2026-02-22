@@ -1,0 +1,21 @@
+int add(int a, int b)
+{
+    return a + b;
+}
+int sub(int a, int b)
+{
+    return a - b;
+}
+int mul(int a, int b)
+{
+    return a * b;
+}
+void main()
+{
+    int li := add(3, 4);
+    int la := sub(10, li);
+    int sw := mul(li, la);
+    PrintInt(li);
+    PrintInt(la);
+    PrintInt(sw);
+}

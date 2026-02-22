@@ -225,7 +225,7 @@ public class AstCallExp extends AstExp {
                     new IrCommandVirtualCall(dst, objTemp, vtableOffset, argTemps));
         } else {
             // Regular function call
-            String funcLabel = "main".equals(funcName) ? "user_main" : funcName;
+            String funcLabel = "main".equals(funcName) ? "user_main" : "_" + funcName;
             Ir.getInstance().AddIrCommand(
                     new IrCommandCallFunc(dst, funcLabel, argTemps));
         }

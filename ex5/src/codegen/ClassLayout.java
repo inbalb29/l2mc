@@ -108,7 +108,7 @@ public class ClassLayout {
                 layout.fieldOffsets.put(tcf.name, fi.offset);
                 layout.objectSize += 4;
             } else if (member instanceof TypeFunction tf) {
-                String implLabel = tc.name + "_" + tf.name;
+                String implLabel = "_" + tc.name + "_" + tf.name;
                 if (layout.methodVtableIndices.containsKey(tf.name)) {
                     int idx = layout.methodVtableIndices.get(tf.name);
                     layout.vtable.set(idx, new MethodInfo(tf.name, implLabel));

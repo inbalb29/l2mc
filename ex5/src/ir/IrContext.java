@@ -153,7 +153,7 @@ public class IrContext {
         if ("main".equals(funcName))
             return "user_main";
         if (isMethod && className != null)
-            return className + "_" + funcName;
-        return funcName;
+            return "_" + className + "_" + funcName;
+        return "_" + funcName;
     }
 }

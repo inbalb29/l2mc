@@ -172,9 +172,9 @@ public class AstFuncDec extends AstDec {
         boolean isMethod = (ownerClass != null);
         String funcLabel;
         if (isMethod) {
-            funcLabel = ownerClass.name + "_" + name;
+            funcLabel = "_" + ownerClass.name + "_" + name;
         } else {
-            funcLabel = "main".equals(name) ? "user_main" : name;
+            funcLabel = "main".equals(name) ? "user_main" : "_" + name;
         }
 
         ctx.enterFunction(name, isMethod, ownerClass);
