@@ -1,0 +1,17 @@
+array IA = int[];
+void main()
+{
+    IA a := new int[5];
+    int i := 0;
+    while (i < 5)
+    {
+        a[i] := i * i;
+        i := i + 1;
+    }
+    int j := 0;
+    while (j < 5)
+    {
+        PrintInt(a[j]);
+        j := j + 1;
+    }
+}

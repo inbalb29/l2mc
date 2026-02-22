@@ -1,0 +1,18 @@
+class Box
+{
+    int val := 4;
+}
+array IA = int[];
+int addThree(int x)
+{
+    return x + 3;
+}
+void main()
+{
+    Box b := new Box;
+    IA arr := new int[3];
+    arr[0] := 2;
+    int i := 0;
+    int r := b.val + arr[i] * addThree(2);
+    PrintInt(r);
+}

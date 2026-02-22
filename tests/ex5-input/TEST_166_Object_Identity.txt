@@ -1,0 +1,11 @@
+class Thing
+{
+    int x := 0;
+}
+void main()
+{
+    Thing a := new Thing;
+    Thing b := new Thing;
+    PrintInt(a = b);
+    PrintInt(a = a);
+}

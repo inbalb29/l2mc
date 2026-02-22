@@ -1,0 +1,23 @@
+class Animal
+{
+    int sound()
+    {
+        return 10;
+    }
+}
+class Cat extends Animal
+{
+    int sound()
+    {
+        return 20;
+    }
+}
+int makeSound(Animal a)
+{
+    return a.sound();
+}
+void main()
+{
+    Cat c := new Cat;
+    PrintInt(makeSound(c));
+}

@@ -1,0 +1,8 @@
+int foo(Baz b)
+{
+    return 0;
+}
+void main()
+{
+    int dummy := 0;
+}

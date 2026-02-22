@@ -1,0 +1,12 @@
+array IA = int[];
+IA garr := nil;
+void main()
+{
+    garr := new int[3];
+    garr[0] := 1;
+    garr[1] := 2;
+    garr[2] := 3;
+    PrintInt(garr[0]);
+    PrintInt(garr[1]);
+    PrintInt(garr[2]);
+}

@@ -1,0 +1,12 @@
+class Calc
+{
+    int sum(int a, int b, int c)
+    {
+        return a + b + c;
+    }
+}
+void main()
+{
+    Calc c := new Calc;
+    PrintInt(c.sum(10, 20, 30));
+}

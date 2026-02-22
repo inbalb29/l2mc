@@ -1,0 +1,14 @@
+class A
+{
+    int dummy := 0;
+}
+class B
+{
+    int dummy := 0;
+}
+void main()
+{
+    A a := new A;
+    B b := new B;
+    int r := (a = b);
+}

@@ -1,0 +1,16 @@
+void main()
+{
+    string s := "hello";
+    if (s = "hello")
+    {
+        PrintString("match");
+    }
+    if (s = "world")
+    {
+        PrintString("bad");
+    }
+    else
+    {
+        PrintString("nomatch");
+    }
+}

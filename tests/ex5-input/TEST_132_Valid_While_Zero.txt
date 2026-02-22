@@ -1,0 +1,9 @@
+void main()
+{
+    int x := 10;
+    while (0)
+    {
+        x := 99;
+    }
+    PrintInt(x);
+}

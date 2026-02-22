@@ -1,0 +1,8 @@
+array IA = int[];
+void main()
+{
+    IA a := new int[3];
+    PrintInt(a[0]);
+    PrintInt(a[1]);
+    PrintInt(a[2]);
+}

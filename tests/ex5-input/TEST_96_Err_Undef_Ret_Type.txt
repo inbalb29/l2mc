@@ -1,0 +1,8 @@
+Foo bar()
+{
+    return nil;
+}
+void main()
+{
+    int dummy := 0;
+}

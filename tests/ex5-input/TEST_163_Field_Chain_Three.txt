@@ -1,0 +1,19 @@
+class C
+{
+    int val := 42;
+}
+class B
+{
+    C c := nil;
+}
+class A
+{
+    B b := nil;
+}
+void main()
+{
+    A a := new A;
+    a.b := new B;
+    a.b.c := new C;
+    PrintInt(a.b.c.val);
+}

@@ -1,0 +1,22 @@
+class Maker
+{
+    int compute(int x)
+    {
+        return x * 2;
+    }
+}
+class Adder
+{
+    int add(int x, int y)
+    {
+        return x + y;
+    }
+}
+void main()
+{
+    Maker m := new Maker;
+    Adder a := new Adder;
+    int t := m.compute(20);
+    int r := a.add(t, 2);
+    PrintInt(r);
+}

@@ -1,0 +1,9 @@
+string combine(string a, string b)
+{
+    return a + b;
+}
+void main()
+{
+    string r := combine("hello", "world");
+    PrintString(r);
+}

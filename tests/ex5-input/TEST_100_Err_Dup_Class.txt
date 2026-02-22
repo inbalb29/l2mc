@@ -1,0 +1,12 @@
+class A
+{
+    int dummy := 0;
+}
+class A
+{
+    int dummy := 0;
+}
+void main()
+{
+    int dummy := 0;
+}

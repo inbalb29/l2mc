@@ -1,0 +1,15 @@
+class Counter
+{
+    int val := 0;
+}
+void main()
+{
+    Counter c := new Counter;
+    int i := 0;
+    while (i < 10)
+    {
+        c.val := c.val + 1;
+        i := i + 1;
+    }
+    PrintInt(c.val);
+}

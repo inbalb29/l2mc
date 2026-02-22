@@ -1,0 +1,15 @@
+class A
+{
+    int x := 0;
+}
+class B extends A
+{
+    int x()
+    {
+        return 0;
+    }
+}
+void main()
+{
+    int dummy := 0;
+}

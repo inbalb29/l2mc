@@ -1,0 +1,16 @@
+class Box
+{
+    int val := 99;
+}
+int getVal(Box b)
+{
+    if (b = nil)
+    {
+        return 0;
+    }
+    return b.val;
+}
+void main()
+{
+    PrintInt(getVal(nil));
+}

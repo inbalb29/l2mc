@@ -1,0 +1,18 @@
+class Calc
+{
+    int base := 10;
+    int getBase()
+    {
+        return base;
+    }
+    int compute()
+    {
+        int b := getBase();
+        return b + 5;
+    }
+}
+void main()
+{
+    Calc c := new Calc;
+    PrintInt(c.compute());
+}

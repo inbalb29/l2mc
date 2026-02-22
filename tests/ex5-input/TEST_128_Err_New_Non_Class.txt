@@ -1,0 +1,5 @@
+array IA = int[];
+void main()
+{
+    IA a := new IA;
+}

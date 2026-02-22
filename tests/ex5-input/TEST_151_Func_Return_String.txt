@@ -1,0 +1,9 @@
+string greet()
+{
+    return "hello";
+}
+void main()
+{
+    string s := greet();
+    PrintString(s);
+}

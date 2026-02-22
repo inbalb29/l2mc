@@ -1,0 +1,8 @@
+class B extends Nonexistent
+{
+    int dummy := 0;
+}
+void main()
+{
+    int dummy := 0;
+}
