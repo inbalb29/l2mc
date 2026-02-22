@@ -1,0 +1,22 @@
+class Node
+{
+    int val := 0;
+    Node next := nil;
+    Node makeNext(int v)
+    {
+        Node n := new Node;
+        n.val := v;
+        return n;
+    }
+}
+
+void main()
+{
+    Node a := new Node;
+    a.val := 1;
+    Node b := a.makeNext(2);
+    Node c := b.makeNext(3);
+    PrintInt(a.val);
+    PrintInt(b.val);
+    PrintInt(c.val);
+}

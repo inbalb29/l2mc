@@ -1,0 +1,35 @@
+array IntArray = int[];
+class Stats
+{
+    IntArray data := nil;
+    int count := 0;
+
+    void add(int val)
+    {
+        data[count] := val;
+        count := count + 1;
+    }
+
+    int sum()
+    {
+        int s := 0;
+        int i := 0;
+        while (i < count)
+        {
+            s := s + data[i];
+            i := i + 1;
+        }
+        return s;
+    }
+}
+
+void main()
+{
+    Stats st := new Stats;
+    st.data := new int[10];
+    st.add(5);
+    st.add(10);
+    st.add(15);
+    PrintInt(st.sum());
+    PrintInt(st.count);
+}

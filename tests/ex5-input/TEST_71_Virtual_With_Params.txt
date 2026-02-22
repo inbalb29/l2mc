@@ -1,0 +1,22 @@
+class Base
+{
+    int calc(int x, int y)
+    {
+        return x + y;
+    }
+}
+class Derived extends Base
+{
+    int calc(int x, int y)
+    {
+        return x * y;
+    }
+}
+
+void main()
+{
+    Base b := new Base;
+    Base d := new Derived;
+    PrintInt(b.calc(3, 4));
+    PrintInt(d.calc(3, 4));
+}

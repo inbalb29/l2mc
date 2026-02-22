@@ -1,0 +1,35 @@
+class A
+{
+    int val := 1;
+    int getVal()
+    {
+        return val;
+    }
+}
+class B extends A
+{
+    int other := 2;
+}
+class C extends B
+{
+    int getVal()
+    {
+        return val + other;
+    }
+}
+class D extends C
+{
+    int extra := 10;
+}
+
+void main()
+{
+    A a := new A;
+    A b := new B;
+    A c := new C;
+    A d := new D;
+    PrintInt(a.getVal());
+    PrintInt(b.getVal());
+    PrintInt(c.getVal());
+    PrintInt(d.getVal());
+}

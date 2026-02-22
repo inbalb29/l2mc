@@ -1,0 +1,29 @@
+class IntList
+{
+    int head := 0;
+    IntList tail := nil;
+    int length()
+    {
+        if (tail = nil)
+        {
+            return 1;
+        }
+        return 1 + tail.length();
+    }
+}
+
+void main()
+{
+    IntList a := new IntList;
+    IntList b := new IntList;
+    IntList c := new IntList;
+    a.head := 10;
+    b.head := 20;
+    c.head := 30;
+    a.tail := b;
+    b.tail := c;
+    PrintInt(a.length());
+    PrintInt(b.length());
+    PrintInt(c.length());
+    PrintInt(a.head);
+}

@@ -1,0 +1,28 @@
+class Shape
+{
+    int area()
+    {
+        return 0;
+    }
+}
+class Box extends Shape
+{
+    int w := 3;
+    int h := 4;
+    int area()
+    {
+        return w * h;
+    }
+}
+
+Shape make()
+{
+    Box b := new Box;
+    return b;
+}
+
+void main()
+{
+    Shape s := make();
+    PrintInt(s.area());
+}

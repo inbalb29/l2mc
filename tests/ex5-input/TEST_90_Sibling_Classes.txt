@@ -1,0 +1,35 @@
+class Vehicle
+{
+    int speed := 0;
+    int getSpeed()
+    {
+        return speed;
+    }
+}
+class Bike extends Vehicle
+{
+    int getSpeed()
+    {
+        return speed + 5;
+    }
+}
+class Truck extends Vehicle
+{
+    int getSpeed()
+    {
+        return speed - 10;
+    }
+}
+
+void main()
+{
+    Vehicle v := new Vehicle;
+    v.speed := 50;
+    Bike b := new Bike;
+    b.speed := 50;
+    Truck t := new Truck;
+    t.speed := 50;
+    PrintInt(v.getSpeed());
+    PrintInt(b.getSpeed());
+    PrintInt(t.getSpeed());
+}

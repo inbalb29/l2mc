@@ -1,0 +1,24 @@
+class Node
+{
+    int val := 0;
+}
+class Wrapper
+{
+    Node inner := nil;
+    void setInner(int v)
+    {
+        inner := new Node;
+        inner.val := v;
+    }
+}
+
+void main()
+{
+    Wrapper w := new Wrapper;
+    PrintInt(w.inner = nil);
+    w.setInner(42);
+    PrintInt(w.inner = nil);
+    PrintInt(w.inner.val);
+    w.setInner(99);
+    PrintInt(w.inner.val);
+}
