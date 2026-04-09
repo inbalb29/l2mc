@@ -7,6 +7,7 @@ import Exceptions.SemanticError;
 import ir.*;
 import symboltable.SymbolTable;
 import temp.Temp;
+import temp.TempFactory;
 import types.*;
 
 public class AstFuncDec extends AstDec {
@@ -200,6 +201,12 @@ public class AstFuncDec extends AstDec {
                 }
             }
         }
+
+        // Ensure deterministic behavior when control reaches function end
+        // without an explicit return statement.
+        Temp defaultRetVal = TempFactory.getInstance().getFreshTemp();
+        Ir.getInstance().AddIrCommand(new IRcommandConstInt(defaultRetVal, 0));
+        Ir.getInstance().AddIrCommand(new IrCommandReturn(defaultRetVal));
 
         // Update numLocals
         Ir.getInstance().getCurrentFunction().setNumLocals(ctx.getNumLocals());
