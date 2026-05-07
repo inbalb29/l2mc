@@ -1,10 +1,10 @@
 {
   "java.project.sourcePaths": [
-    "ex4/src/**",
-    "ex4/src",
-    "ex4"
+    "ex5/src/**",
+    "ex5/src",
+    "ex5"
   ],
   "java.project.referencedLibraries": [
-    "ex4/external_jars/*"
+    "ex5/external_jars/*"
   ]
 }

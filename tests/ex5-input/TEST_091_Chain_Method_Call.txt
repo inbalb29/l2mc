@@ -1,0 +1,29 @@
+class Node
+{
+    int val := 0;
+    Node next := nil;
+    Node getNext()
+    {
+        return next;
+    }
+    int getVal()
+    {
+        return val;
+    }
+}
+
+void main()
+{
+    Node a := new Node;
+    Node b := new Node;
+    Node c := new Node;
+    a.val := 1;
+    b.val := 2;
+    c.val := 3;
+    a.next := b;
+    b.next := c;
+    Node n1 := a.getNext();
+    PrintInt(n1.getVal());
+    Node n2 := n1.getNext();
+    PrintInt(n2.getVal());
+}

@@ -1,0 +1,14 @@
+class add
+{
+    int val := 0;
+    int get()
+    {
+        return val;
+    }
+}
+void main()
+{
+    add a := new add;
+    a.val := 99;
+    PrintInt(a.get());
+}

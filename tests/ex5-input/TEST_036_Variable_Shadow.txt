@@ -1,0 +1,19 @@
+int x := 10;
+int y := 20;
+
+int getX()
+{
+    return x;
+}
+
+int shadow(int x)
+{
+    return x + y;
+}
+
+void main()
+{
+    PrintInt(getX());
+    PrintInt(shadow(5));
+    PrintInt(x);
+}

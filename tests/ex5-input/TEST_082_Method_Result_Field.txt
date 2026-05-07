@@ -1,0 +1,26 @@
+class Node
+{
+    int val := 0;
+    Node next := nil;
+}
+class List
+{
+    Node head := nil;
+    Node getHead()
+    {
+        return head;
+    }
+}
+
+void main()
+{
+    List l := new List;
+    l.head := new Node;
+    l.head.val := 42;
+    l.head.next := new Node;
+    l.head.next.val := 99;
+    Node h := l.getHead();
+    PrintInt(h.val);
+    Node h2 := h.next;
+    PrintInt(h2.val);
+}

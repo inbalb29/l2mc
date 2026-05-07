@@ -1,0 +1,10 @@
+void main()
+{
+    int x := 10;
+    int y := 10;
+    int r := (x = y);
+    PrintInt(r);
+    y := 20;
+    int s := (x = y);
+    PrintInt(s);
+}

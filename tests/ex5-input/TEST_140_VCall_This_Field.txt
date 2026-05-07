@@ -1,0 +1,19 @@
+class Counter
+{
+    int val := 5;
+    int getVal()
+    {
+        return val;
+    }
+    void addToVal(int n)
+    {
+        val := val + n;
+    }
+}
+void main()
+{
+    Counter c := new Counter;
+    PrintInt(c.getVal());
+    c.addToVal(10);
+    PrintInt(c.getVal());
+}

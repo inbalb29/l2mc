@@ -1,0 +1,25 @@
+class Engine
+{
+    int hp := 100;
+    int getHP()
+    {
+        return hp;
+    }
+}
+class Car
+{
+    Engine e := nil;
+    int power()
+    {
+        return e.getHP();
+    }
+}
+
+void main()
+{
+    Car c := new Car;
+    c.e := new Engine;
+    PrintInt(c.power());
+    c.e.hp := 200;
+    PrintInt(c.power());
+}

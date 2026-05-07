@@ -1,0 +1,36 @@
+class Animal
+{
+    int speak()
+    {
+        return 0;
+    }
+}
+class Dog extends Animal
+{
+    int speak()
+    {
+        return 1;
+    }
+}
+class Cat extends Animal
+{
+    int speak()
+    {
+        return 2;
+    }
+}
+
+int whatSays(Animal a)
+{
+    return a.speak();
+}
+
+void main()
+{
+    Animal a := new Animal;
+    Dog d := new Dog;
+    Cat c := new Cat;
+    PrintInt(whatSays(a));
+    PrintInt(whatSays(d));
+    PrintInt(whatSays(c));
+}

@@ -1,0 +1,33 @@
+class Counter
+{
+    int n := 0;
+    int get()
+    {
+        return n;
+    }
+}
+array CounterArray = Counter[];
+
+int total(CounterArray arr, int len)
+{
+    int s := 0;
+    int i := 0;
+    while (i < len)
+    {
+        s := s + arr[i].get();
+        i := i + 1;
+    }
+    return s;
+}
+
+void main()
+{
+    CounterArray ca := new Counter[3];
+    ca[0] := new Counter;
+    ca[1] := new Counter;
+    ca[2] := new Counter;
+    ca[0].n := 10;
+    ca[1].n := 20;
+    ca[2].n := 30;
+    PrintInt(total(ca, 3));
+}

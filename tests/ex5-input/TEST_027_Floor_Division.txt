@@ -1,0 +1,10 @@
+void main()
+{
+    PrintInt(-7/2);
+    PrintInt(7/-2);
+    PrintInt(-1/2);
+    PrintInt(1/-2);
+    PrintInt(-7/-2);
+    PrintInt(0/5);
+    PrintInt(5/1);
+}

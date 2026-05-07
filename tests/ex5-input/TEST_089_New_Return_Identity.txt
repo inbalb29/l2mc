@@ -1,0 +1,22 @@
+class Box
+{
+    int val := 0;
+}
+
+Box makeBox(int v)
+{
+    Box b := new Box;
+    b.val := v;
+    return b;
+}
+
+void main()
+{
+    Box a := makeBox(10);
+    Box b := makeBox(20);
+    PrintInt(a.val);
+    PrintInt(b.val);
+    PrintInt(a = b);
+    Box c := a;
+    PrintInt(a = c);
+}

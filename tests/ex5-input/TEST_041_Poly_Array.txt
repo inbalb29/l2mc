@@ -1,0 +1,35 @@
+class Shape
+{
+    int area() { return 0; }
+}
+
+class Square extends Shape
+{
+    int side := 5;
+    int area() { return side * side; }
+}
+
+class Rect extends Shape
+{
+    int w := 3;
+    int h := 7;
+    int area() { return w * h; }
+}
+
+array Shapes = Shape[];
+
+void main()
+{
+    Shapes arr := new Shape[3];
+    arr[0] := new Shape;
+    arr[1] := new Square;
+    arr[2] := new Rect;
+    int i := 0;
+    int total := 0;
+    while (i < 3)
+    {
+        total := total + arr[i].area();
+        i := i + 1;
+    }
+    PrintInt(total);
+}

@@ -1,0 +1,14 @@
+class Box
+{
+    int val := 10;
+    int get()
+    {
+        return val;
+    }
+}
+void main()
+{
+    Box b := new Box;
+    int r := b.get() + 1;
+    PrintInt(r);
+}

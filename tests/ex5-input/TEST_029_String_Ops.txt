@@ -1,0 +1,14 @@
+string s1 := "hello";
+string s2 := "hello";
+string s3 := "world";
+string s4 := "";
+
+void main()
+{
+    PrintInt(s1 = s2);
+    PrintInt(s1 = s3);
+    PrintInt(s3 = s3);
+    PrintString(s1 + s3);
+    PrintString(s4 + s1);
+    PrintInt(s4 = "");
+}

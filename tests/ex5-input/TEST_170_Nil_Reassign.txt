@@ -1,0 +1,10 @@
+class Box
+{
+    int val := 42;
+}
+void main()
+{
+    Box b := nil;
+    b := new Box;
+    PrintInt(b.val);
+}

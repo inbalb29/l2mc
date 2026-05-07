@@ -1,0 +1,11 @@
+int g := 10;
+void setG(int val)
+{
+    g := val;
+}
+void main()
+{
+    PrintInt(g);
+    setG(20);
+    PrintInt(g);
+}

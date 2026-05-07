@@ -1,0 +1,18 @@
+void main()
+{
+    int x := 3;
+    int result := 0;
+    if (x < 5)
+    {
+        int a := x * x;
+        int b := a + x;
+        result := a + b;
+    }
+    else
+    {
+        int c := x + x;
+        result := c * x;
+    }
+    PrintInt(result);
+    PrintInt(x);
+}

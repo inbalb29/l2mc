@@ -1,0 +1,19 @@
+class Math
+{
+    int add(int a, int b)
+    {
+        return a + b;
+    }
+    int mul(int a, int b)
+    {
+        return a * b;
+    }
+}
+
+void main()
+{
+    Math m := new Math;
+    PrintInt(m.add(3, 4));
+    PrintInt(m.mul(5, 6));
+    PrintInt(m.add(m.mul(2, 3), m.add(4, 5)));
+}

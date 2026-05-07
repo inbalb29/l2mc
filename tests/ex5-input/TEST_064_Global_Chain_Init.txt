@@ -1,0 +1,10 @@
+int g0 := 5;
+int g1 := g0 + 10;
+int g2 := g1 * 2;
+
+void main()
+{
+    PrintInt(g0);
+    PrintInt(g1);
+    PrintInt(g2);
+}

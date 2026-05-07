@@ -1,0 +1,5 @@
+array VA = void[];
+void main()
+{
+    int dummy := 0;
+}

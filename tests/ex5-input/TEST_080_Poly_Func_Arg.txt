@@ -1,0 +1,41 @@
+class Animal
+{
+    int id()
+    {
+        return 0;
+    }
+}
+class Dog extends Animal
+{
+    int id()
+    {
+        return 1;
+    }
+}
+class Cat extends Animal
+{
+    int id()
+    {
+        return 2;
+    }
+}
+array AnimalArray = Animal[];
+
+int identify(Animal a)
+{
+    return a.id();
+}
+
+void main()
+{
+    AnimalArray zoo := new Animal[3];
+    zoo[0] := new Animal;
+    zoo[1] := new Dog;
+    zoo[2] := new Cat;
+    int i := 0;
+    while (i < 3)
+    {
+        PrintInt(identify(zoo[i]));
+        i := i + 1;
+    }
+}

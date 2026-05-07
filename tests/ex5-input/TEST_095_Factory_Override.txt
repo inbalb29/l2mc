@@ -1,0 +1,40 @@
+class Animal
+{
+    int sound()
+    {
+        return 0;
+    }
+}
+class Dog extends Animal
+{
+    int sound()
+    {
+        return 1;
+    }
+}
+class Factory
+{
+    Animal create()
+    {
+        Animal a := new Animal;
+        return a;
+    }
+}
+class DogFactory extends Factory
+{
+    Animal create()
+    {
+        Dog d := new Dog;
+        return d;
+    }
+}
+
+void main()
+{
+    Factory f := new Factory;
+    Factory df := new DogFactory;
+    Animal a := f.create();
+    Animal b := df.create();
+    PrintInt(a.sound());
+    PrintInt(b.sound());
+}

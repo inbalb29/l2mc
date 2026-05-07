@@ -1,0 +1,6 @@
+array IA = int[];
+array IA = string[];
+void main()
+{
+    int dummy := 0;
+}

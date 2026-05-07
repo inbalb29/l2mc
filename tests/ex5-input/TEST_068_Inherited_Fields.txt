@@ -1,0 +1,22 @@
+class A
+{
+    int x := 10;
+}
+class B extends A
+{
+    int y := 20;
+}
+class C extends B
+{
+    int z := 30;
+}
+
+void main()
+{
+    C c := new C;
+    PrintInt(c.x);
+    PrintInt(c.y);
+    PrintInt(c.z);
+    c.x := 100;
+    PrintInt(c.x);
+}

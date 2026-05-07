@@ -1,0 +1,8 @@
+void main()
+{
+    string s := "test";
+    if (s)
+    {
+        PrintInt(1);
+    }
+}

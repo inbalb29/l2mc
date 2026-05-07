@@ -1,0 +1,12 @@
+int f(int x)
+{
+    return x + 1;
+}
+int g(int a, int b, int c, int d, int e)
+{
+    return a + b + c + d + e;
+}
+void main()
+{
+    PrintInt(g(f(1), f(2), f(3), f(4), f(5)));
+}

@@ -1,0 +1,8 @@
+array IA = int[];
+array SA = string[];
+void main()
+{
+    IA a := new int[1];
+    SA b := new string[1];
+    int r := (a = b);
+}

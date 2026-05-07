@@ -64,6 +64,10 @@ Implements a semantic analyzer that recursively scans the AST produced by CUP an
 
 Implements a dataflow analysis for detecting uninitializzed variables. Recursively traverses the AST and generates an intermediate representation (IR) of the program. Then, it constructs a control-flow graph (CFG) from the IR and computes the result of the analysis using chaotic iterations. The output is a text file indicating whether the input has no uninitialized variables, and if it does, a list of the uninitialized variables.
 
+## Exercise 5: Code Generation
+
+Completes the compiler by implementing a code generator that translates the IR produced in Exercise 4 into MIPS assembly code. The output is a text file containing the generated MIPS assembly code.
+
 ## License
 
 This project is distributed under the GPL-3.0 License. See the

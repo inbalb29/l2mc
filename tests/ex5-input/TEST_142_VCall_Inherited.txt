@@ -1,0 +1,17 @@
+class Base
+{
+    int value := 100;
+    int getVal()
+    {
+        return value;
+    }
+}
+class Child extends Base
+{
+    int other := 200;
+}
+void main()
+{
+    Child c := new Child;
+    PrintInt(c.getVal());
+}

@@ -1,0 +1,9 @@
+array IA = int[];
+class B extends IA
+{
+    int dummy := 0;
+}
+void main()
+{
+    int dummy := 0;
+}

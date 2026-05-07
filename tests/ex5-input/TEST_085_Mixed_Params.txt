@@ -1,0 +1,19 @@
+class Pair
+{
+    int x := 0;
+    int y := 0;
+}
+
+int compute(int scale, Pair p, int offset)
+{
+    return scale * (p.x + p.y) + offset;
+}
+
+void main()
+{
+    Pair p := new Pair;
+    p.x := 3;
+    p.y := 4;
+    PrintInt(compute(2, p, 1));
+    PrintInt(compute(10, p, 0 - 5));
+}

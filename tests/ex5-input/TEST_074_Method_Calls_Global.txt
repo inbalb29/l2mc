@@ -1,0 +1,21 @@
+int twice(int x)
+{
+    return x + x;
+}
+
+class Foo
+{
+    int val := 5;
+    int doubled()
+    {
+        return twice(val);
+    }
+}
+
+void main()
+{
+    Foo f := new Foo;
+    PrintInt(f.doubled());
+    f.val := 13;
+    PrintInt(f.doubled());
+}

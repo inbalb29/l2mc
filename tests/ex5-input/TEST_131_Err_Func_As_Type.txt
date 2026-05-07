@@ -1,0 +1,9 @@
+void foo()
+{
+    int dummy := 0;
+}
+foo x;
+void main()
+{
+    int dummy := 0;
+}

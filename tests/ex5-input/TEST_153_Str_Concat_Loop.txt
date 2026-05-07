@@ -1,0 +1,11 @@
+void main()
+{
+    string s := "";
+    int i := 0;
+    while (i < 5)
+    {
+        s := s + "a";
+        i := i + 1;
+    }
+    PrintString(s);
+}

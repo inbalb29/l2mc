@@ -1,0 +1,11 @@
+class Node
+{
+    int val := 0;
+}
+array NA = Node[];
+void main()
+{
+    NA a := new Node[2];
+    PrintInt(a[0] = nil);
+    PrintInt(a[1] = nil);
+}
